@@ -1,0 +1,11 @@
+*.local
+.devcontainer.json
+.DS_Store
+.env
+.idea
+.npmrc
+dist
+generated-types
+inuits-apollo-server-auth
+modules
+node_modules

@@ -1,0 +1,35 @@
+---
+###############################################################################
+# NPM APPLICATION PIPELINE
+###############################################################################
+
+include:
+  - project: 'inuits/gitlab-ci/pipeline-templates'
+    ref: 'v3.0.0'
+    file: 'pipelines/inuits/deploy-inuits.yml'
+  - project: 'inuits/gitlab-ci/pipeline-templates'
+    ref: v3.0.0
+    file: 'jobs/build-variant/npm.yml'
+
+variables:
+  CUSTOMER: 'imec'
+  APPLICATION: 'graphql'
+  PROJECT: 'hairoad-elody'
+
+  TERRAFORM_REPO_GITLAB_PATH: "customers/imec/elody/hairoad-elody-terraform"
+
+# template overrides
+dev:
+  variables:
+    TARGET_CLUSTER: 'inuits-prod-ovh'
+  rules:
+    - when: never
+
+uat:
+  variables:
+    TARGET_CLUSTER: 'inuits-prod-ovh'
+
+prod:
+  variables:
+    TARGET_CLUSTER: 'inuits-prod-ovh'
+
