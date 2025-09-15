@@ -31,12 +31,12 @@ export const runnerQueries = gql`
       column {
         size(size: seventy)
         elements {
-          runners: entityListElement {
-            label(input: "element-labels.runner-element")
+          processors: entityListElement {
+            label(input: "element-labels.processor-element")
             isCollapsed(input: false)
-            entityTypes(input: [runner])
+            entityTypes(input: [processor])
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetRunnerFilter")
+            customQueryFilters(input: "GetProcessorFilter")
             searchInputType(input: "AdvancedInputType")
           }
         }
@@ -99,12 +99,12 @@ export const runnerQueries = gql`
     }
   }
 
-  query GetRunnerFilter($entityType: String!) {
+  query GetProcessorFilter($entityType: String!) {
     EntityTypeFilters(type: $entityType) {
       advancedFilters {
         type: advancedFilter(type: type) {
           type
-          defaultValue(value: "runner")
+          defaultValue(value: "processor")
           hidden(value: true)
         }
         relation: advancedFilter(
@@ -113,7 +113,7 @@ export const runnerQueries = gql`
         ) {
           type
           key
-          defaultValue(value: "$entity.relationValues.isRunnerFor.key")
+          defaultValue(value: "$entity.relationValues.isProcessorFor.key")
           hidden(value: true)
         }
       }
