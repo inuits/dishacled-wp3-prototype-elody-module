@@ -67,6 +67,7 @@ export const dishacledAppConfig: Environment = {
     applicationLocale: "en",
     uploadEntityTypeToCreate: Entitytyping.Asset,
     entityIdKey: "_id",
+    excludedLanguages: ["ar"],
   },
   features: {
     hasTenantSelect: false,
