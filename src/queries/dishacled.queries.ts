@@ -279,7 +279,7 @@ export const dishacledQueries = gql`
           label: "navigation.pipelines"
           entityType: pipeline
           typeLink: { route: { destination: "pipelines" } }
-          icon: ExclamationTriangle
+          icon: CloudDataConnection
           requiresAuth: true
         ) {
           label
@@ -296,7 +296,7 @@ export const dishacledQueries = gql`
           label: "navigation.runners"
           entityType: runner
           typeLink: { route: { destination: "runners" } }
-          icon: Draggabledots
+          icon: Cog
           requiresAuth: true
         ) {
           label
@@ -313,7 +313,7 @@ export const dishacledQueries = gql`
           label: "navigation.processors"
           entityType: processor
           typeLink: { route: { destination: "processors" } }
-          icon: Car
+          icon: Processor
           requiresAuth: true
         ) {
           label
@@ -330,7 +330,7 @@ export const dishacledQueries = gql`
           label: "navigation.channels"
           entityType: channel
           typeLink: { route: { destination: "channels" } }
-          icon: Process
+          icon: Channel
           requiresAuth: true
         ) {
           label
@@ -425,6 +425,12 @@ export const dishacledQueries = gql`
             value
           }
         }
+      }
+      ... on Processor {
+        ...processorBulkOperations
+      }
+      ... on Runner {
+        ...runnerBulkOperations
       }
     }
   }

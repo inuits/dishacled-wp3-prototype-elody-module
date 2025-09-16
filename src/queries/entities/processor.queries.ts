@@ -14,7 +14,7 @@ export const processorQueries = gql`
       }
     }
     teaserMetadata {
-      serial_number: metaData {
+      name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
       }
@@ -99,6 +99,73 @@ export const processorQueries = gql`
     }
   }
 
+  fragment processorBulkOperations on Processor {
+    bulkOperationOptions {
+      options(
+        input: [
+          {
+            icon: Create
+            label: "bulk-operations.create-processor"
+            value: "createEntity"
+            primary: true
+            actionContext: {
+              activeViewMode: readMode
+              entitiesSelectionType: noneSelected
+              labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+            }
+            bulkOperationModal: {
+              typeModal: DynamicForm
+              formQuery: "GetProcessorCreateForm"
+              formRelationType: "isProcessorFor"
+              askForCloseConfirmation: true
+              neededPermission: cancreate
+            }
+          }
+        ]
+      ) {
+        icon
+        label
+        value
+        primary
+        can
+        actionContext {
+          ...actionContext
+        }
+        bulkOperationModal {
+          ...bulkOperationModal
+        }
+      }
+    }
+  }
+
+  query GetProcessorCreateForm {
+    GetDynamicForm {
+      label(input: "navigation.create-processor")
+      name: formTab {
+        formFields {
+          name: metaData {
+            label(input: "metadata.labels.name")
+            key(input: "name")
+            inputField(type: baseTextField) {
+              ...inputfield
+              validation(input: { value: required }) {
+                ...validation
+              }
+            }
+          }
+          createAction: action {
+            label(input: "actions.labels.create")
+            icon(input: Create)
+            actionType(input: submit)
+            actionQuery(input: "CreateEntity")
+            creationType(input: processor)
+            showsFormErrors(input: true)
+          }
+        }
+      }
+    }
+  }
+
   query GetRunnerFilter($entityType: String!) {
     EntityTypeFilters(type: $entityType) {
       advancedFilters {
@@ -113,7 +180,7 @@ export const processorQueries = gql`
         ) {
           type
           key
-          defaultValue(value: "$entity.relationValues.isRunnerFor.key")
+          defaultValue(value: "$entity.relationValues.hasRunner.key")
           hidden(value: true)
         }
       }

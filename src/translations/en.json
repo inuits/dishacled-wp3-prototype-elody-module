@@ -1,3 +1,34 @@
 {
-  "en": {}
+  "en": {
+    "bulk-operations": {
+      "create-processor": "Create processor",
+      "create-runner": "Create runner"
+    },
+    "element-labels": {
+      "runner-element": "Runners",
+      "processor-element": "Processors"
+    },
+    "metadata": {
+      "labels": {
+        "name": "Name"
+      }
+    },
+    "navigation": {
+      "pipelines": "Pipelines",
+      "runners": "Runners",
+      "processors": "Processors",
+      "channels": "Channels",
+      "create-processor": "Create processor",
+      "create-runner": "Create runner"
+    },
+    "panel-labels": {
+      "processor-info": "Processor info",
+      "channel-info": "Channel info",
+      "runner-info": "Runner info",
+      "pipeline-info": "Pipeline info"
+    },
+    "window-element-labels": {
+      "info-window": "Info"
+    }
+  }
 }

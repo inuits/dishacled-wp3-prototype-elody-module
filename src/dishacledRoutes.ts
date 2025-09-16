@@ -32,7 +32,7 @@ export const dishacledRoutes = [
       },
       {
         path: "pipelines",
-        name: RouteNames.Users,
+        name: RouteNames.Pipelines,
         component: "Home",
         meta: {
           title: "navigation.pipelines",
