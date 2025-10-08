@@ -10,7 +10,6 @@ export const dishacledRoutes = [
     name: RouteNames.Home,
     component: "HomeWrapper",
     meta: {
-      title: "Home",
       type: Collection.Entities,
       requiresAuth: true,
       entityType: Entitytyping.Processor,
@@ -26,7 +25,6 @@ export const dishacledRoutes = [
         name: RouteNames.SingleEntity,
         component: "SingleEntity",
         meta: {
-          title: "Single Entity",
           requiresAuth: true,
         },
       },
@@ -35,7 +33,6 @@ export const dishacledRoutes = [
         name: RouteNames.Pipelines,
         component: "Home",
         meta: {
-          title: "navigation.pipelines",
           requiresAuth: true,
           type: Collection.Entities,
           entityType: Entitytyping.Pipeline,
@@ -51,7 +48,6 @@ export const dishacledRoutes = [
         name: RouteNames.Runners,
         component: "Home",
         meta: {
-          title: "navigation.runners",
           requiresAuth: true,
           type: Collection.Entities,
           entityType: Entitytyping.Runner,
@@ -67,7 +63,6 @@ export const dishacledRoutes = [
         name: RouteNames.Processors,
         component: "Home",
         meta: {
-          title: "navigation.processors",
           requiresAuth: true,
           type: Collection.Entities,
           entityType: Entitytyping.Processor,
@@ -83,7 +78,6 @@ export const dishacledRoutes = [
         name: RouteNames.Channels,
         component: "Home",
         meta: {
-          title: "navigation.channels",
           requiresAuth: true,
           type: Collection.Entities,
           entityType: Entitytyping.Channel,
@@ -99,7 +93,6 @@ export const dishacledRoutes = [
         name: RouteNames.Users,
         component: "Home",
         meta: {
-          title: "navigation.users",
           requiresAuth: true,
           type: Collection.Entities,
           entityType: Entitytyping.User,
