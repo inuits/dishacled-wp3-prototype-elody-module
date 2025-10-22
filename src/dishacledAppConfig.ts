@@ -10,6 +10,7 @@ export const dishacledAppConfig: Environment = {
     introspection: process.env.APOLLO_INTROSPECTION === "true",
     playground: process.env.APOLLO_PLAYGROUND === "true",
     tokenLogging: process.env.APOLLO_TOKENLOGGING || "false",
+    maxQueryDepth: 10,
   },
   port: process.env.PORT || defaultPort,
   environment: process.env.NODE_ENV || "development",
@@ -36,7 +37,6 @@ export const dishacledAppConfig: Environment = {
     promUrl: "",
     collectionApiUrl:
       process.env.COLLECTION_API_URL || "http://collection-api:8000",
-    searchApiUrl: process.env.SEARCH_API_URL || "http://search-api:8002",
     csvImportServiceUrl:
       process.env.CSV_IMPORTER_URL || "http://dams-csv-import-service:8003",
     fileSystemImporterServiceUrl:
@@ -72,12 +72,6 @@ export const dishacledAppConfig: Environment = {
   features: {
     hasTenantSelect: false,
     hideSuperTenant: true,
-    SEO: {
-      hasSEO: false,
-    },
-    simpleSearch: {
-      hasSimpleSearch: false,
-    },
     hasSavedSearch: true,
   },
   allowAnonymousUsers:
