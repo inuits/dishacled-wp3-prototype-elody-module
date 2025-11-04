@@ -8,14 +8,16 @@ import {
   dishacledFields,
   dishacledElodyTypeCollectionMapping,
 } from "./dishacledModule";
-import start, { type ElodyConfig, generateElodyConfig } from "base-graphql";
+import start, { type ElodyModuleConfig } from "base-graphql";
 
-const dishacledElodyConfig: ElodyConfig = generateElodyConfig([
-  mediafileModule,
-  advancedFilterModule,
-  savedSearchModule,
-  dishacledModule,
-]);
+const dishacledElodyConfig: ElodyModuleConfig = {
+  modules: [
+    mediafileModule,
+    advancedFilterModule,
+    savedSearchModule,
+    dishacledModule,
+  ],
+};
 
 start(
   dishacledElodyConfig,
