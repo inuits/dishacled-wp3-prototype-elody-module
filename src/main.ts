@@ -4,7 +4,7 @@ import { savedSearchModule } from "saved-search-module";
 import {
   dishacledModule,
   dishacledAppConfig,
-  appTranslations,
+  dishacledTranslations,
   dishacledFields,
   dishacledElodyTypeCollectionMapping,
 } from "./dishacledModule";
@@ -22,7 +22,7 @@ const dishacledElodyConfig: ElodyModuleConfig = {
 start(
   dishacledElodyConfig,
   dishacledAppConfig,
-  appTranslations,
+  dishacledTranslations,
   [],
   dishacledFields,
   dishacledElodyTypeCollectionMapping,

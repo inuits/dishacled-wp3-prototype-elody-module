@@ -4,15 +4,12 @@ import { dishacledSchema } from "./dishacledSchema.schema";
 import { dishacledQueries } from "./queries/dishacled.queries";
 import { dishacledAppConfig } from "./dishacledAppConfig";
 import { dishacledFields } from "./sources/forms";
-import { loadTranslations, baseTranslations } from "base-graphql";
+import { loadTranslationsFromDirectory } from "base-graphql";
 import path from "path";
-import { mergeObjects } from "json-merger";
 import { dishacledElodyTypeCollectionMapping } from "./sources/typeCollectionMapping";
 
-const translations: Record<string, Object> = {
-  en: loadTranslations(path.join(__dirname, "./translations/en.json")),
-  nl: loadTranslations(path.join(__dirname, "./translations/nl.json")),
-};
+const dishacledTranslations: Record<string, Object> =
+  loadTranslationsFromDirectory(path.join(__dirname, "translations"));
 
 const dishacledModule = createModule({
   id: "dishacledModule",
@@ -21,18 +18,11 @@ const dishacledModule = createModule({
   resolvers: [dishacledResolver],
 });
 
-const dishacledTranslations = Object.values(translations);
-
-const appTranslations = mergeObjects([
-  baseTranslations,
-  ...dishacledTranslations,
-]);
-
 export {
   dishacledQueries,
   dishacledModule,
   dishacledAppConfig,
-  appTranslations,
+  dishacledTranslations,
   dishacledFields,
   dishacledElodyTypeCollectionMapping,
 };
