@@ -17,6 +17,7 @@ const dishacledElodyConfig: ElodyModuleConfig = {
     savedSearchModule,
     dishacledModule,
   ],
+  dataSources: {},
 };
 
 start(

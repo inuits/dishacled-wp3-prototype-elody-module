@@ -73,6 +73,7 @@ export const dishacledAppConfig: Environment = {
     hasTenantSelect: false,
     hideSuperTenant: true,
     hasSavedSearch: true,
+    hasRedirectToExternalSites: false,
   },
   allowAnonymousUsers:
     process.env.ALLOW_ANONYMOUS_USERS?.toLowerCase() === "true",
