@@ -1,8 +1,15 @@
 {
   "nl": {
     "bulk-operations": {
+      "create-pipeline": "Pipeline aanmaken",
       "create-processor": "Processor aanmaken",
       "create-runner": "Runner aanmaken"
+    },
+    "entity-translations": {
+      "plural": {
+        "runner": "Runners",
+        "processor": "Processors"
+      }
     },
     "element-labels": {
       "runner-element": "Runners",
@@ -10,10 +17,13 @@
     },
     "metadata": {
       "labels": {
-        "name": "Naam"
+        "name": "Naam",
+        "repository": "Repository",
+        "description": "Beschrijving"
       }
     },
     "navigation": {
+      "create-pipeline": "Pipeline aanmaken",
       "pipelines": "Pipelines",
       "runners": "Runners",
       "processors": "Processors",

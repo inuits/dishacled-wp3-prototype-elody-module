@@ -1,10 +1,10 @@
-import { Environment, getRoutesObject } from "base-graphql";
+import { FullyOptionalEnvironmentInput, getRoutesObject } from "base-graphql";
 import { dishacledRoutes } from "./dishacledRoutes";
 import { Entitytyping } from "../generated-types/type-defs";
 
 const defaultPort = 4000;
 
-export const dishacledAppConfig: Environment = {
+export const dishacledAppConfig: FullyOptionalEnvironmentInput = {
   apollo: {
     graphqlPath: process.env.APOLLO_GRAPHQL_PATH || "/api/graphql",
     introspection: process.env.APOLLO_INTROSPECTION === "true",
@@ -73,7 +73,6 @@ export const dishacledAppConfig: Environment = {
     hasTenantSelect: false,
     hideSuperTenant: true,
     hasSavedSearch: true,
-    hasRedirectToExternalSites: false,
   },
   allowAnonymousUsers:
     process.env.ALLOW_ANONYMOUS_USERS?.toLowerCase() === "true",

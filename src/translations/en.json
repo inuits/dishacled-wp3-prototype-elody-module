@@ -1,8 +1,15 @@
 {
   "en": {
     "bulk-operations": {
+      "create-pipeline": "Create pipeline",
       "create-processor": "Create processor",
       "create-runner": "Create runner"
+    },
+    "entity-translations": {
+      "plural": {
+        "runner": "Runners",
+        "processor": "Processors"
+      }
     },
     "element-labels": {
       "runner-element": "Runners",
@@ -10,7 +17,9 @@
     },
     "metadata": {
       "labels": {
-        "name": "Name"
+        "name": "Name",
+        "repository": "Repository",
+        "description": "Description"
       }
     },
     "navigation": {
@@ -18,6 +27,7 @@
       "runners": "Runners",
       "processors": "Processors",
       "channels": "Channels",
+      "create-pipeline": "Create pipeline",
       "create-processor": "Create processor",
       "create-runner": "Create runner"
     },

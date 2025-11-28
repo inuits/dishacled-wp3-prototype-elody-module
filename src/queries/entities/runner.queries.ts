@@ -4,6 +4,12 @@ export const runnerQueries = gql`
   fragment minimalRunner on Runner {
     intialValues {
       name: keyValue(key: "name", source: metadata)
+      repository: keyValue(key: "repository", source: metadata)
+      hasProcessor: keyValue(
+        key: "hasProcessor"
+        source: relations
+        formatter: "pill"
+      )
     }
     relationValues
     allowedViewModes {
@@ -18,6 +24,14 @@ export const runnerQueries = gql`
         label(input: "metadata.labels.name")
         key(input: "name")
       }
+      repository: metaData {
+        label(input: "metadata.labels.repository")
+        key(input: "repository")
+      }
+      hasProcessor: metaData {
+        label(input: "metadata.labels.processor")
+        key(input: "processor")
+      }
     }
     ...minimalBaseEntity
   }
@@ -25,6 +39,7 @@ export const runnerQueries = gql`
   fragment fullRunner on Runner {
     intialValues {
       name: keyValue(key: "name", source: metadata)
+      repository: keyValue(key: "repository", source: metadata)
     }
     relationValues
     entityView {
@@ -35,9 +50,11 @@ export const runnerQueries = gql`
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
             entityTypes(input: [processor])
+            relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetProcessorFilter")
             searchInputType(input: "AdvancedInputType")
+            customBulkOperations(input: "GetProcessorOnRunnerBulkOperations")
           }
         }
       }
@@ -57,6 +74,10 @@ export const runnerQueries = gql`
               name: metaData {
                 label(input: "metadata.labels.name")
                 key(input: "name")
+              }
+              repository: metaData {
+                label(input: "metadata.labels.repository")
+                key(input: "repository")
               }
             }
           }
@@ -88,6 +109,18 @@ export const runnerQueries = gql`
         type: text
         key: ["elody:1|metadata.name.value"]
         label: "metadata.labels.name"
+        isDisplayedByDefault: true
+      ) {
+        type
+        key
+        label
+        isDisplayedByDefault
+        tooltip(value: true)
+      }
+      repository: advancedFilter(
+        type: text
+        key: ["elody:1|metadata.repository.value"]
+        label: "metadata.labels.repository"
         isDisplayedByDefault: true
       ) {
         type
@@ -153,6 +186,16 @@ export const runnerQueries = gql`
               }
             }
           }
+          repository: metaData {
+            label(input: "metadata.labels.repository")
+            key(input: "repository")
+            inputField(type: baseTextField) {
+              ...inputfield
+              validation(input: { value: required }) {
+                ...validation
+              }
+            }
+          }
           createAction: action {
             label(input: "actions.labels.create")
             icon(input: Create)
@@ -180,8 +223,83 @@ export const runnerQueries = gql`
         ) {
           type
           key
-          defaultValue(value: "$entity.relationValues.isRunnerFor.key")
+          defaultValue(value: "$entity.relationValues.hasProcessor.key")
           hidden(value: true)
+        }
+      }
+    }
+  }
+
+  query GetProcessorOnRunnerBulkOperations {
+    CustomBulkOperations {
+      bulkOperationOptions {
+        options(
+          input: [
+            {
+              icon: PlusCircle
+              label: "bulk-operations.add-new-relation"
+              value: "createEntity"
+              primary: true
+              can: ["update:runner:has-processor"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetProcessorCreateForm"
+                formRelationType: "isProcessorFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: PlusCircle
+              label: "bulk-operations.add-existing-relation"
+              value: "addRelation"
+              can: ["update:runner:has-processor"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetEntityPickerForm"
+                askForCloseConfirmation: true
+                neededPermission: canupdate
+              }
+            }
+            {
+              label: "bulk-operations.delete-selected"
+              value: "deleteEntities"
+              primary: false
+              can: ["update:runner:has-processor"]
+              bulkOperationModal: {
+                typeModal: BulkOperationsDeleteEntities
+                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                askForCloseConfirmation: false
+              }
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: someSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-someselected"
+              }
+            }
+          ]
+        ) {
+          icon
+          label
+          value
+          primary
+          can
+          actionContext {
+            ...actionContext
+          }
+          bulkOperationModal {
+            ...bulkOperationModal
+          }
         }
       }
     }

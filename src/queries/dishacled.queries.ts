@@ -426,6 +426,9 @@ export const dishacledQueries = gql`
           }
         }
       }
+      ... on Pipeline {
+        ...pipelineBulkOperations
+      }
       ... on Processor {
         ...processorBulkOperations
       }

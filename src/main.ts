@@ -9,6 +9,7 @@ import {
   dishacledElodyTypeCollectionMapping,
 } from "./dishacledModule";
 import start, { type ElodyModuleConfig } from "base-graphql";
+import { dishacledPermissions } from "./dishacledPermissions";
 
 const dishacledElodyConfig: ElodyModuleConfig = {
   modules: [
@@ -27,4 +28,5 @@ start(
   [],
   dishacledFields,
   dishacledElodyTypeCollectionMapping,
+  dishacledPermissions,
 );
