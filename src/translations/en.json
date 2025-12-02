@@ -3,6 +3,9 @@
     "bulk-operations": {
       "create-pipeline": "Create pipeline",
       "create-processor": "Create processor",
+      "create-jvm-rml-processor": "Create jvm rml processor",
+      "create-py-log-processor": "Create py log processor",
+      "create-ts-http-utils-processor": "Create ts http utils processor",
       "create-jsrunner": "Create js runner",
       "create-jvmrunner": "Create jvm runner",
       "create-pyrunner": "Create py runner",
@@ -42,6 +45,9 @@
       "channels": "Channels",
       "create-pipeline": "Create pipeline",
       "create-processor": "Create processor",
+      "create-jvm-rml-processor": "Create java virtual machine rml processor",
+      "create-py-log-processor": "Create python log processor",
+      "create-ts-http-utils-processor": "Create typescript http utils processor",
       "create-jsrunner": "Create javascript runner",
       "create-jvmrunner": "Create java virtual machine runner",
       "create-pyrunner": "Create python runner"

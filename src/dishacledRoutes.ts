@@ -69,6 +69,12 @@ export const dishacledRoutes = [
         name: RouteNames.Processors,
         component: "Home",
         meta: {
+          queries: {
+            getEntities: "GetAllProcessorEntities",
+            getFilters: "GetAllProcessorFilters",
+            getSortOptions: "GetAllProcessorSortOptions",
+            getBulkOperations: "GetAllProcessorBulkOperations",
+          },
           requiresAuth: true,
           type: Collection.Entities,
           entityType: Entitytyping.Processor,

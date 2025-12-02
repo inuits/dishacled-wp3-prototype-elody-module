@@ -175,4 +175,182 @@ export const processorQueries = gql`
       }
     }
   }
+
+  query GetAllProcessorEntities(
+    $type: Entitytyping!
+    $limit: Int
+    $skip: Int
+    $searchValue: SearchFilter!
+    $advancedSearchValue: [FilterInput]
+    $advancedFilterInputs: [AdvancedFilterInput!]!
+    $searchInputType: SearchInputType
+  ) {
+    Entities(
+      type: $type
+      limit: $limit
+      skip: $skip
+      searchValue: $searchValue
+      advancedSearchValue: $advancedSearchValue
+      advancedFilterInputs: $advancedFilterInputs
+      searchInputType: $searchInputType
+    ) {
+      count
+      limit
+      results {
+        id
+        uuid
+        type
+        relationValues
+        ... on JvmRmlProcessor {
+          ...minimalJvmRmlProcessor
+        }
+        ... on PyLogProcessor {
+          ...minimalPyLogProcessor
+        }
+        ... on TsHttpUtilsProcessor {
+          ...minimalTsHttpUtilsProcessor
+        }
+      }
+    }
+  }
+
+  query GetAllProcessorFilters($entityType: String!) {
+    EntityTypeFilters(type: $entityType) {
+      advancedFilters {
+        type: advancedFilter(type: selection, key: "type") {
+          type
+          key
+          defaultValue(
+            value: ["jvmRmlProcessor", "pyLogProcessor", "tsHttpUtilsProcessor"]
+          )
+          hidden(value: true)
+        }
+        id: advancedFilter(
+          type: text
+          key: ["elody:1|metadata.id.value"]
+          label: "metadata.labels.id"
+          isDisplayedByDefault: true
+        ) {
+          type
+          key
+          label
+          isDisplayedByDefault
+        }
+        hasRunner: advancedFilter(
+          type: selection
+          key: ["elody:1|relations.hasRunner.key"]
+          label: "metadata.labels.runner"
+          isDisplayedByDefault: true
+          useNewWayToFetchOptions: true
+          advancedFilterInputForRetrievingOptions: [
+            {
+              type: text
+              key: ["elody:1|properties.name.value"]
+              value: "*"
+              match_exact: false
+            }
+          ]
+        ) {
+          type
+          key
+          label
+          isDisplayedByDefault
+          advancedFilterInputForRetrievingOptions {
+            type
+            key
+            value
+            item_types
+          }
+          tooltip(value: true)
+        }
+      }
+    }
+  }
+
+  query GetAllProcessorSortOptions($entityType: String!) {
+    EntityTypeSortOptions(entityType: $entityType) {
+      sortOptions {
+        options(
+          input: [{ icon: NoIcon, label: "metadata.labels.id", value: "id" }]
+        ) {
+          icon
+          label
+          value
+        }
+      }
+    }
+  }
+
+  query GetAllProcessorBulkOperations($entityType: String!) {
+    BulkOperations(entityType: $entityType) {
+      bulkOperationOptions {
+        options(
+          input: [
+            {
+              icon: Create
+              label: "bulk-operations.create-jvm-rml-processor"
+              value: "createEntity"
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetJvmRmlProcessorCreateForm"
+                formRelationType: "isProcessorFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: Create
+              label: "bulk-operations.create-py-log-processor"
+              value: "createEntity"
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetPyLogProcessorCreateForm"
+                formRelationType: "isProcessorFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: Create
+              label: "bulk-operations.create-ts-http-utils-processor"
+              value: "createEntity"
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetTsHttpUtilsProcessorCreateForm"
+                formRelationType: "isProcessorFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+          ]
+        ) {
+          icon
+          label
+          value
+          primary
+          actionContext {
+            ...actionContext
+          }
+          bulkOperationModal {
+            ...bulkOperationModal
+          }
+        }
+      }
+    }
+  }
 `;

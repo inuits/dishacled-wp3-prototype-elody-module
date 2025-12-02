@@ -16,6 +16,9 @@ export const dishacledSchema = gql`
     jvmRunner
     pyRunner
     processor
+    pyLogProcessor
+    tsHttpUtilsProcessor
+    jvmRmlProcessor
     channel
     user
     tenant
@@ -172,7 +175,7 @@ export const dishacledSchema = gql`
     mapElement: MapElement
   }
 
-  type TsFileUtilsProcessor implements Entity {
+  type TsHttpUtilsProcessor implements Entity {
     id: String!
     uuid: String!
     type: String!
