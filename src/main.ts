@@ -7,6 +7,7 @@ import {
   dishacledTranslations,
   dishacledFields,
   dishacledElodyTypeCollectionMapping,
+  dishacledTypePillLabelMapping,
 } from "./dishacledModule";
 import start, { type ElodyModuleConfig } from "base-graphql";
 import { dishacledPermissions } from "./dishacledPermissions";
@@ -29,4 +30,7 @@ start(
   dishacledFields,
   dishacledElodyTypeCollectionMapping,
   dishacledPermissions,
+  undefined,
+  undefined,
+  dishacledTypePillLabelMapping,
 );

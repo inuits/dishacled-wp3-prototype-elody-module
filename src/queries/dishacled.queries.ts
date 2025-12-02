@@ -22,6 +22,17 @@ export const dishacledQueries = gql`
     }
   }
 
+  fragment typePillsIntialValues on IntialValues {
+    type: keyValue(key: "type", source: typePillLabel, index: 0, formatter: "pill|auto")
+  }
+
+  fragment typePillsTeaserMetadata on teaserMetadata {
+    type: metaData {
+      label(input: "metadata.labels.type")
+      key(input: "type")
+    }
+  }
+
   fragment fullEntity on Entity {
     id
     uuid
@@ -37,6 +48,15 @@ export const dishacledQueries = gql`
     }
     ... on Runner {
       ...fullRunner
+    }
+    ... on JsRunner {
+      ...fullJsRunner
+    }
+    ... on JvmRunner {
+      ...fullJvmRunner
+    }
+    ... on PyRunner {
+      ...fullPyRunner
     }
     ... on Processor {
       ...fullProcessor
@@ -81,6 +101,15 @@ export const dishacledQueries = gql`
         }
         ... on Runner {
           ...minimalRunner
+        }
+        ... on JsRunner {
+          ...minimalJsRunner
+        }
+        ... on JvmRunner {
+          ...minimalJvmRunner
+        }
+        ... on PyRunner {
+          ...minimalPyRunner
         }
         ... on Processor {
           ...minimalProcessor
@@ -135,6 +164,15 @@ export const dishacledQueries = gql`
       }
       ... on Runner {
         ...filtersForRunner
+      }
+      ... on JsRunner {
+        ...filtersForJsRunner
+      }
+      ... on JvmRunner {
+        ...filtersForJvmRunner
+      }
+      ... on PyRunner {
+        ...filtersForPyRunner
       }
       ... on Processor {
         ...filtersForProcessor
@@ -386,6 +424,15 @@ export const dishacledQueries = gql`
       ... on Runner {
         ...runnerSortOptions
       }
+      ... on JsRunner {
+        ...jsRunnerSortOptions
+      }
+      ... on JvmRunner {
+        ...jvmRunnerSortOptions
+      }
+      ... on PyRunner {
+        ...pyRunnerSortOptions
+      }
       ... on Processor {
         ...processorSortOptions
       }
@@ -432,8 +479,14 @@ export const dishacledQueries = gql`
       ... on Processor {
         ...processorBulkOperations
       }
-      ... on Runner {
-        ...runnerBulkOperations
+      ... on JsRunner {
+        ...jsRunnerBulkOperations
+      }
+      ... on JvmRunner {
+        ...jvmRunnerBulkOperations
+      }
+      ... on PyRunner {
+        ...pyRunnerBulkOperations
       }
     }
   }

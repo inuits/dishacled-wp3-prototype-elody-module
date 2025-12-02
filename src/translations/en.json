@@ -3,11 +3,16 @@
     "bulk-operations": {
       "create-pipeline": "Create pipeline",
       "create-processor": "Create processor",
-      "create-runner": "Create runner"
+      "create-jsrunner": "Create js runner",
+      "create-jvmrunner": "Create jvm runner",
+      "create-pyrunner": "Create py runner",
+      "existing-runner": "Add existing runner"
     },
     "entity-translations": {
       "plural": {
-        "runner": "Runners",
+        "jsRunner": "Js runners",
+        "jvmRunner": "Jvm runners",
+        "pyRunner": "Py runners",
         "processor": "Processors"
       }
     },
@@ -19,7 +24,15 @@
       "labels": {
         "name": "Name",
         "repository": "Repository",
-        "description": "Description"
+        "description": "Description",
+        "processor": "Processor",
+        "runner": "Runner",
+        "location": "Location",
+        "file": "File",
+        "clazz": "Clazz",
+        "jar": "Jar",
+        "module-path": "Module path",
+        "type": "Type"
       }
     },
     "navigation": {
@@ -29,7 +42,9 @@
       "channels": "Channels",
       "create-pipeline": "Create pipeline",
       "create-processor": "Create processor",
-      "create-runner": "Create runner"
+      "create-jsrunner": "Create javascript runner",
+      "create-jvmrunner": "Create java virtual machine runner",
+      "create-pyrunner": "Create python runner"
     },
     "panel-labels": {
       "processor-info": "Processor info",

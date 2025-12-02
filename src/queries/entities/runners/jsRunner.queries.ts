@@ -1,13 +1,16 @@
 import { gql } from "graphql-modules";
 
-export const runnerQueries = gql`
-  fragment minimalRunner on Runner {
+export const jsRunnerQueries = gql`
+  fragment minimalJsRunner on JsRunner {
     intialValues {
-      name: keyValue(key: "name", source: metadata)
-      repository: keyValue(key: "repository", source: metadata)
+      ...typePillsIntialValues
+      location: keyValue(key: "location", source: metadata)
+      file: keyValue(key: "file", source: metadata)
+      clazz: keyValue(key: "clazz", source: metadata)
       hasProcessor: keyValue(
         key: "hasProcessor"
         source: relations
+        metadataKeyAsLabel: "name"
         formatter: "pill"
       )
     }
@@ -20,13 +23,18 @@ export const runnerQueries = gql`
       }
     }
     teaserMetadata {
-      name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+      ...typePillsTeaserMetadata
+      location: metaData {
+        label(input: "metadata.labels.location")
+        key(input: "location")
       }
-      repository: metaData {
-        label(input: "metadata.labels.repository")
-        key(input: "repository")
+      file: metaData {
+        label(input: "metadata.labels.file")
+        key(input: "file")
+      }
+      clazz: metaData {
+        label(input: "metadata.labels.clazz")
+        key(input: "clazz")
       }
       hasProcessor: metaData {
         label(input: "metadata.labels.processor")
@@ -36,10 +44,11 @@ export const runnerQueries = gql`
     ...minimalBaseEntity
   }
 
-  fragment fullRunner on Runner {
+  fragment fullJsRunner on JsRunner {
     intialValues {
-      name: keyValue(key: "name", source: metadata)
-      repository: keyValue(key: "repository", source: metadata)
+      location: keyValue(key: "location", source: metadata)
+      file: keyValue(key: "file", source: metadata)
+      clazz: keyValue(key: "clazz", source: metadata)
     }
     relationValues
     entityView {
@@ -47,14 +56,14 @@ export const runnerQueries = gql`
         size(size: seventy)
         elements {
           processors: entityListElement {
-            label(input: "element-labels.processor-element")
+            label(input: "element-labels.jsrunner.processor-element")
             isCollapsed(input: false)
             entityTypes(input: [processor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetProcessorFilter")
             searchInputType(input: "AdvancedInputType")
-            customBulkOperations(input: "GetProcessorOnRunnerBulkOperations")
+            customBulkOperations(input: "GetProcessorOnJsRunnerBulkOperations")
           }
         }
       }
@@ -71,13 +80,17 @@ export const runnerQueries = gql`
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
-              name: metaData {
-                label(input: "metadata.labels.name")
-                key(input: "name")
+              location: metaData {
+                label(input: "metadata.labels.location")
+                key(input: "location")
               }
-              repository: metaData {
-                label(input: "metadata.labels.repository")
-                key(input: "repository")
+              file: metaData {
+                label(input: "metadata.labels.file")
+                key(input: "file")
+              }
+              clazz: metaData {
+                label(input: "metadata.labels.clazz")
+                key(input: "clazz")
               }
             }
           }
@@ -86,10 +99,12 @@ export const runnerQueries = gql`
     }
   }
 
-  fragment runnerSortOptions on Runner {
+  fragment jsRunnerSortOptions on JsRunner {
     sortOptions {
       options(
-        input: [{ icon: NoIcon, label: "metadata.labels.name", value: "name" }]
+        input: [
+          { icon: NoIcon, label: "metadata.labels.location", value: "location" }
+        ]
       ) {
         icon
         label
@@ -98,17 +113,17 @@ export const runnerQueries = gql`
     }
   }
 
-  fragment filtersForRunner on Runner {
+  fragment filtersForJsRunner on JsRunner {
     advancedFilters {
       type: advancedFilter(type: type) {
         type
-        defaultValue(value: "runner")
+        defaultValue(value: "jsRunner")
         hidden(value: true)
       }
-      name: advancedFilter(
+      location: advancedFilter(
         type: text
-        key: ["elody:1|metadata.name.value"]
-        label: "metadata.labels.name"
+        key: ["elody:1|metadata.location.value"]
+        label: "metadata.labels.location"
         isDisplayedByDefault: true
       ) {
         type
@@ -117,10 +132,22 @@ export const runnerQueries = gql`
         isDisplayedByDefault
         tooltip(value: true)
       }
-      repository: advancedFilter(
+      file: advancedFilter(
         type: text
-        key: ["elody:1|metadata.repository.value"]
-        label: "metadata.labels.repository"
+        key: ["elody:1|metadata.file.value"]
+        label: "metadata.labels.file"
+        isDisplayedByDefault: true
+      ) {
+        type
+        key
+        label
+        isDisplayedByDefault
+        tooltip(value: true)
+      }
+      clazz: advancedFilter(
+        type: text
+        key: ["elody:1|metadata.clazz.value"]
+        label: "metadata.labels.clazz"
         isDisplayedByDefault: true
       ) {
         type
@@ -132,13 +159,13 @@ export const runnerQueries = gql`
     }
   }
 
-  fragment runnerBulkOperations on Runner {
+  fragment jsRunnerBulkOperations on JsRunner {
     bulkOperationOptions {
       options(
         input: [
           {
             icon: Create
-            label: "bulk-operations.create-runner"
+            label: "bulk-operations.create-jsrunner"
             value: "createEntity"
             primary: true
             actionContext: {
@@ -148,8 +175,8 @@ export const runnerQueries = gql`
             }
             bulkOperationModal: {
               typeModal: DynamicForm
-              formQuery: "GetRunnerCreateForm"
-              formRelationType: "isRunnerFor"
+              formQuery: "GetJsRunnerCreateForm"
+              formRelationType: "isJsRunnerFor"
               askForCloseConfirmation: true
               neededPermission: cancreate
             }
@@ -171,14 +198,14 @@ export const runnerQueries = gql`
     }
   }
 
-  query GetRunnerCreateForm {
+  query GetJsRunnerCreateForm {
     GetDynamicForm {
-      label(input: "navigation.create-runner")
+      label(input: "navigation.create-jsrunner")
       name: formTab {
         formFields {
-          name: metaData {
-            label(input: "metadata.labels.name")
-            key(input: "name")
+          location: metaData {
+            label(input: "metadata.labels.location")
+            key(input: "location")
             inputField(type: baseTextField) {
               ...inputfield
               validation(input: { value: required }) {
@@ -186,9 +213,19 @@ export const runnerQueries = gql`
               }
             }
           }
-          repository: metaData {
-            label(input: "metadata.labels.repository")
-            key(input: "repository")
+          file: metaData {
+            label(input: "metadata.labels.file")
+            key(input: "file")
+            inputField(type: baseTextField) {
+              ...inputfield
+              validation(input: { value: required }) {
+                ...validation
+              }
+            }
+          }
+          clazz: metaData {
+            label(input: "metadata.labels.clazz")
+            key(input: "clazz")
             inputField(type: baseTextField) {
               ...inputfield
               validation(input: { value: required }) {
@@ -201,7 +238,7 @@ export const runnerQueries = gql`
             icon(input: Create)
             actionType(input: submit)
             actionQuery(input: "CreateEntity")
-            creationType(input: runner)
+            creationType(input: jsRunner)
             showsFormErrors(input: true)
           }
         }
@@ -209,28 +246,7 @@ export const runnerQueries = gql`
     }
   }
 
-  query GetProcessorFilter($entityType: String!) {
-    EntityTypeFilters(type: $entityType) {
-      advancedFilters {
-        type: advancedFilter(type: type) {
-          type
-          defaultValue(value: "processor")
-          hidden(value: true)
-        }
-        relation: advancedFilter(
-          type: selection
-          key: ["elody:1|identifiers"]
-        ) {
-          type
-          key
-          defaultValue(value: "$entity.relationValues.hasProcessor.key")
-          hidden(value: true)
-        }
-      }
-    }
-  }
-
-  query GetProcessorOnRunnerBulkOperations {
+  query GetProcessorOnJsRunnerBulkOperations {
     CustomBulkOperations {
       bulkOperationOptions {
         options(
@@ -240,7 +256,7 @@ export const runnerQueries = gql`
               label: "bulk-operations.add-new-relation"
               value: "createEntity"
               primary: true
-              can: ["update:runner:has-processor"]
+              can: ["update:jsrunner:has-processor"]
               actionContext: {
                 activeViewMode: readMode
                 entitiesSelectionType: noneSelected
@@ -258,7 +274,7 @@ export const runnerQueries = gql`
               icon: PlusCircle
               label: "bulk-operations.add-existing-relation"
               value: "addRelation"
-              can: ["update:runner:has-processor"]
+              can: ["update:jsrunner:has-processor"]
               actionContext: {
                 activeViewMode: readMode
                 entitiesSelectionType: noneSelected
@@ -275,7 +291,7 @@ export const runnerQueries = gql`
               label: "bulk-operations.delete-selected"
               value: "deleteEntities"
               primary: false
-              can: ["update:runner:has-processor"]
+              can: ["update:jsrunner:has-processor"]
               bulkOperationModal: {
                 typeModal: BulkOperationsDeleteEntities
                 formQuery: "GetBulkRemovingMediafilesInDetailForm"

@@ -3,7 +3,9 @@
     "bulk-operations": {
       "create-pipeline": "Pipeline aanmaken",
       "create-processor": "Processor aanmaken",
-      "create-runner": "Runner aanmaken"
+      "create-jsrunner": "Js runner aanmaken",
+      "create-jvmrunner": "Jvm runner aanmaken",
+      "create-pyrunner": "Py runner aanmaken"
     },
     "entity-translations": {
       "plural": {
@@ -19,7 +21,9 @@
       "labels": {
         "name": "Naam",
         "repository": "Repository",
-        "description": "Beschrijving"
+        "description": "Beschrijving",
+        "processor": "Processor",
+        "runner": "Runner"
       }
     },
     "navigation": {

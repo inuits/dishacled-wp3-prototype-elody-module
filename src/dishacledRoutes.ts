@@ -48,6 +48,12 @@ export const dishacledRoutes = [
         name: RouteNames.Runners,
         component: "Home",
         meta: {
+          queries: {
+            getEntities: "GetAllRunnerEntities",
+            getFilters: "GetAllRunnerFilters",
+            getSortOptions: "GetAllRunnerSortOptions",
+            getBulkOperations: "GetAllRunnerBulkOperations",
+          },
           requiresAuth: true,
           type: Collection.Entities,
           entityType: Entitytyping.Runner,

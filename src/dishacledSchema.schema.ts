@@ -12,6 +12,9 @@ export const dishacledSchema = gql`
   enum Entitytyping {
     pipeline
     runner
+    jsRunner
+    jvmRunner
+    pyRunner
     processor
     channel
     user
@@ -84,7 +87,109 @@ export const dishacledSchema = gql`
     mapElement: MapElement
   }
 
+  type JsRunner implements Entity {
+    id: String!
+    uuid: String!
+    type: String!
+    teaserMetadata: teaserMetadata
+    intialValues: IntialValues!
+    allowedViewModes: AllowedViewModes
+    relationValues: JSON
+    entityView: ColumnList!
+    advancedFilters: AdvancedFilters
+    sortOptions: SortOptions
+    bulkOperationOptions: BulkOperationOptions
+    previewComponent: PreviewComponent
+    deleteQueryOptions: DeleteQueryOptions
+    mapElement: MapElement
+  }
+
+  type JvmRunner implements Entity {
+    id: String!
+    uuid: String!
+    type: String!
+    teaserMetadata: teaserMetadata
+    intialValues: IntialValues!
+    allowedViewModes: AllowedViewModes
+    relationValues: JSON
+    entityView: ColumnList!
+    advancedFilters: AdvancedFilters
+    sortOptions: SortOptions
+    bulkOperationOptions: BulkOperationOptions
+    previewComponent: PreviewComponent
+    deleteQueryOptions: DeleteQueryOptions
+    mapElement: MapElement
+  }
+
+  type PyRunner implements Entity {
+    id: String!
+    uuid: String!
+    type: String!
+    teaserMetadata: teaserMetadata
+    intialValues: IntialValues!
+    allowedViewModes: AllowedViewModes
+    relationValues: JSON
+    entityView: ColumnList!
+    advancedFilters: AdvancedFilters
+    sortOptions: SortOptions
+    bulkOperationOptions: BulkOperationOptions
+    previewComponent: PreviewComponent
+    deleteQueryOptions: DeleteQueryOptions
+    mapElement: MapElement
+  }
+
   type Processor implements Entity {
+    id: String!
+    uuid: String!
+    type: String!
+    teaserMetadata: teaserMetadata
+    intialValues: IntialValues!
+    allowedViewModes: AllowedViewModes
+    relationValues: JSON
+    entityView: ColumnList!
+    advancedFilters: AdvancedFilters
+    sortOptions: SortOptions
+    bulkOperationOptions: BulkOperationOptions
+    previewComponent: PreviewComponent
+    deleteQueryOptions: DeleteQueryOptions
+    mapElement: MapElement
+  }
+
+  type PyLogProcessor implements Entity {
+    id: String!
+    uuid: String!
+    type: String!
+    teaserMetadata: teaserMetadata
+    intialValues: IntialValues!
+    allowedViewModes: AllowedViewModes
+    relationValues: JSON
+    entityView: ColumnList!
+    advancedFilters: AdvancedFilters
+    sortOptions: SortOptions
+    bulkOperationOptions: BulkOperationOptions
+    previewComponent: PreviewComponent
+    deleteQueryOptions: DeleteQueryOptions
+    mapElement: MapElement
+  }
+
+  type TsFileUtilsProcessor implements Entity {
+    id: String!
+    uuid: String!
+    type: String!
+    teaserMetadata: teaserMetadata
+    intialValues: IntialValues!
+    allowedViewModes: AllowedViewModes
+    relationValues: JSON
+    entityView: ColumnList!
+    advancedFilters: AdvancedFilters
+    sortOptions: SortOptions
+    bulkOperationOptions: BulkOperationOptions
+    previewComponent: PreviewComponent
+    deleteQueryOptions: DeleteQueryOptions
+    mapElement: MapElement
+  }
+
+  type JvmRmlProcessor implements Entity {
     id: String!
     uuid: String!
     type: String!

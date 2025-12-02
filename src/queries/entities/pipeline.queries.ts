@@ -35,10 +35,10 @@ export const pipelineQueries = gql`
           runners: entityListElement {
             label(input: "element-labels.runner-element")
             isCollapsed(input: false)
-            entityTypes(input: [runner])
+            entityTypes(input: [jsRunner, jvmRunner, pyRunner])
             relationType: label(input: "hasRunner")
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetRunnerFilter")
+            customQueryFilters(input: "GetRelatedRunnerFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetRunnerOnPipelineBulkOperations")
           }
@@ -197,9 +197,8 @@ export const pipelineQueries = gql`
           input: [
             {
               icon: PlusCircle
-              label: "bulk-operations.add-new-relation"
+              label: "bulk-operations.create-jsrunner"
               value: "createEntity"
-              primary: true
               can: ["update:pipeline:has-runner"]
               actionContext: {
                 activeViewMode: readMode
@@ -208,7 +207,7 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetRunnerCreateForm"
+                formQuery: "GetJsRunnerCreateForm"
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -216,7 +215,43 @@ export const pipelineQueries = gql`
             }
             {
               icon: PlusCircle
-              label: "bulk-operations.add-existing-relation"
+              label: "bulk-operations.create-jvmrunner"
+              value: "createEntity"
+              can: ["update:pipeline:has-runner"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetJvmRunnerCreateForm"
+                formRelationType: "isRunnerFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: PlusCircle
+              label: "bulk-operations.create-pyrunner"
+              value: "createEntity"
+              can: ["update:pipeline:has-runner"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetPyRunnerCreateForm"
+                formRelationType: "isRunnerFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: PlusCircle
+              label: "bulk-operations.existing-runner"
               value: "addRelation"
               can: ["update:pipeline:has-runner"]
               actionContext: {

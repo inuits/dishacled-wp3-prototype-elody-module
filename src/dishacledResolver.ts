@@ -28,6 +28,9 @@ export const dishacledResolver: Resolvers = {
       else if (type === "pipeline") return "Pipeline";
       else if (type === "processor") return "Processor";
       else if (type === "runner") return "Runner";
+      else if (type === "jsrunner") return "JsRunner";
+      else if (type === "jvmrunner") return "JvmRunner";
+      else if (type === "pyrunner") return "PyRunner";
       else if (type === "channel") return "Channel";
       return "BaseEntity";
     },
@@ -45,6 +48,15 @@ export const dishacledResolver: Resolvers = {
     ...baseSetOffResolvers,
   },
   Runner: {
+    ...baseSetOffResolvers,
+  },
+  JsRunner: {
+    ...baseSetOffResolvers,
+  },
+  JvmRunner: {
+    ...baseSetOffResolvers,
+  },
+  PyRunner: {
     ...baseSetOffResolvers,
   },
   Channel: {

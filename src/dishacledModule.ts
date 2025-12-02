@@ -7,6 +7,7 @@ import { dishacledFields } from "./sources/forms";
 import { loadTranslationsFromDirectory } from "base-graphql";
 import path from "path";
 import { dishacledElodyTypeCollectionMapping } from "./sources/typeCollectionMapping";
+import { dishacledTypePillLabelMapping } from "./sources/typePillLabelMapping";
 
 const dishacledTranslations: Record<string, Object> =
   loadTranslationsFromDirectory(path.join(__dirname, "translations"));
@@ -25,4 +26,5 @@ export {
   dishacledTranslations,
   dishacledFields,
   dishacledElodyTypeCollectionMapping,
+  dishacledTypePillLabelMapping,
 };

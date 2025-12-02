@@ -4,6 +4,12 @@ export const processorQueries = gql`
   fragment minimalProcessor on Processor {
     intialValues {
       name: keyValue(key: "name", source: metadata)
+      hasRunner: keyValue(
+        key: "hasRunner"
+        source: relations
+        metadataKeyAsLabel: "name"
+        formatter: "pill"
+      )
     }
     relationValues
     allowedViewModes {
@@ -17,6 +23,10 @@ export const processorQueries = gql`
       name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
+      }
+      hasRunner: metaData {
+        label(input: "metadata.labels.runner")
+        key(input: "hasRunner")
       }
     }
     ...minimalBaseEntity
@@ -34,9 +44,9 @@ export const processorQueries = gql`
           runners: entityListElement {
             label(input: "element-labels.runner-element")
             isCollapsed(input: false)
-            entityTypes(input: [runner])
+            entityTypes(input: [jsRunner, jvmRunner, pyRunner])
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetRunnerFilter")
+            customQueryFilters(input: "GetRelatedRunnerFilter")
             searchInputType(input: "AdvancedInputType")
           }
         }
@@ -161,27 +171,6 @@ export const processorQueries = gql`
             creationType(input: processor)
             showsFormErrors(input: true)
           }
-        }
-      }
-    }
-  }
-
-  query GetRunnerFilter($entityType: String!) {
-    EntityTypeFilters(type: $entityType) {
-      advancedFilters {
-        type: advancedFilter(type: type) {
-          type
-          defaultValue(value: "runner")
-          hidden(value: true)
-        }
-        relation: advancedFilter(
-          type: selection
-          key: ["elody:1|identifiers"]
-        ) {
-          type
-          key
-          defaultValue(value: "$entity.relationValues.hasRunner.key")
-          hidden(value: true)
         }
       }
     }
