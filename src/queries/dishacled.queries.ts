@@ -61,6 +61,15 @@ export const dishacledQueries = gql`
     ... on Processor {
       ...fullProcessor
     }
+    ... on JvmRmlProcessor {
+      ...fullJvmRmlProcessor
+    }
+    ... on PyLogProcessor {
+      ...fullPyLogProcessor
+    }
+    ... on TsHttpUtilsProcessor {
+      ...fullTsHttpUtilsProcessor
+    }
     ... on Channel {
       ...fullChannel
     }
@@ -113,6 +122,15 @@ export const dishacledQueries = gql`
         }
         ... on Processor {
           ...minimalProcessor
+        }
+        ... on JvmRmlProcessor {
+          ...minimalJvmRmlProcessor
+        }
+        ... on PyLogProcessor {
+          ...minimalPyLogProcessor
+        }
+        ... on TsHttpUtilsProcessor {
+          ...minimalTsHttpUtilsProcessor
         }
         ... on Channel {
           ...minimalChannel
@@ -176,6 +194,15 @@ export const dishacledQueries = gql`
       }
       ... on Processor {
         ...filtersForProcessor
+      }
+      ... on JvmRmlProcessor {
+        ...filtersForJvmRmlProcessor
+      }
+      ... on PyLogProcessor {
+        ...filtersForPyLogProcessor
+      }
+      ... on TsHttpUtilsProcessor {
+        ...filtersForTsHttpUtilsProcessor
       }
       ... on Channel {
         ...filtersForChannel
@@ -478,6 +505,15 @@ export const dishacledQueries = gql`
       }
       ... on Processor {
         ...processorBulkOperations
+      }
+      ... on JvmRmlProcessor {
+        ...jvmRmlProcessorBulkOperations
+      }
+      ... on PyLogProcessor {
+        ...pyLogProcessorBulkOperations
+      }
+      ... on TsHttpUtilsProcessor {
+        ...tsHttpUtilsProcessorBulkOperations
       }
       ... on JsRunner {
         ...jsRunnerBulkOperations
