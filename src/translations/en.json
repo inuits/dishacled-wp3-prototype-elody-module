@@ -9,7 +9,8 @@
       "create-jsrunner": "Create js runner",
       "create-jvmrunner": "Create jvm runner",
       "create-pyrunner": "Create py runner",
-      "existing-runner": "Add existing runner"
+      "existing-runner": "Add existing runner",
+      "existing-processor": "Add existing processor"
     },
     "entity-translations": {
       "plural": {

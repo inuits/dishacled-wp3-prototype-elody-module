@@ -41,6 +41,9 @@ export const pipelineQueries = gql`
             customQueryFilters(input: "GetRelatedRunnerFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetRunnerOnPipelineBulkOperations")
+            customQueryEntityPickerList(
+              input: "GetEntityPickerListForRunnersInPipeline"
+            )
             customQueryEntityPickerListFilters(
               input: "GetEntityPickerFiltersForRunnersInPipeline"
             )
@@ -56,6 +59,12 @@ export const pipelineQueries = gql`
             customQueryFilters(input: "GetProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetProcessorOnPipelineOperations")
+            customQueryEntityPickerList(
+              input: "GetEntityPickerListForProcessorsInPipeline"
+            )
+            customQueryEntityPickerListFilters(
+              input: "GetEntityPickerFiltersForProcessorsInPipeline"
+            )
           }
         }
       }
@@ -366,7 +375,7 @@ export const pipelineQueries = gql`
             }
             {
               icon: PlusCircle
-              label: "bulk-operations.add-existing-relation"
+              label: "bulk-operations.existing-processor"
               value: "addRelation"
               can: ["update:pipeline:has-processor"]
               actionContext: {
@@ -415,6 +424,44 @@ export const pipelineQueries = gql`
     }
   }
 
+  query GetEntityPickerListForRunnersInPipeline(
+    $type: Entitytyping!
+    $limit: Int
+    $skip: Int
+    $searchValue: SearchFilter!
+    $advancedSearchValue: [FilterInput]
+    $advancedFilterInputs: [AdvancedFilterInput!]!
+    $searchInputType: SearchInputType
+  ) {
+    Entities(
+      type: $type
+      limit: $limit
+      skip: $skip
+      searchValue: $searchValue
+      advancedSearchValue: $advancedSearchValue
+      advancedFilterInputs: $advancedFilterInputs
+      searchInputType: $searchInputType
+    ) {
+      count
+      limit
+      results {
+        id
+        uuid
+        type
+        ... on JsRunner {
+          ...minimalJsRunner
+        }
+        ... on PyRunner {
+          ...minimalPyRunner
+        }
+        ... on JvmRunner {
+          ...minimalJvmRunner
+        }
+      }
+      __typename
+    }
+  }
+
   query GetEntityPickerFiltersForRunnersInPipeline($entityType: String!) {
     EntityTypeFilters(type: $entityType) {
       advancedFilters {
@@ -422,6 +469,59 @@ export const pipelineQueries = gql`
           type
           key
           defaultValue(value: ["jsRunner", "pyRunner", "jvmRunner"])
+          hidden(value: true)
+        }
+      }
+    }
+  }
+
+  query GetEntityPickerListForProcessorsInPipeline(
+    $type: Entitytyping!
+    $limit: Int
+    $skip: Int
+    $searchValue: SearchFilter!
+    $advancedSearchValue: [FilterInput]
+    $advancedFilterInputs: [AdvancedFilterInput!]!
+    $searchInputType: SearchInputType
+  ) {
+    Entities(
+      type: $type
+      limit: $limit
+      skip: $skip
+      searchValue: $searchValue
+      advancedSearchValue: $advancedSearchValue
+      advancedFilterInputs: $advancedFilterInputs
+      searchInputType: $searchInputType
+    ) {
+      count
+      limit
+      results {
+        id
+        uuid
+        type
+        ... on TsHttpUtilsProcessor {
+          ...minimalTsHttpUtilsProcessor
+        }
+        ... on PyLogProcessor {
+          ...minimalPyLogProcessor
+        }
+        ... on JvmRmlProcessor {
+          ...minimalJvmRmlProcessor
+        }
+      }
+      __typename
+    }
+  }
+
+  query GetEntityPickerFiltersForProcessorsInPipeline($entityType: String!) {
+    EntityTypeFilters(type: $entityType) {
+      advancedFilters {
+        type: advancedFilter(type: selection, key: "type") {
+          type
+          key
+          defaultValue(
+            value: ["tsHttpUtilsProcessor", "pyLogProcessor", "jvmRmlProcessor"]
+          )
           hidden(value: true)
         }
       }
