@@ -25,6 +25,7 @@
     },
     "metadata": {
       "labels": {
+        "id": "Id",
         "name": "Name",
         "repository": "Repository",
         "description": "Description",
@@ -35,7 +36,32 @@
         "clazz": "Clazz",
         "jar": "Jar",
         "module-path": "Module path",
-        "type": "Type"
+        "type": "Type",
+        "auth-type": "Type",
+        "method": "Method",
+        "headers": "Headers",
+        "accept-status-code": "Accept status code",
+        "close-on-end": "Close on end",
+        "time-out-milliseconds": "Timeout milliseconds",
+        "auth": "Auth",
+        "cron": "Cron",
+        "run-on-init": "Run on initialization",
+        "errors-are-fatal": "Errors are fatal",
+        "output-as-buffer": "Output as buffer",
+        "url": "Url",
+        "writer": "Writer",
+        "options": "Options",
+        "reader": "Reader",
+        "label": "Label",
+        "level": "Level",
+        "raw": "Raw",
+        "msg": "Message",
+        "mappings": "Mappings",
+        "base-iri": "Base iri",
+        "wait-for-mapping-close": "Wait for mapping close",
+        "default-target": "Default target",
+        "sources": "Sources",
+        "targets": "Targets"
       }
     },
     "navigation": {
@@ -56,7 +82,15 @@
       "processor-info": "Processor info",
       "channel-info": "Channel info",
       "runner-info": "Runner info",
-      "pipeline-info": "Pipeline info"
+      "pipeline-info": "Pipeline info",
+      "auth": "Authentication",
+      "fetch-options": "Fetch options",
+      "fetch": "Fetch",
+      "log-processor": "Log processor",
+      "send-processor": "Send processor",
+      "mappings": "Mappings",
+      "sources": "Sources",
+      "targets": "Targets"
     },
     "window-element-labels": {
       "info-window": "Info"

@@ -7,7 +7,7 @@ export const pyRunnerQueries = gql`
       modulePath: keyValue(key: "modulePath", source: metadata)
       clazz: keyValue(key: "clazz", source: metadata)
       hasProcessor: keyValue(
-        key: "hasProcessor"
+        key: "isRunnerFor"
         source: relations
         metadataKeyAsLabel: "name"
         formatter: "pill"
@@ -33,7 +33,7 @@ export const pyRunnerQueries = gql`
       }
       hasProcessor: metaData {
         label(input: "metadata.labels.processor")
-        key(input: "processor")
+        key(input: "hasProcessor")
       }
     }
     ...minimalBaseEntity
@@ -55,7 +55,7 @@ export const pyRunnerQueries = gql`
             entityTypes(input: [processor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetProcessorFilter")
+            customQueryFilters(input: "GetPyLogProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetProcessorOnPyRunnerBulkOperations")
           }

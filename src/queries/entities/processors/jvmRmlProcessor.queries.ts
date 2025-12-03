@@ -3,6 +3,7 @@ import { gql } from "graphql-modules";
 export const jvmRmlProcessorQueries = gql`
   fragment minimalJvmRmlProcessor on JvmRmlProcessor {
     intialValues {
+      ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
       hasRunner: keyValue(
         key: "hasRunner"
@@ -20,6 +21,7 @@ export const jvmRmlProcessorQueries = gql`
       }
     }
     teaserMetadata {
+      ...typePillsTeaserMetadata
       name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
@@ -34,7 +36,15 @@ export const jvmRmlProcessorQueries = gql`
 
   fragment fullJvmRmlProcessor on JvmRmlProcessor {
     intialValues {
-      name: keyValue(key: "name", source: metadata)
+      mappings: keyValue(key: "mappings", source: metadata)
+      baseIRI: keyValue(key: "baseIRI", source: metadata)
+      waitForMappingClose: keyValue(
+        key: "waitForMappingClose"
+        source: metadata
+      )
+      defaultTarget: keyValue(key: "defaultTarget", source: metadata)
+      sources: keyValue(key: "sources", source: metadata)
+      targets: keyValue(key: "targets", source: metadata)
     }
     relationValues
     entityView {
@@ -44,10 +54,14 @@ export const jvmRmlProcessorQueries = gql`
           runners: entityListElement {
             label(input: "element-labels.runner-element")
             isCollapsed(input: false)
-            entityTypes(input: [jsRunner, jvmRunner, pyRunner])
+            entityTypes(input: [jvmRunner])
+            relationType: label(input: "hasRunner")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetRelatedRunnerFilter")
             searchInputType(input: "AdvancedInputType")
+            customBulkOperations(
+              input: "GetRunnerOnJvmRmlProcessorBulkOperations"
+            )
           }
         }
       }
@@ -59,14 +73,58 @@ export const jvmRmlProcessorQueries = gql`
             expandButtonOptions {
               shown(input: true)
             }
-            info: panels {
-              label(input: "panel-labels.processor-info")
+            mappingsPanel: panels {
+              label(input: "panel-labels.mappings")
               panelType(input: metadata)
               isCollapsed(input: false)
-              isEditable(input: false)
-              name: metaData {
-                label(input: "metadata.labels.name")
-                key(input: "name")
+              isEditable(input: true)
+              mappings: metaData {
+                label(input: "metadata.labels.mappings")
+                key(input: "mappings")
+                inputField(type: baseTextField) {
+                  ...inputfield
+                  validation(input: { value: required }) {
+                    ...validation
+                  }
+                }
+              }
+              baseIRI: metaData {
+                label(input: "metadata.labels.base-iri")
+                key(input: "baseIRI")
+                inputField(type: baseTextField) {
+                  ...inputfield
+                }
+              }
+              waitForMappingClose: metaData {
+                label(input: "metadata.labels.wait-for-mapping-close")
+                key(input: "waitForMappingClose")
+                inputField(type: baseCheckbox) {
+                  ...inputfield
+                }
+              }
+              defaultTarget: metaData {
+                label(input: "metadata.labels.default-target")
+                key(input: "defaultTarget")
+              }
+            }
+            sourcesPanel: panels {
+              label(input: "panel-labels.sources")
+              panelType(input: metadata)
+              isCollapsed(input: false)
+              isEditable(input: true)
+              sources: metaData {
+                label(input: "metadata.labels.sources")
+                key(input: "sources")
+              }
+            }
+            targetsPanel: panels {
+              label(input: "panel-labels.targets")
+              panelType(input: metadata)
+              isCollapsed(input: false)
+              isEditable(input: true)
+              targets: metaData {
+                label(input: "metadata.labels.targets")
+                key(input: "targets")
               }
             }
           }
@@ -171,6 +229,101 @@ export const jvmRmlProcessorQueries = gql`
             creationType(input: jvmRmlProcessor)
             showsFormErrors(input: true)
           }
+        }
+      }
+    }
+  }
+
+  query GetRunnerOnJvmRmlProcessorBulkOperations {
+    CustomBulkOperations {
+      bulkOperationOptions {
+        options(
+          input: [
+            {
+              icon: PlusCircle
+              label: "bulk-operations.create-jvmrunner"
+              value: "createEntity"
+              can: ["update:jvmRmlProcessor:has-runner"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetJvmRunnerCreateForm"
+                formRelationType: "isRunnerFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: PlusCircle
+              label: "bulk-operations.existing-runner"
+              value: "addRelation"
+              can: ["update:jvmRmlProcessor:has-runner"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetEntityPickerForm"
+                askForCloseConfirmation: true
+                neededPermission: canupdate
+              }
+            }
+            {
+              label: "bulk-operations.delete-selected"
+              value: "deleteEntities"
+              primary: false
+              can: ["update:jvmRmlProcessor:has-runner"]
+              bulkOperationModal: {
+                typeModal: BulkOperationsDeleteEntities
+                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                askForCloseConfirmation: false
+              }
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: someSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-someselected"
+              }
+            }
+          ]
+        ) {
+          icon
+          label
+          value
+          primary
+          can
+          actionContext {
+            ...actionContext
+          }
+          bulkOperationModal {
+            ...bulkOperationModal
+          }
+        }
+      }
+    }
+  }
+
+  query GetJvmRmlProcessorFilter($entityType: String!) {
+    EntityTypeFilters(type: $entityType) {
+      advancedFilters {
+        type: advancedFilter(type: type) {
+          type
+          defaultValue(value: "jvmRmlProcessor")
+          hidden(value: true)
+        }
+        relation: advancedFilter(
+          type: selection
+          key: ["elody:1|identifiers"]
+        ) {
+          type
+          key
+          defaultValue(value: "$entity.relationValues.hasProcessor.key")
+          hidden(value: true)
         }
       }
     }

@@ -61,7 +61,7 @@ export const jsRunnerQueries = gql`
             entityTypes(input: [processor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetProcessorFilter")
+            customQueryFilters(input: "GetTsHttpUtilsProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetProcessorOnJsRunnerBulkOperations")
           }

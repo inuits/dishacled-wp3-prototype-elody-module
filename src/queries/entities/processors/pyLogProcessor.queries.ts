@@ -3,6 +3,7 @@ import { gql } from "graphql-modules";
 export const pyLogProcessorQueries = gql`
   fragment minimalPyLogProcessor on PyLogProcessor {
     intialValues {
+      ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
       hasRunner: keyValue(
         key: "hasRunner"
@@ -20,6 +21,7 @@ export const pyLogProcessorQueries = gql`
       }
     }
     teaserMetadata {
+      ...typePillsTeaserMetadata
       name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
@@ -35,6 +37,13 @@ export const pyLogProcessorQueries = gql`
   fragment fullPyLogProcessor on PyLogProcessor {
     intialValues {
       name: keyValue(key: "name", source: metadata)
+      reader: keyValue(key: "reader", source: relations)
+      writer: keyValue(key: "writer", source: relations)
+      logLabel: keyValue(key: "logLabel", source: metadata)
+      level: keyValue(key: "level", source: metadata)
+      raw: keyValue(key: "raw", source: metadata)
+      sendWriter: keyValue(key: "sendWriter", source: relations)
+      msg: keyValue(key: "msg", source: metadata)
     }
     relationValues
     entityView {
@@ -44,10 +53,14 @@ export const pyLogProcessorQueries = gql`
           runners: entityListElement {
             label(input: "element-labels.runner-element")
             isCollapsed(input: false)
-            entityTypes(input: [jsRunner, jvmRunner, pyRunner])
+            entityTypes(input: [pyRunner])
+            relationType: label(input: "hasRunner")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetRelatedRunnerFilter")
             searchInputType(input: "AdvancedInputType")
+            customBulkOperations(
+              input: "GetRunnerOnPyLogProcessorBulkOperations"
+            )
           }
         }
       }
@@ -59,14 +72,53 @@ export const pyLogProcessorQueries = gql`
             expandButtonOptions {
               shown(input: true)
             }
-            info: panels {
-              label(input: "panel-labels.processor-info")
+            logProcessor: panels {
+              label(input: "panel-labels.log-processor")
               panelType(input: metadata)
               isCollapsed(input: false)
-              isEditable(input: false)
-              name: metaData {
-                label(input: "metadata.labels.name")
-                key(input: "name")
+              isEditable(input: true)
+              reader: metaData {
+                label(input: "metadata.labels.reader")
+                key(input: "reader")
+              }
+              writer: metaData {
+                label(input: "metadata.labels.writer")
+                key(input: "writer")
+              }
+              logLabel: metaData {
+                label(input: "metadata.labels.label")
+                key(input: "logLabel")
+                inputField(type: baseTextField) {
+                  ...inputfield
+                }
+              }
+              level: metaData {
+                label(input: "metadata.labels.level")
+                key(input: "level")
+                inputField(type: baseTextField) {
+                  ...inputfield
+                }
+              }
+              raw: metaData {
+                label(input: "metadata.labels.raw")
+                key(input: "raw")
+                inputField(type: baseCheckbox) {
+                  ...inputfield
+                }
+              }
+            }
+            sendProcessor: panels {
+              label(input: "panel-labels.send-processor")
+              panelType(input: metadata)
+              isCollapsed(input: false)
+              isEditable(input: true)
+              sendWriter: metaData {
+                label(input: "metadata.labels.writer")
+                key(input: "sendWriter")
+              }
+              msg: metaData {
+                label(input: "metadata.labels.msg")
+                key(input: "msg")
               }
             }
           }
@@ -171,6 +223,101 @@ export const pyLogProcessorQueries = gql`
             creationType(input: pyLogProcessor)
             showsFormErrors(input: true)
           }
+        }
+      }
+    }
+  }
+
+  query GetRunnerOnPyLogProcessorBulkOperations {
+    CustomBulkOperations {
+      bulkOperationOptions {
+        options(
+          input: [
+            {
+              icon: PlusCircle
+              label: "bulk-operations.create-pyrunner"
+              value: "createEntity"
+              can: ["update:pyLogProcessor:has-runner"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetPyRunnerCreateForm"
+                formRelationType: "isRunnerFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: PlusCircle
+              label: "bulk-operations.existing-runner"
+              value: "addRelation"
+              can: ["update:pyLogProcessor:has-runner"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetEntityPickerForm"
+                askForCloseConfirmation: true
+                neededPermission: canupdate
+              }
+            }
+            {
+              label: "bulk-operations.delete-selected"
+              value: "deleteEntities"
+              primary: false
+              can: ["update:pyLogProcessor:has-runner"]
+              bulkOperationModal: {
+                typeModal: BulkOperationsDeleteEntities
+                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                askForCloseConfirmation: false
+              }
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: someSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-someselected"
+              }
+            }
+          ]
+        ) {
+          icon
+          label
+          value
+          primary
+          can
+          actionContext {
+            ...actionContext
+          }
+          bulkOperationModal {
+            ...bulkOperationModal
+          }
+        }
+      }
+    }
+  }
+
+  query GetPyLogProcessorFilter($entityType: String!) {
+    EntityTypeFilters(type: $entityType) {
+      advancedFilters {
+        type: advancedFilter(type: type) {
+          type
+          defaultValue(value: "pyLogProcessor")
+          hidden(value: true)
+        }
+        relation: advancedFilter(
+          type: selection
+          key: ["elody:1|identifiers"]
+        ) {
+          type
+          key
+          defaultValue(value: "$entity.relationValues.hasProcessor.key")
+          hidden(value: true)
         }
       }
     }

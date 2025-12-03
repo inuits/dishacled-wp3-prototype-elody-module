@@ -38,6 +38,33 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
       type: Entitytyping.Pipeline,
     },
   },
+  "update:jvmRmlProcessor:has-runner": {
+    datasource: "CollectionAPI",
+    crud: "patch",
+    uri: "/entities/$parentEntityId",
+    body: {
+      relations: [{ key: "", type: "hasRunner" }],
+      type: Entitytyping.JvmRmlProcessor,
+    },
+  },
+  "update:pyLogProcessor:has-runner": {
+    datasource: "CollectionAPI",
+    crud: "patch",
+    uri: "/entities/$parentEntityId",
+    body: {
+      relations: [{ key: "", type: "hasRunner" }],
+      type: Entitytyping.JvmRmlProcessor,
+    },
+  },
+  "update:tsHttpUtilsProcessor:has-runner": {
+    datasource: "CollectionAPI",
+    crud: "patch",
+    uri: "/entities/$parentEntityId",
+    body: {
+      relations: [{ key: "", type: "hasRunner" }],
+      type: Entitytyping.JvmRmlProcessor,
+    },
+  },
   "update:runner:has-processor": {
     datasource: "CollectionAPI",
     crud: "patch",

@@ -171,27 +171,6 @@ export const runnerQueries = gql`
     }
   }
 
-  query GetProcessorFilter($entityType: String!) {
-    EntityTypeFilters(type: $entityType) {
-      advancedFilters {
-        type: advancedFilter(type: type) {
-          type
-          defaultValue(value: "processor")
-          hidden(value: true)
-        }
-        relation: advancedFilter(
-          type: selection
-          key: ["elody:1|identifiers"]
-        ) {
-          type
-          key
-          defaultValue(value: "$entity.relationValues.hasProcessor.key")
-          hidden(value: true)
-        }
-      }
-    }
-  }
-
   query GetProcessorOnRunnerBulkOperations {
     CustomBulkOperations {
       bulkOperationOptions {
