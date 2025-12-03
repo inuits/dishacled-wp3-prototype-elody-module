@@ -3,13 +3,20 @@
     "bulk-operations": {
       "create-pipeline": "Pipeline aanmaken",
       "create-processor": "Processor aanmaken",
-      "create-jsrunner": "Js runner aanmaken",
-      "create-jvmrunner": "Jvm runner aanmaken",
-      "create-pyrunner": "Py runner aanmaken"
+      "create-jvm-rml-processor": "JVM RML-processor aanmaken",
+      "create-py-log-processor": "Python logprocessor aanmaken",
+      "create-ts-http-utils-processor": "TypeScript HTTP-utils-processor aanmaken",
+      "create-jsrunner": "JavaScript-runner aanmaken",
+      "create-jvmrunner": "JVM-runner aanmaken",
+      "create-pyrunner": "Python-runner aanmaken",
+      "existing-runner": "Bestaande runner toevoegen",
+      "existing-processor": "Bestaande processor toevoegen"
     },
     "entity-translations": {
       "plural": {
-        "runner": "Runners",
+        "jsRunner": "JavaScript-runners",
+        "jvmRunner": "JVM-runners",
+        "pyRunner": "Python-runners",
         "processor": "Processors"
       }
     },
@@ -19,27 +26,72 @@
     },
     "metadata": {
       "labels": {
+        "id": "Id",
         "name": "Naam",
         "repository": "Repository",
         "description": "Beschrijving",
         "processor": "Processor",
-        "runner": "Runner"
+        "runner": "Runner",
+        "location": "Locatie",
+        "file": "Bestand",
+        "clazz": "Klasse",
+        "jar": "JAR",
+        "module-path": "Modulepad",
+        "type": "Type",
+        "auth-type": "Type",
+        "method": "Methode",
+        "headers": "Headers",
+        "accept-status-code": "Toegestane statuscode",
+        "close-on-end": "Sluiten bij einde",
+        "time-out-milliseconds": "Time-out in milliseconden",
+        "auth": "Authenticatie",
+        "cron": "Cron",
+        "run-on-init": "Uitvoeren bij initialisatie",
+        "errors-are-fatal": "Fouten zijn fataal",
+        "output-as-buffer": "Uitvoer als buffer",
+        "url": "URL",
+        "writer": "Schrijver",
+        "options": "Opties",
+        "reader": "Lezer",
+        "label": "Label",
+        "level": "Niveau",
+        "raw": "Onbewerkt",
+        "msg": "Bericht",
+        "mappings": "Mappings",
+        "base-iri": "Basis-IRI",
+        "wait-for-mapping-close": "Wachten tot mapping klaar is",
+        "default-target": "Standaarddoel",
+        "sources": "Bronnen",
+        "targets": "Doelen"
       }
     },
     "navigation": {
-      "create-pipeline": "Pipeline aanmaken",
       "pipelines": "Pipelines",
       "runners": "Runners",
       "processors": "Processors",
-      "channels": "Channels",
+      "channels": "Kanalen",
+      "create-pipeline": "Pipeline aanmaken",
       "create-processor": "Processor aanmaken",
-      "create-runner": "Runner aanmaken"
+      "create-jvm-rml-processor": "Java Virtual Machine RML-processor aanmaken",
+      "create-py-log-processor": "Python logprocessor aanmaken",
+      "create-ts-http-utils-processor": "TypeScript HTTP-utils-processor aanmaken",
+      "create-jsrunner": "JavaScript-runner aanmaken",
+      "create-jvmrunner": "Java Virtual Machine-runner aanmaken",
+      "create-pyrunner": "Python-runner aanmaken"
     },
     "panel-labels": {
-      "processor-info": "Processor info",
-      "channel-info": "Channel info",
-      "runner-info": "Runner info",
-      "pipeline-info": "Pipeline info"
+      "processor-info": "Processorinfo",
+      "channel-info": "Kanaalinfo",
+      "runner-info": "Runnerinfo",
+      "pipeline-info": "Pipeline-info",
+      "auth": "Authenticatie",
+      "fetch-options": "Ophaalopties",
+      "fetch": "Ophalen",
+      "log-processor": "Logprocessor",
+      "send-processor": "Verzendprocessor",
+      "mappings": "Mappings",
+      "sources": "Bronnen",
+      "targets": "Doelen"
     },
     "window-element-labels": {
       "info-window": "Info"
