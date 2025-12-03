@@ -27,6 +27,9 @@ export const dishacledResolver: Resolvers = {
       else if (type === "tenant") return "Tenant";
       else if (type === "pipeline") return "Pipeline";
       else if (type === "processor") return "Processor";
+      else if (type === "jvmrmlprocessor") return "JvmRmlProcessor";
+      else if (type === "pylogprocessor") return "PyLogProcessor";
+      else if (type === "tshttputilsprocessor") return "TsHttpUtilsProcessor";
       else if (type === "runner") return "Runner";
       else if (type === "jsrunner") return "JsRunner";
       else if (type === "jvmrunner") return "JvmRunner";
@@ -45,6 +48,15 @@ export const dishacledResolver: Resolvers = {
     ...baseSetOffResolvers,
   },
   Processor: {
+    ...baseSetOffResolvers,
+  },
+  JvmRmlProcessor: {
+    ...baseSetOffResolvers,
+  },
+  PyLogProcessor: {
+    ...baseSetOffResolvers,
+  },
+  TsHttpUtilsProcessor: {
     ...baseSetOffResolvers,
   },
   Runner: {
