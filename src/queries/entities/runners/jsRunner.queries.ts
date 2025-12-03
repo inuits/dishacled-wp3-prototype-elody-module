@@ -4,6 +4,7 @@ export const jsRunnerQueries = gql`
   fragment minimalJsRunner on JsRunner {
     intialValues {
       ...typePillsIntialValues
+      name: keyValue(key: "name", source: metadata)
       location: keyValue(key: "location", source: metadata)
       file: keyValue(key: "file", source: metadata)
       clazz: keyValue(key: "clazz", source: metadata)
@@ -24,6 +25,10 @@ export const jsRunnerQueries = gql`
     }
     teaserMetadata {
       ...typePillsTeaserMetadata
+      name: metaData {
+        label(input: "metadata.labels.name")
+        key(input: "name")
+      }
       location: metaData {
         label(input: "metadata.labels.location")
         key(input: "location")
@@ -46,6 +51,7 @@ export const jsRunnerQueries = gql`
 
   fragment fullJsRunner on JsRunner {
     intialValues {
+      name: keyValue(key: "name", source: metadata)
       location: keyValue(key: "location", source: metadata)
       file: keyValue(key: "file", source: metadata)
       clazz: keyValue(key: "clazz", source: metadata)
@@ -56,7 +62,7 @@ export const jsRunnerQueries = gql`
         size(size: seventy)
         elements {
           processors: entityListElement {
-            label(input: "element-labels.jsrunner.processor-element")
+            label(input: "element-labels.processor-element")
             isCollapsed(input: false)
             entityTypes(input: [processor])
             relationType: label(input: "hasProcessor")
@@ -203,6 +209,16 @@ export const jsRunnerQueries = gql`
       label(input: "navigation.create-jsrunner")
       name: formTab {
         formFields {
+          name: metaData {
+            label(input: "metadata.labels.name")
+            key(input: "name")
+            inputField(type: baseTextField) {
+              ...inputfield
+              validation(input: { value: required }) {
+                ...validation
+              }
+            }
+          }
           location: metaData {
             label(input: "metadata.labels.location")
             key(input: "location")

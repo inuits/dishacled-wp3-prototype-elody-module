@@ -4,6 +4,7 @@ export const pyRunnerQueries = gql`
   fragment minimalPyRunner on PyRunner {
     intialValues {
       ...typePillsIntialValues
+      name: keyValue(key: "name", source: metadata)
       modulePath: keyValue(key: "modulePath", source: metadata)
       clazz: keyValue(key: "clazz", source: metadata)
       hasProcessor: keyValue(
@@ -23,6 +24,10 @@ export const pyRunnerQueries = gql`
     }
     teaserMetadata {
       ...typePillsTeaserMetadata
+      name: metaData {
+        label(input: "metadata.labels.name")
+        key(input: "name")
+      }
       modulePath: metaData {
         label(input: "metadata.labels.module-path")
         key(input: "modulePath")
@@ -41,6 +46,7 @@ export const pyRunnerQueries = gql`
 
   fragment fullPyRunner on PyRunner {
     intialValues {
+      name: keyValue(key: "name", source: metadata)
       modulePath: keyValue(key: "modulePath", source: metadata)
       clazz: keyValue(key: "clazz", source: metadata)
     }
@@ -181,6 +187,16 @@ export const pyRunnerQueries = gql`
       label(input: "navigation.create-pyrunner")
       name: formTab {
         formFields {
+          name: metaData {
+            label(input: "metadata.labels.name")
+            key(input: "name")
+            inputField(type: baseTextField) {
+              ...inputfield
+              validation(input: { value: required }) {
+                ...validation
+              }
+            }
+          }
           modulePath: metaData {
             label(input: "metadata.labels.module-path")
             key(input: "modulePath")

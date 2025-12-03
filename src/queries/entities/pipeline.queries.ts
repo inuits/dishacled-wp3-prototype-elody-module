@@ -41,16 +41,21 @@ export const pipelineQueries = gql`
             customQueryFilters(input: "GetRelatedRunnerFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetRunnerOnPipelineBulkOperations")
+            customQueryEntityPickerListFilters(
+              input: "GetEntityPickerFiltersForRunnersInPipeline"
+            )
           }
           processors: entityListElement {
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
-            entityTypes(input: [processor])
+            entityTypes(
+              input: [jvmRmlProcessor, pyLogProcessor, tsHttpUtilsProcessor]
+            )
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetProcessorFilter")
             searchInputType(input: "AdvancedInputType")
-            customBulkOperations(input: "GetProcessorOnPipelineBulkOperations")
+            customBulkOperations(input: "GetProcessorOnPipelineOperations")
           }
         }
       }
@@ -300,16 +305,15 @@ export const pipelineQueries = gql`
     }
   }
 
-  query GetProcessorOnPipelineBulkOperations {
+  query GetProcessorOnPipelineOperations {
     CustomBulkOperations {
       bulkOperationOptions {
         options(
           input: [
             {
               icon: PlusCircle
-              label: "bulk-operations.add-new-relation"
+              label: "bulk-operations.create-jvm-rml-processor"
               value: "createEntity"
-              primary: true
               can: ["update:pipeline:has-processor"]
               actionContext: {
                 activeViewMode: readMode
@@ -318,7 +322,43 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetProcessorCreateForm"
+                formQuery: "GetJvmRmlProcessorCreateForm"
+                formRelationType: "isProcessorFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: PlusCircle
+              label: "bulk-operations.create-py-log-processor"
+              value: "createEntity"
+              can: ["update:pipeline:has-processor"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetPyLogProcessorCreateForm"
+                formRelationType: "isProcessorFor"
+                askForCloseConfirmation: true
+                neededPermission: cancreate
+              }
+            }
+            {
+              icon: PlusCircle
+              label: "bulk-operations.create-ts-http-utils-processor"
+              value: "createEntity"
+              can: ["update:pipeline:has-processor"]
+              actionContext: {
+                activeViewMode: readMode
+                entitiesSelectionType: noneSelected
+                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+              }
+              bulkOperationModal: {
+                typeModal: DynamicForm
+                formQuery: "GetTsHttpUtilsProcessorCreateForm"
                 formRelationType: "isProcessorFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -370,6 +410,19 @@ export const pipelineQueries = gql`
           bulkOperationModal {
             ...bulkOperationModal
           }
+        }
+      }
+    }
+  }
+
+  query GetEntityPickerFiltersForRunnersInPipeline($entityType: String!) {
+    EntityTypeFilters(type: $entityType) {
+      advancedFilters {
+        type: advancedFilter(type: selection, key: "type") {
+          type
+          key
+          defaultValue(value: ["jsRunner", "pyRunner", "jvmRunner"])
+          hidden(value: true)
         }
       }
     }

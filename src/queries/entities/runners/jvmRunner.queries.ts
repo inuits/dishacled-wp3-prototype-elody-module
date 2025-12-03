@@ -4,6 +4,7 @@ export const jvmRunnerQueries = gql`
   fragment minimalJvmRunner on JvmRunner {
     intialValues {
       ...typePillsIntialValues
+      name: keyValue(key: "name", source: metadata)
       jar: keyValue(key: "jar", source: metadata)
       clazz: keyValue(key: "clazz", source: metadata)
       hasProcessor: keyValue(
@@ -23,6 +24,10 @@ export const jvmRunnerQueries = gql`
     }
     teaserMetadata {
       ...typePillsTeaserMetadata
+      name: metaData {
+        label(input: "metadata.labels.name")
+        key(input: "name")
+      }
       jar: metaData {
         label(input: "metadata.labels.jar")
         key(input: "jar")
@@ -41,6 +46,7 @@ export const jvmRunnerQueries = gql`
 
   fragment fullJvmRunner on JvmRunner {
     intialValues {
+      name: keyValue(key: "name", source: metadata)
       jar: keyValue(key: "jar", source: metadata)
       clazz: keyValue(key: "clazz", source: metadata)
     }
@@ -180,6 +186,16 @@ export const jvmRunnerQueries = gql`
       name: formTab {
         formFields {
           name: metaData {
+            label(input: "metadata.labels.name")
+            key(input: "name")
+            inputField(type: baseTextField) {
+              ...inputfield
+              validation(input: { value: required }) {
+                ...validation
+              }
+            }
+          }
+          jar: metaData {
             label(input: "metadata.labels.jar")
             key(input: "jar")
             inputField(type: baseTextField) {
@@ -189,7 +205,7 @@ export const jvmRunnerQueries = gql`
               }
             }
           }
-          repository: metaData {
+          clazz: metaData {
             label(input: "metadata.labels.clazz")
             key(input: "clazz")
             inputField(type: baseTextField) {

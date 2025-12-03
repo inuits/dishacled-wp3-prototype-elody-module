@@ -36,6 +36,7 @@ export const jvmRmlProcessorQueries = gql`
 
   fragment fullJvmRmlProcessor on JvmRmlProcessor {
     intialValues {
+      name: keyValue(key: "name", source: metadata)
       mappings: keyValue(key: "mappings", source: metadata)
       baseIRI: keyValue(key: "baseIRI", source: metadata)
       waitForMappingClose: keyValue(
