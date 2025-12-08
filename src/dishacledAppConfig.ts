@@ -73,6 +73,7 @@ export const dishacledAppConfig: FullyOptionalEnvironmentInput = {
     hasTenantSelect: false,
     hideSuperTenant: true,
     hasSavedSearch: true,
+    hasPersistentSessions: false
   },
   allowAnonymousUsers:
     process.env.ALLOW_ANONYMOUS_USERS?.toLowerCase() === "true",

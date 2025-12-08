@@ -58,7 +58,7 @@ export const pyRunnerQueries = gql`
           processors: entityListElement {
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
-            entityTypes(input: [processor])
+            entityTypes(input: [pyLogProcessor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetPyLogProcessorFilter")
@@ -248,7 +248,7 @@ export const pyRunnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetProcessorCreateForm"
+                formQuery: "GetPyLogProcessorCreateForm"
                 formRelationType: "isProcessorFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate

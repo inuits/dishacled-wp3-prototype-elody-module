@@ -45,6 +45,7 @@ export const processorQueries = gql`
             label(input: "element-labels.runner-element")
             isCollapsed(input: false)
             entityTypes(input: [jsRunner, jvmRunner, pyRunner])
+            relationType: label(input: "hasRunner")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetRelatedRunnerFilter")
             searchInputType(input: "AdvancedInputType")
@@ -349,6 +350,27 @@ export const processorQueries = gql`
           bulkOperationModal {
             ...bulkOperationModal
           }
+        }
+      }
+    }
+  }
+
+    query GetRelatedProcessorFilter($entityType: String!) {
+    EntityTypeFilters(type: $entityType) {
+      advancedFilters {
+        type: advancedFilter(type: type) {
+          type
+          defaultValue(value: ["tsHttpUtilsProcessor", "pyLogProcessor", "jvmRmlProcessor"])
+          hidden(value: true)
+        }
+        relation: advancedFilter(
+          type: selection
+          key: ["elody:1|identifiers"]
+        ) {
+          type
+          key
+          defaultValue(value: "$entity.relationValues.hasProcessor.key")
+          hidden(value: true)
         }
       }
     }

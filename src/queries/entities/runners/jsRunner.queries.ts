@@ -64,7 +64,7 @@ export const jsRunnerQueries = gql`
           processors: entityListElement {
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
-            entityTypes(input: [processor])
+            entityTypes(input: [tsHttpUtilsProcessor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetTsHttpUtilsProcessorFilter")
@@ -280,7 +280,7 @@ export const jsRunnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetProcessorCreateForm"
+                formQuery: "GetTsHttpUtilsCreateForm"
                 formRelationType: "isProcessorFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate

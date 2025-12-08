@@ -58,7 +58,7 @@ export const jvmRunnerQueries = gql`
           processors: entityListElement {
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
-            entityTypes(input: [processor])
+            entityTypes(input: [jvmRmlProcessor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetJvmRmlProcessorFilter")
@@ -246,7 +246,7 @@ export const jvmRunnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetProcessorCreateForm"
+                formQuery: "GetJvmRmlProcessorCreateForm"
                 formRelationType: "isProcessorFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate

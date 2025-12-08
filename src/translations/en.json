@@ -17,7 +17,10 @@
         "jsRunner": "Js runners",
         "jvmRunner": "Jvm runners",
         "pyRunner": "Py runners",
-        "processor": "Processors"
+        "processor": "Processors",
+        "jvmRmlProcessor": "Jvm rml processors",
+        "pyLogProcessor": "Py log processors",
+        "tsHttpUtilsProcessor": "Ts http utils processors"
       }
     },
     "element-labels": {

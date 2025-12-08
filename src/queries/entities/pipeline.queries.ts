@@ -56,7 +56,7 @@ export const pipelineQueries = gql`
             )
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetProcessorFilter")
+            customQueryFilters(input: "GetRelatedProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetProcessorOnPipelineOperations")
             customQueryEntityPickerList(

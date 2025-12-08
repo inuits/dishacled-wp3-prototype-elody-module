@@ -53,7 +53,7 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
     uri: "/entities/$parentEntityId",
     body: {
       relations: [{ key: "", type: "hasRunner" }],
-      type: Entitytyping.JvmRmlProcessor,
+      type: Entitytyping.PyLogProcessor,
     },
   },
   "update:tsHttpUtilsProcessor:has-runner": {
@@ -62,7 +62,7 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
     uri: "/entities/$parentEntityId",
     body: {
       relations: [{ key: "", type: "hasRunner" }],
-      type: Entitytyping.JvmRmlProcessor,
+      type: Entitytyping.TsHttpUtilsProcessor,
     },
   },
   "update:runner:has-processor": {
@@ -72,6 +72,33 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
     body: {
       relations: [{ key: "", type: "hasProcessor" }],
       type: Entitytyping.Runner,
+    },
+  },
+    "update:jsrunner:has-processor": {
+    datasource: "CollectionAPI",
+    crud: "patch",
+    uri: "/entities/$parentEntityId",
+    body: {
+      relations: [{ key: "", type: "hasProcessor" }],
+      type: Entitytyping.JsRunner,
+    },
+  },
+    "update:jvmrunner:has-processor": {
+    datasource: "CollectionAPI",
+    crud: "patch",
+    uri: "/entities/$parentEntityId",
+    body: {
+      relations: [{ key: "", type: "hasProcessor" }],
+      type: Entitytyping.JvmRunner,
+    },
+  },
+    "update:pyrunner:has-processor": {
+    datasource: "CollectionAPI",
+    crud: "patch",
+    uri: "/entities/$parentEntityId",
+    body: {
+      relations: [{ key: "", type: "hasProcessor" }],
+      type: Entitytyping.PyRunner,
     },
   },
   "update:pipeline:has-processor": {
