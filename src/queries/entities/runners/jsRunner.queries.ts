@@ -5,9 +5,6 @@ export const jsRunnerQueries = gql`
     intialValues {
       ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
-      location: keyValue(key: "location", source: metadata)
-      file: keyValue(key: "file", source: metadata)
-      clazz: keyValue(key: "clazz", source: metadata)
       hasProcessor: keyValue(
         key: "hasProcessor"
         source: relations
@@ -29,18 +26,6 @@ export const jsRunnerQueries = gql`
         label(input: "metadata.labels.name")
         key(input: "name")
       }
-      location: metaData {
-        label(input: "metadata.labels.location")
-        key(input: "location")
-      }
-      file: metaData {
-        label(input: "metadata.labels.file")
-        key(input: "file")
-      }
-      clazz: metaData {
-        label(input: "metadata.labels.clazz")
-        key(input: "clazz")
-      }
       hasProcessor: metaData {
         label(input: "metadata.labels.processor")
         key(input: "processor")
@@ -52,9 +37,6 @@ export const jsRunnerQueries = gql`
   fragment fullJsRunner on JsRunner {
     intialValues {
       name: keyValue(key: "name", source: metadata)
-      location: keyValue(key: "location", source: metadata)
-      file: keyValue(key: "file", source: metadata)
-      clazz: keyValue(key: "clazz", source: metadata)
     }
     relationValues
     entityView {
@@ -86,17 +68,9 @@ export const jsRunnerQueries = gql`
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
-              location: metaData {
-                label(input: "metadata.labels.location")
-                key(input: "location")
-              }
-              file: metaData {
-                label(input: "metadata.labels.file")
-                key(input: "file")
-              }
-              clazz: metaData {
-                label(input: "metadata.labels.clazz")
-                key(input: "clazz")
+              name: metaData {
+                label(input: "metadata.labels.name")
+                key(input: "name")
               }
             }
           }
@@ -109,7 +83,7 @@ export const jsRunnerQueries = gql`
     sortOptions {
       options(
         input: [
-          { icon: NoIcon, label: "metadata.labels.location", value: "location" }
+          { icon: NoIcon, label: "metadata.labels.name", value: "name" }
         ]
       ) {
         icon
@@ -126,34 +100,10 @@ export const jsRunnerQueries = gql`
         defaultValue(value: "jsRunner")
         hidden(value: true)
       }
-      location: advancedFilter(
+      name: advancedFilter(
         type: text
-        key: ["elody:1|metadata.location.value"]
-        label: "metadata.labels.location"
-        isDisplayedByDefault: true
-      ) {
-        type
-        key
-        label
-        isDisplayedByDefault
-        tooltip(value: true)
-      }
-      file: advancedFilter(
-        type: text
-        key: ["elody:1|metadata.file.value"]
-        label: "metadata.labels.file"
-        isDisplayedByDefault: true
-      ) {
-        type
-        key
-        label
-        isDisplayedByDefault
-        tooltip(value: true)
-      }
-      clazz: advancedFilter(
-        type: text
-        key: ["elody:1|metadata.clazz.value"]
-        label: "metadata.labels.clazz"
+        key: ["elody:1|metadata.name.value"]
+        label: "metadata.labels.name"
         isDisplayedByDefault: true
       ) {
         type
@@ -212,36 +162,6 @@ export const jsRunnerQueries = gql`
           name: metaData {
             label(input: "metadata.labels.name")
             key(input: "name")
-            inputField(type: baseTextField) {
-              ...inputfield
-              validation(input: { value: required }) {
-                ...validation
-              }
-            }
-          }
-          location: metaData {
-            label(input: "metadata.labels.location")
-            key(input: "location")
-            inputField(type: baseTextField) {
-              ...inputfield
-              validation(input: { value: required }) {
-                ...validation
-              }
-            }
-          }
-          file: metaData {
-            label(input: "metadata.labels.file")
-            key(input: "file")
-            inputField(type: baseTextField) {
-              ...inputfield
-              validation(input: { value: required }) {
-                ...validation
-              }
-            }
-          }
-          clazz: metaData {
-            label(input: "metadata.labels.clazz")
-            key(input: "clazz")
             inputField(type: baseTextField) {
               ...inputfield
               validation(input: { value: required }) {

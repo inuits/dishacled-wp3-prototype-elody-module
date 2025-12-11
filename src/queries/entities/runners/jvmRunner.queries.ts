@@ -5,8 +5,6 @@ export const jvmRunnerQueries = gql`
     intialValues {
       ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
-      jar: keyValue(key: "jar", source: metadata)
-      clazz: keyValue(key: "clazz", source: metadata)
       hasProcessor: keyValue(
         key: "hasProcessor"
         source: relations
@@ -28,14 +26,6 @@ export const jvmRunnerQueries = gql`
         label(input: "metadata.labels.name")
         key(input: "name")
       }
-      jar: metaData {
-        label(input: "metadata.labels.jar")
-        key(input: "jar")
-      }
-      clazz: metaData {
-        label(input: "metadata.labels.clazz")
-        key(input: "clazz")
-      }
       hasProcessor: metaData {
         label(input: "metadata.labels.processor")
         key(input: "processor")
@@ -47,8 +37,6 @@ export const jvmRunnerQueries = gql`
   fragment fullJvmRunner on JvmRunner {
     intialValues {
       name: keyValue(key: "name", source: metadata)
-      jar: keyValue(key: "jar", source: metadata)
-      clazz: keyValue(key: "clazz", source: metadata)
     }
     relationValues
     entityView {
@@ -80,13 +68,9 @@ export const jvmRunnerQueries = gql`
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
-              jar: metaData {
-                label(input: "metadata.labels.jar")
-                key(input: "jar")
-              }
-              clazz: metaData {
-                label(input: "metadata.labels.clazz")
-                key(input: "clazz")
+              name: metaData {
+                label(input: "metadata.labels.name")
+                key(input: "name")
               }
             }
           }
@@ -98,7 +82,7 @@ export const jvmRunnerQueries = gql`
   fragment jvmRunnerSortOptions on JvmRunner {
     sortOptions {
       options(
-        input: [{ icon: NoIcon, label: "metadata.labels.jar", value: "name" }]
+        input: [{ icon: NoIcon, label: "metadata.labels.name", value: "name" }]
       ) {
         icon
         label
@@ -116,20 +100,8 @@ export const jvmRunnerQueries = gql`
       }
       name: advancedFilter(
         type: text
-        key: ["elody:1|metadata.jar.value"]
-        label: "metadata.labels.jar"
-        isDisplayedByDefault: true
-      ) {
-        type
-        key
-        label
-        isDisplayedByDefault
-        tooltip(value: true)
-      }
-      repository: advancedFilter(
-        type: text
-        key: ["elody:1|metadata.clazz.value"]
-        label: "metadata.labels.clazz"
+        key: ["elody:1|metadata.name.value"]
+        label: "metadata.labels.name"
         isDisplayedByDefault: true
       ) {
         type
@@ -188,26 +160,6 @@ export const jvmRunnerQueries = gql`
           name: metaData {
             label(input: "metadata.labels.name")
             key(input: "name")
-            inputField(type: baseTextField) {
-              ...inputfield
-              validation(input: { value: required }) {
-                ...validation
-              }
-            }
-          }
-          jar: metaData {
-            label(input: "metadata.labels.jar")
-            key(input: "jar")
-            inputField(type: baseTextField) {
-              ...inputfield
-              validation(input: { value: required }) {
-                ...validation
-              }
-            }
-          }
-          clazz: metaData {
-            label(input: "metadata.labels.clazz")
-            key(input: "clazz")
             inputField(type: baseTextField) {
               ...inputfield
               validation(input: { value: required }) {

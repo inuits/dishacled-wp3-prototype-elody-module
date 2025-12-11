@@ -5,8 +5,6 @@ export const pyRunnerQueries = gql`
     intialValues {
       ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
-      modulePath: keyValue(key: "modulePath", source: metadata)
-      clazz: keyValue(key: "clazz", source: metadata)
       hasProcessor: keyValue(
         key: "isRunnerFor"
         source: relations
@@ -28,14 +26,6 @@ export const pyRunnerQueries = gql`
         label(input: "metadata.labels.name")
         key(input: "name")
       }
-      modulePath: metaData {
-        label(input: "metadata.labels.module-path")
-        key(input: "modulePath")
-      }
-      clazz: metaData {
-        label(input: "metadata.labels.clazz")
-        key(input: "clazz")
-      }
       hasProcessor: metaData {
         label(input: "metadata.labels.processor")
         key(input: "hasProcessor")
@@ -47,8 +37,6 @@ export const pyRunnerQueries = gql`
   fragment fullPyRunner on PyRunner {
     intialValues {
       name: keyValue(key: "name", source: metadata)
-      modulePath: keyValue(key: "modulePath", source: metadata)
-      clazz: keyValue(key: "clazz", source: metadata)
     }
     relationValues
     entityView {
@@ -80,13 +68,9 @@ export const pyRunnerQueries = gql`
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
-              modulePath: metaData {
-                label(input: "metadata.labels.module-path")
-                key(input: "modulePath")
-              }
-              clazz: metaData {
-                label(input: "metadata.labels.clazz")
-                key(input: "clazz")
+              name: metaData {
+                label(input: "metadata.labels.name")
+                key(input: "name")
               }
             }
           }
@@ -119,19 +103,7 @@ export const pyRunnerQueries = gql`
       name: advancedFilter(
         type: text
         key: ["elody:1|metadata.modulePath.value"]
-        label: "metadata.labels.modulePath"
-        isDisplayedByDefault: true
-      ) {
-        type
-        key
-        label
-        isDisplayedByDefault
-        tooltip(value: true)
-      }
-      repository: advancedFilter(
-        type: text
-        key: ["elody:1|metadata.clazz.value"]
-        label: "metadata.labels.clazz"
+        label: "metadata.labels.name"
         isDisplayedByDefault: true
       ) {
         type
@@ -190,26 +162,6 @@ export const pyRunnerQueries = gql`
           name: metaData {
             label(input: "metadata.labels.name")
             key(input: "name")
-            inputField(type: baseTextField) {
-              ...inputfield
-              validation(input: { value: required }) {
-                ...validation
-              }
-            }
-          }
-          modulePath: metaData {
-            label(input: "metadata.labels.module-path")
-            key(input: "modulePath")
-            inputField(type: baseTextField) {
-              ...inputfield
-              validation(input: { value: required }) {
-                ...validation
-              }
-            }
-          }
-          clazz: metaData {
-            label(input: "metadata.labels.clazz")
-            key(input: "clazz")
             inputField(type: baseTextField) {
               ...inputfield
               validation(input: { value: required }) {

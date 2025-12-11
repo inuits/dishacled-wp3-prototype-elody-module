@@ -67,7 +67,6 @@ export const dishacledAppConfig: FullyOptionalEnvironmentInput = {
     applicationLocale: "en",
     uploadEntityTypeToCreate: Entitytyping.Asset,
     entityIdKey: "_id",
-    excludedLanguages: ["ar"],
   },
   features: {
     hasTenantSelect: false,
