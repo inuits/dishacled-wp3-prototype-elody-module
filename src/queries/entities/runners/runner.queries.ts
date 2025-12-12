@@ -421,25 +421,4 @@ export const runnerQueries = gql`
       }
     }
   }
-
-  query GetRelatedRunnerFilter($entityType: String!) {
-    EntityTypeFilters(type: $entityType) {
-      advancedFilters {
-        type: advancedFilter(type: type) {
-          type
-          defaultValue(value: ["jsRunner", "jvmRunner", "pyRunner"])
-          hidden(value: true)
-        }
-        relation: advancedFilter(
-          type: selection
-          key: ["elody:1|identifiers"]
-        ) {
-          type
-          key
-          defaultValue(value: "$entity.relationValues.hasRunner.key")
-          hidden(value: true)
-        }
-      }
-    }
-  }
 `;

@@ -56,7 +56,7 @@ export const pyLogProcessorQueries = gql`
             entityTypes(input: [pyRunner])
             relationType: label(input: "hasRunner")
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetRelatedRunnerFilter")
+            customQueryFilters(input: "GetRunnerRelatedToProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(
               input: "GetRunnerOnPyLogProcessorBulkOperations"

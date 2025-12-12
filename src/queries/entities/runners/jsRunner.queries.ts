@@ -200,7 +200,7 @@ export const jsRunnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetTsHttpUtilsCreateForm"
+                formQuery: "GetTsHttpUtilsProcessorCreateForm"
                 formRelationType: "isProcessorFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate

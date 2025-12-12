@@ -5,8 +5,8 @@ export const tsHttpUtilsProcessorQueries = gql`
     intialValues {
       ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
-      hasRunner: keyValue(
-        key: "hasRunner"
+      isProcessorFor: keyValue(
+        key: "isProcessorFor"
         source: relations
         metadataKeyAsLabel: "name"
         formatter: "pill"
@@ -26,9 +26,9 @@ export const tsHttpUtilsProcessorQueries = gql`
         label(input: "metadata.labels.name")
         key(input: "name")
       }
-      hasRunner: metaData {
+      isProcessorFor: metaData {
         label(input: "metadata.labels.runner")
-        key(input: "hasRunner")
+        key(input: "isProcessorFor")
       }
     }
     ...minimalBaseEntity
@@ -66,7 +66,7 @@ export const tsHttpUtilsProcessorQueries = gql`
             entityTypes(input: [jsRunner])
             relationType: label(input: "hasRunner")
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetRelatedRunnerFilter")
+            customQueryFilters(input: "GetRunnerRelatedToProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(
               input: "GetRunnerOnTsHttpUtilsProcessorBulkOperations"

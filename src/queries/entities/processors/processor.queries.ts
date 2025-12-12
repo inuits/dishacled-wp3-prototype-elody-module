@@ -375,4 +375,25 @@ export const processorQueries = gql`
       }
     }
   }
+
+    query GetRunnerRelatedToProcessorFilter($entityType: String!) {
+    EntityTypeFilters(type: $entityType) {
+      advancedFilters {
+        type: advancedFilter(type: type) {
+          type
+          defaultValue(value: ["jsRunner", "jvmRunner", "pyRunner"])
+          hidden(value: true)
+        }
+        relation: advancedFilter(
+          type: selection
+          key: ["elody:1|identifiers"]
+        ) {
+          type
+          key
+          defaultValue(value: "$entity.relationValues.isProcessorFor.key")
+          hidden(value: true)
+        }
+      }
+    }
+  }
 `;

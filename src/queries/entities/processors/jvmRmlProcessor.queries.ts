@@ -58,7 +58,7 @@ export const jvmRmlProcessorQueries = gql`
             entityTypes(input: [jvmRunner])
             relationType: label(input: "hasRunner")
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetRelatedRunnerFilter")
+            customQueryFilters(input: "GetRunnerRelatedToProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(
               input: "GetRunnerOnJvmRmlProcessorBulkOperations"
