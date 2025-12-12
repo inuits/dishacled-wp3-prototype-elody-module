@@ -14,7 +14,7 @@ export const channelQueries = gql`
       }
     }
     teaserMetadata {
-      serial_number: metaData {
+      name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
       }

@@ -38,7 +38,7 @@ export const pyLogProcessorQueries = gql`
     intialValues {
       name: keyValue(key: "name", source: metadata)
       reader: keyValue(key: "reader", source: relations)
-      writer: keyValue(key: "writer", source: relations)
+      hasWriter: keyValue(key: "hasWriter", source: relations, metadataKeyAsLabel: "name", relationEntityType: "channel")
       logLabel: keyValue(key: "logLabel", source: metadata)
       level: keyValue(key: "level", source: metadata)
       raw: keyValue(key: "raw", source: metadata)
@@ -81,9 +81,12 @@ export const pyLogProcessorQueries = gql`
                 label(input: "metadata.labels.reader")
                 key(input: "reader")
               }
-              writer: metaData {
+             hasWriter: metaData {
                 label(input: "metadata.labels.writer")
-                key(input: "writer")
+                key(input: "hasWriter")
+                inputField(type: hasWriterField){
+                  ...inputfield
+                }
               }
               logLabel: metaData {
                 label(input: "metadata.labels.label")

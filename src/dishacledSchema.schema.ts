@@ -37,8 +37,9 @@ export const dishacledSchema = gql`
   }
 
   # Merge with BaseFieldType from baseSchema
-  #  enum BaseFieldType {
-  #  }
+   enum BaseFieldType {
+    hasWriterField
+   }
 
   interface Entity {
     id: String!

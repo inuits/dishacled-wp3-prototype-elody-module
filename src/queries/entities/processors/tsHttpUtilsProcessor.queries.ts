@@ -52,7 +52,7 @@ export const tsHttpUtilsProcessorQueries = gql`
       errorsAreFatal: keyValue(key: "errorsAreFatal", source: metadata)
       outputAsBuffer: keyValue(key: "outputAsBuffer", source: metadata)
       url: keyValue(key: "url", source: metadata)
-      writer: keyValue(key: "writer", source: metadata)
+      hasWriter: keyValue(key: "hasWriter", source: relations, metadataKeyAsLabel: "name", relationEntityType: "channel")
       options: keyValue(key: "options", source: metadata)
     }
     relationValues
@@ -189,9 +189,12 @@ export const tsHttpUtilsProcessorQueries = gql`
                   }
                 }
               }
-              writer: metaData {
+              hasWriter: metaData {
                 label(input: "metadata.labels.writer")
-                key(input: "writer")
+                key(input: "hasWriter")
+                inputField(type: hasWriterField){
+                  ...inputfield
+                }
               }
               options: metaData {
                 label(input: "metadata.labels.options")
