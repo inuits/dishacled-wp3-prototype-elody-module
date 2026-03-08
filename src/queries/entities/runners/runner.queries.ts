@@ -309,7 +309,7 @@ export const runnerQueries = gql`
           key: ["elody:1|relations.hasProcessor.key"]
           label: "metadata.labels.processor"
           isDisplayedByDefault: true
-          useNewWayToFetchOptions: true
+          useOldWayToFetchOptions: false
           advancedFilterInputForRetrievingOptions: [
             {
               type: text

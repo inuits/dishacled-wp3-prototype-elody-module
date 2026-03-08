@@ -1,37 +1,45 @@
-ARG REGISTRY_PROXY
-
-### Build graphql
+# --------------------------------------------------------------
+# Build stage
+# --------------------------------------------------------------
 FROM ${REGISTRY_PROXY}inuits/dams-frontend:latest as frontend
-FROM node:18-alpine as build-stage
+FROM node:18-bookworm-slim as build-stage
 
-
-ARG NPM_CONFIG_ALWAYS_AUTH
-ARG NPM_CONFIG_REGISTRY
-ARG NPM_CONFIG__AUTH_TOKEN
 ARG IMAGE_TAG
 ENV NPM_CONFIG_ALWAYS_AUTH=false
-ENV VERSION=$IMAGE_TAG
+ENV VERSION=${IMAGE_TAG}
 
-RUN adduser --disabled-password --home /app --shell /bin/bash app && corepack enable && corepack prepare pnpm@9.10.0 --activate
+RUN apt-get update && apt-get install -y curl bash && rm -rf /var/lib/apt/lists/* && adduser --disabled-password --home /app --shell /bin/bash app
+RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
+RUN curl -fsSL https://bun.sh/install | bash && ln -s /root/.bun/bin/bun /usr/local/bin/bun
 
-### Build graphql
+### Setup graphql service
 WORKDIR /app/inuits-dams-graphql-service
 COPY ./  ./
 COPY --from=frontend /app /app/inuits-dams-graphql-service/dashboard
-RUN pnpm i --force
-
+# Mount NPM_CONFIG_REGISTRY, NPM_CONFIG__AUTH_TOKEN as build secrets
+RUN --mount=type=secret,id=NPM_CONFIG_REGISTRY,uid=1000 \
+    --mount=type=secret,id=NPM_CONFIG__AUTH_TOKEN,uid=1000 \
+    export NPM_CONFIG_REGISTRY=$(cat /run/secrets/NPM_CONFIG_REGISTRY) && \
+    export NPM_CONFIG__AUTH_TOKEN=$(cat /run/secrets/NPM_CONFIG__AUTH_TOKEN) && \
+    pnpm i --force
 
 RUN mkdir -p /app/schemas
 RUN find /app/inuits-dams-graphql-service -type f -name "*.schema.ts" -exec cp -n {} /app/schemas \;
 RUN find /app/inuits-dams-graphql-service -type f -name "*.queries.ts" -exec cp -n {} /app/schemas \;
 RUN ls /app/schemas
 
-RUN pnpm run generate && pnpm run build
+# Generate GraphQL types (no webpack build needed — Bun runs TypeScript directly)
+RUN pnpm run generate
+
+# Extract GraphQL document nodes into documents.json
+RUN bun /app/inuits-dams-graphql-service/docker/extract-documents.ts \
+    /app/inuits-dams-graphql-service/dashboard/src/generated-types/queries.ts \
+    /app/inuits-dams-graphql-service/documents.json
 
 ### Customize Elody frontend according to client
 WORKDIR /app/inuits-dams-graphql-service/dashboard
 
-RUN rm ./public/logo.svg && rm ./public/favicon.svg && rm ./public/upload-csv-template-asset.csv
+RUN rm -f ./public/logo.svg ./public/favicon.svg ./public/upload-csv-template-asset.csv
 COPY /dashboard/client-customization/* ./public/
 COPY /dashboard/client-customization/theme.txt /tmp/theme.txt
 
@@ -44,32 +52,47 @@ RUN set -e; \
 # --- End of Theme Color Customization ---
 
 ### Set the pwa version to the image tag
-RUN chmod +x /app/inuits-dams-graphql-service/docker/setFrontendVersion.sh
-RUN /app/inuits-dams-graphql-service/docker/setFrontendVersion.sh
-
+RUN if [ -f /app/inuits-dams-graphql-service/docker/setFrontendVersion.sh ]; then \
+      chmod +x /app/inuits-dams-graphql-service/docker/setFrontendVersion.sh && \
+      /app/inuits-dams-graphql-service/docker/setFrontendVersion.sh; \
+    fi
 
 RUN pnpm i && pnpm run build
 
-### Production stage
-FROM node:18-alpine as production-stage
+
+# --------------------------------------------------------------
+# Production stage
+# --------------------------------------------------------------
+FROM node:18-bookworm-slim as production-stage
 
 ARG IMAGE_TAG
-ARG NPM_CONFIG_ALWAYS_AUTH
-ARG NPM_CONFIG_REGISTRY
-ARG NPM_CONFIG__AUTH_TOKEN
-ENV NPM_CONFIG_ALWAYS_AUTH=false
 ENV NODE_ENV=production
 ENV VERSION=${IMAGE_TAG}
 
-RUN adduser --disabled-password --home /app --shell /bin/bash app && corepack enable && corepack prepare pnpm@9.10.0 --activate
+RUN apt-get update && apt-get install -y curl bash && rm -rf /var/lib/apt/lists/* && adduser --disabled-password --home /app --shell /bin/bash app
+RUN curl -fsSL https://bun.sh/install | bash && ln -s /root/.bun/bin/bun /usr/local/bin/bun
 
-COPY --from=build-stage /app/inuits-dams-graphql-service/dist ./dist
-COPY --from=build-stage /app/inuits-dams-graphql-service/package.json /app/inuits-dams-graphql-service/pnpm-lock.yaml /app/inuits-dams-graphql-service/.npmrc ./
+WORKDIR /app/inuits-dams-graphql-service
+
+# GraphQL server TypeScript source (Bun runs it directly, no compilation)
+COPY --from=build-stage /app/inuits-dams-graphql-service/src ./src
+COPY --from=build-stage /app/inuits-dams-graphql-service/package.json ./
+COPY --from=build-stage /app/inuits-dams-graphql-service/tsconfig.json ./
+
+# Modules + generated-types needed at runtime
+COPY --from=build-stage /app/inuits-dams-graphql-service/modules ./modules
+COPY --from=build-stage /app/inuits-dams-graphql-service/generated-types ./generated-types
+COPY --from=build-stage /app/inuits-dams-graphql-service/node_modules ./node_modules
+
+# Compiled frontend (served by Express)
 COPY --from=build-stage /app/inuits-dams-graphql-service/dashboard/dist ./dashboard/dist
-COPY --from=build-stage /app/inuits-dams-graphql-service/dashboard/package.json ./dashboard
 
-RUN pnpm i --prod
+# GraphQL document nodes for /api/documents endpoint
+COPY --from=build-stage /app/inuits-dams-graphql-service/documents.json ./documents.json
 
-CMD pnpm start
+USER app
+
+ENTRYPOINT []
+CMD ["bun", "src/main.ts"]
 
 EXPOSE 4001
