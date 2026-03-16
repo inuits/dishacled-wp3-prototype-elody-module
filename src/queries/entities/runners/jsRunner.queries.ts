@@ -46,10 +46,10 @@ export const jsRunnerQueries = gql`
           processors: entityListElement {
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
-            entityTypes(input: [tsHttpUtilsProcessor])
+            entityTypes(input: [githubProcessor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetTsHttpUtilsProcessorFilter")
+            customQueryFilters(input: "GetRelatedProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetProcessorOnJsRunnerBulkOperations")
           }
@@ -200,7 +200,7 @@ export const jsRunnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetTsHttpUtilsProcessorCreateForm"
+                formQuery: "GetProcessorCreateForm"
                 formRelationType: "isProcessorFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate

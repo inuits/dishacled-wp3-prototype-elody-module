@@ -4,7 +4,6 @@ export const dishacledSchema = gql`
   enum RouteNames {
     Pipelines
     Runners
-    Processors
     Channels
     Users
   }
@@ -15,10 +14,7 @@ export const dishacledSchema = gql`
     jsRunner
     jvmRunner
     pyRunner
-    processor
-    pyLogProcessor
-    tsHttpUtilsProcessor
-    jvmRmlProcessor
+    githubProcessor
     channel
     user
     tenant
@@ -31,6 +27,11 @@ export const dishacledSchema = gql`
   #  enum CreateableEntityTypes {
   #
   #  }
+
+  # Extend Collection with githubProcessors for HTTP-backed GitHub discovery
+  enum Collection {
+    githubProcessors
+  }
 
   enum UploadEntityTypes {
     none
@@ -142,7 +143,7 @@ export const dishacledSchema = gql`
     mapElement: MapElement
   }
 
-  type Processor implements Entity {
+  type GithubProcessor implements Entity {
     id: String!
     uuid: String!
     type: String!
@@ -157,57 +158,7 @@ export const dishacledSchema = gql`
     previewComponent: PreviewComponent
     deleteQueryOptions: DeleteQueryOptions
     mapElement: MapElement
-  }
-
-  type PyLogProcessor implements Entity {
-    id: String!
-    uuid: String!
-    type: String!
-    teaserMetadata: teaserMetadata
-    intialValues: IntialValues!
-    allowedViewModes: AllowedViewModes
-    relationValues: JSON
-    entityView: ColumnList!
-    advancedFilters: AdvancedFilters
-    sortOptions: SortOptions
-    bulkOperationOptions: BulkOperationOptions
-    previewComponent: PreviewComponent
-    deleteQueryOptions: DeleteQueryOptions
-    mapElement: MapElement
-  }
-
-  type TsHttpUtilsProcessor implements Entity {
-    id: String!
-    uuid: String!
-    type: String!
-    teaserMetadata: teaserMetadata
-    intialValues: IntialValues!
-    allowedViewModes: AllowedViewModes
-    relationValues: JSON
-    entityView: ColumnList!
-    advancedFilters: AdvancedFilters
-    sortOptions: SortOptions
-    bulkOperationOptions: BulkOperationOptions
-    previewComponent: PreviewComponent
-    deleteQueryOptions: DeleteQueryOptions
-    mapElement: MapElement
-  }
-
-  type JvmRmlProcessor implements Entity {
-    id: String!
-    uuid: String!
-    type: String!
-    teaserMetadata: teaserMetadata
-    intialValues: IntialValues!
-    allowedViewModes: AllowedViewModes
-    relationValues: JSON
-    entityView: ColumnList!
-    advancedFilters: AdvancedFilters
-    sortOptions: SortOptions
-    bulkOperationOptions: BulkOperationOptions
-    previewComponent: PreviewComponent
-    deleteQueryOptions: DeleteQueryOptions
-    mapElement: MapElement
+    processorConfig: JSON
   }
 
   type Channel implements Entity {

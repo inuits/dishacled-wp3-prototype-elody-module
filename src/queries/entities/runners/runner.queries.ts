@@ -50,7 +50,7 @@ export const runnerQueries = gql`
           processors: entityListElement {
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
-            entityTypes(input: [processor])
+            entityTypes(input: [githubProcessor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetProcessorFilter")

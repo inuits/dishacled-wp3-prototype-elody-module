@@ -58,20 +58,11 @@ export const dishacledQueries = gql`
     ... on PyRunner {
       ...fullPyRunner
     }
-    ... on Processor {
-      ...fullProcessor
-    }
-    ... on JvmRmlProcessor {
-      ...fullJvmRmlProcessor
-    }
-    ... on PyLogProcessor {
-      ...fullPyLogProcessor
-    }
-    ... on TsHttpUtilsProcessor {
-      ...fullTsHttpUtilsProcessor
-    }
     ... on Channel {
       ...fullChannel
+    }
+    ... on GithubProcessor {
+      ...fullGithubProcessor
     }
   }
 
@@ -120,20 +111,11 @@ export const dishacledQueries = gql`
         ... on PyRunner {
           ...minimalPyRunner
         }
-        ... on Processor {
-          ...minimalProcessor
-        }
-        ... on JvmRmlProcessor {
-          ...minimalJvmRmlProcessor
-        }
-        ... on PyLogProcessor {
-          ...minimalPyLogProcessor
-        }
-        ... on TsHttpUtilsProcessor {
-          ...minimalTsHttpUtilsProcessor
-        }
         ... on Channel {
           ...minimalChannel
+        }
+        ... on GithubProcessor {
+          ...minimalGithubProcessor
         }
       }
     }
@@ -192,20 +174,11 @@ export const dishacledQueries = gql`
       ... on PyRunner {
         ...filtersForPyRunner
       }
-      ... on Processor {
-        ...filtersForProcessor
-      }
-      ... on JvmRmlProcessor {
-        ...filtersForJvmRmlProcessor
-      }
-      ... on PyLogProcessor {
-        ...filtersForPyLogProcessor
-      }
-      ... on TsHttpUtilsProcessor {
-        ...filtersForTsHttpUtilsProcessor
-      }
       ... on Channel {
         ...filtersForChannel
+      }
+      ... on GithubProcessor {
+        ...filtersForGithubProcessor
       }
     }
   }
@@ -374,23 +347,6 @@ export const dishacledQueries = gql`
           icon
           requiresAuth
         }
-        processors: menuItem(
-          label: "navigation.processors"
-          entityType: processor
-          typeLink: { route: { destination: "processors" } }
-          icon: Processor
-          requiresAuth: true
-        ) {
-          label
-          entityType
-          typeLink {
-            route {
-              destination
-            }
-          }
-          icon
-          requiresAuth
-        }
         channels: menuItem(
           label: "navigation.channels"
           entityType: channel
@@ -460,11 +416,11 @@ export const dishacledQueries = gql`
       ... on PyRunner {
         ...pyRunnerSortOptions
       }
-      ... on Processor {
-        ...processorSortOptions
-      }
       ... on Channel {
         ...channelSortOptions
+      }
+      ... on GithubProcessor {
+        ...githubProcessorSortOptions
       }
     }
   }
@@ -503,18 +459,6 @@ export const dishacledQueries = gql`
       ... on Pipeline {
         ...pipelineBulkOperations
       }
-      ... on Processor {
-        ...processorBulkOperations
-      }
-      ... on JvmRmlProcessor {
-        ...jvmRmlProcessorBulkOperations
-      }
-      ... on PyLogProcessor {
-        ...pyLogProcessorBulkOperations
-      }
-      ... on TsHttpUtilsProcessor {
-        ...tsHttpUtilsProcessorBulkOperations
-      }
       ... on JsRunner {
         ...jsRunnerBulkOperations
       }
@@ -523,6 +467,9 @@ export const dishacledQueries = gql`
       }
       ... on PyRunner {
         ...pyRunnerBulkOperations
+      }
+      ... on GithubProcessor {
+        ...githubProcessorBulkOperations
       }
     }
   }

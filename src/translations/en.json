@@ -2,25 +2,21 @@
   "en": {
     "bulk-operations": {
       "create-pipeline": "Create pipeline",
-      "create-processor": "Create processor",
-      "create-jvm-rml-processor": "Create jvm rml processor",
-      "create-py-log-processor": "Create py log processor",
-      "create-ts-http-utils-processor": "Create ts http utils processor",
       "create-jsrunner": "Create js runner",
       "create-jvmrunner": "Create jvm runner",
       "create-pyrunner": "Create py runner",
       "existing-runner": "Add existing runner",
-      "existing-processor": "Add existing processor"
+      "add-processor": "Add processor",
+      "generate-code": "Generate code",
+      "install-processor": "Install processor",
+      "import-from-github": "Import from GitHub"
     },
     "entity-translations": {
       "plural": {
         "jsRunner": "Js runners",
         "jvmRunner": "Jvm runners",
         "pyRunner": "Py runners",
-        "processor": "Processors",
-        "jvmRmlProcessor": "Jvm rml processors",
-        "pyLogProcessor": "Py log processors",
-        "tsHttpUtilsProcessor": "Ts http utils processors"
+        "githubProcessor": "GitHub processors"
       }
     },
     "element-labels": {
@@ -52,7 +48,7 @@
         "run-on-init": "Run on initialization",
         "errors-are-fatal": "Errors are fatal",
         "output-as-buffer": "Output as buffer",
-        "url": "Url",
+        "url": "URL",
         "writer": "Writer",
         "options": "Options",
         "reader": "Reader",
@@ -65,39 +61,41 @@
         "wait-for-mapping-close": "Wait for mapping close",
         "default-target": "Default target",
         "sources": "Sources",
-        "targets": "Targets"
+        "targets": "Targets",
+        "runtime": "Runtime",
+        "owner": "Owner",
+        "stars": "Stars",
+        "default-branch": "Default branch",
+        "shacl-files": "SHACL files",
+        "language": "Language",
+        "log-label": "Label",
+        "send-writer": "Writer",
+        "follow": "Follow",
+        "poll-interval": "Poll interval"
       }
     },
     "navigation": {
       "pipelines": "Pipelines",
       "runners": "Runners",
-      "processors": "Processors",
       "channels": "Channels",
       "create-pipeline": "Create pipeline",
-      "create-processor": "Create processor",
-      "create-jvm-rml-processor": "Create java virtual machine rml processor",
-      "create-py-log-processor": "Create python log processor",
-      "create-ts-http-utils-processor": "Create typescript http utils processor",
       "create-jsrunner": "Create javascript runner",
       "create-jvmrunner": "Create java virtual machine runner",
       "create-pyrunner": "Create python runner"
     },
     "panel-labels": {
+      "repository-info": "Repository info",
+      "shacl-files": "SHACL files",
+      "import-configuration": "Import configuration",
       "processor-info": "Processor info",
+      "processor-properties": "Properties",
       "channel-info": "Channel info",
       "runner-info": "Runner info",
-      "pipeline-info": "Pipeline info",
-      "auth": "Authentication",
-      "fetch-options": "Fetch options",
-      "fetch": "Fetch",
-      "log-processor": "Log processor",
-      "send-processor": "Send processor",
-      "mappings": "Mappings",
-      "sources": "Sources",
-      "targets": "Targets"
+      "pipeline-info": "Pipeline info"
     },
     "window-element-labels": {
-      "info-window": "Info"
+      "info-window": "Info",
+      "import-config": "Import configuration"
     }
   }
 }

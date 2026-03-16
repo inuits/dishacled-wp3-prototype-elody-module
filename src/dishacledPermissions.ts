@@ -17,12 +17,6 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
     uri: `/entities`,
     body: { type: Entitytyping.Channel },
   },
-  "create:processor": {
-    datasource: "CollectionAPI",
-    crud: "post",
-    uri: `/entities`,
-    body: { type: Entitytyping.Processor },
-  },
   "create:runner": {
     datasource: "CollectionAPI",
     crud: "post",
@@ -38,32 +32,20 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
       type: Entitytyping.Pipeline,
     },
   },
-  "update:jvmRmlProcessor:has-runner": {
+  "update:githubProcessor:has-runner": {
     datasource: "CollectionAPI",
     crud: "patch",
-    uri: "/entities/$parentEntityId",
+    uri: "/githubProcessors/$parentEntityId",
     body: {
       relations: [{ key: "", type: "hasRunner" }],
-      type: Entitytyping.JvmRmlProcessor,
+      type: Entitytyping.GithubProcessor,
     },
   },
-  "update:pyLogProcessor:has-runner": {
+  "read:githubProcessor": {
     datasource: "CollectionAPI",
-    crud: "patch",
-    uri: "/entities/$parentEntityId",
-    body: {
-      relations: [{ key: "", type: "hasRunner" }],
-      type: Entitytyping.PyLogProcessor,
-    },
-  },
-  "update:tsHttpUtilsProcessor:has-runner": {
-    datasource: "CollectionAPI",
-    crud: "patch",
-    uri: "/entities/$parentEntityId",
-    body: {
-      relations: [{ key: "", type: "hasRunner" }],
-      type: Entitytyping.TsHttpUtilsProcessor,
-    },
+    crud: "get",
+    uri: `/githubProcessors`,
+    body: { type: Entitytyping.GithubProcessor },
   },
   "update:runner:has-processor": {
     datasource: "CollectionAPI",
@@ -74,7 +56,7 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
       type: Entitytyping.Runner,
     },
   },
-    "update:jsrunner:has-processor": {
+  "update:jsrunner:has-processor": {
     datasource: "CollectionAPI",
     crud: "patch",
     uri: "/entities/$parentEntityId",
@@ -83,7 +65,7 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
       type: Entitytyping.JsRunner,
     },
   },
-    "update:jvmrunner:has-processor": {
+  "update:jvmrunner:has-processor": {
     datasource: "CollectionAPI",
     crud: "patch",
     uri: "/entities/$parentEntityId",
@@ -92,7 +74,7 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
       type: Entitytyping.JvmRunner,
     },
   },
-    "update:pyrunner:has-processor": {
+  "update:pyrunner:has-processor": {
     datasource: "CollectionAPI",
     crud: "patch",
     uri: "/entities/$parentEntityId",

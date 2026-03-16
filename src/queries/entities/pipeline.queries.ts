@@ -51,9 +51,7 @@ export const pipelineQueries = gql`
           processors: entityListElement {
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
-            entityTypes(
-              input: [jvmRmlProcessor, pyLogProcessor, tsHttpUtilsProcessor]
-            )
+            entityTypes(input: [githubProcessor])
             relationType: label(input: "hasProcessor")
             customQuery(input: "GetEntities")
             customQueryFilters(input: "GetRelatedProcessorFilter")
@@ -321,61 +319,7 @@ export const pipelineQueries = gql`
           input: [
             {
               icon: PlusCircle
-              label: "bulk-operations.create-jvm-rml-processor"
-              value: "createEntity"
-              can: ["update:pipeline:has-processor"]
-              actionContext: {
-                activeViewMode: readMode
-                entitiesSelectionType: noneSelected
-                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
-              }
-              bulkOperationModal: {
-                typeModal: DynamicForm
-                formQuery: "GetJvmRmlProcessorCreateForm"
-                formRelationType: "isProcessorFor"
-                askForCloseConfirmation: true
-                neededPermission: cancreate
-              }
-            }
-            {
-              icon: PlusCircle
-              label: "bulk-operations.create-py-log-processor"
-              value: "createEntity"
-              can: ["update:pipeline:has-processor"]
-              actionContext: {
-                activeViewMode: readMode
-                entitiesSelectionType: noneSelected
-                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
-              }
-              bulkOperationModal: {
-                typeModal: DynamicForm
-                formQuery: "GetPyLogProcessorCreateForm"
-                formRelationType: "isProcessorFor"
-                askForCloseConfirmation: true
-                neededPermission: cancreate
-              }
-            }
-            {
-              icon: PlusCircle
-              label: "bulk-operations.create-ts-http-utils-processor"
-              value: "createEntity"
-              can: ["update:pipeline:has-processor"]
-              actionContext: {
-                activeViewMode: readMode
-                entitiesSelectionType: noneSelected
-                labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
-              }
-              bulkOperationModal: {
-                typeModal: DynamicForm
-                formQuery: "GetTsHttpUtilsProcessorCreateForm"
-                formRelationType: "isProcessorFor"
-                askForCloseConfirmation: true
-                neededPermission: cancreate
-              }
-            }
-            {
-              icon: PlusCircle
-              label: "bulk-operations.existing-processor"
+              label: "bulk-operations.add-processor"
               value: "addRelation"
               can: ["update:pipeline:has-processor"]
               actionContext: {
@@ -499,14 +443,8 @@ export const pipelineQueries = gql`
         id
         uuid
         type
-        ... on TsHttpUtilsProcessor {
-          ...minimalTsHttpUtilsProcessor
-        }
-        ... on PyLogProcessor {
-          ...minimalPyLogProcessor
-        }
-        ... on JvmRmlProcessor {
-          ...minimalJvmRmlProcessor
+        ... on GithubProcessor {
+          ...minimalGithubProcessor
         }
       }
       __typename
@@ -516,12 +454,9 @@ export const pipelineQueries = gql`
   query GetEntityPickerFiltersForProcessorsInPipeline($entityType: String!) {
     EntityTypeFilters(type: $entityType) {
       advancedFilters {
-        type: advancedFilter(type: selection, key: "type") {
+        type: advancedFilter(type: type) {
           type
-          key
-          defaultValue(
-            value: ["tsHttpUtilsProcessor", "pyLogProcessor", "jvmRmlProcessor"]
-          )
+          defaultValue(value: "githubProcessor")
           hidden(value: true)
         }
       }

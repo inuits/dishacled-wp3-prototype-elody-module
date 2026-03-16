@@ -10,18 +10,12 @@ export const dishacledRoutes = [
     name: RouteNames.Home,
     component: "HomeWrapper",
     meta: {
-      queries: {
-        getEntities: "GetAllProcessorEntities",
-        getFilters: "GetAllProcessorFilters",
-        getSortOptions: "GetAllProcessorSortOptions",
-        getBulkOperations: "GetAllProcessorBulkOperations",
-      },
-      type: Collection.Entities,
       requiresAuth: true,
-      entityType: Entitytyping.Processor,
+      type: Collection.Entities,
+      entityType: Entitytyping.Pipeline,
       breadcrumbs: [
         {
-          overviewPage: RouteNames.Processors,
+          overviewPage: RouteNames.Pipelines,
         },
       ],
     },
@@ -66,27 +60,6 @@ export const dishacledRoutes = [
           breadcrumbs: [
             {
               overviewPage: RouteNames.Runners,
-            },
-          ],
-        },
-      },
-      {
-        path: "processors",
-        name: RouteNames.Processors,
-        component: "Home",
-        meta: {
-          queries: {
-            getEntities: "GetAllProcessorEntities",
-            getFilters: "GetAllProcessorFilters",
-            getSortOptions: "GetAllProcessorSortOptions",
-            getBulkOperations: "GetAllProcessorBulkOperations",
-          },
-          requiresAuth: true,
-          type: Collection.Entities,
-          entityType: Entitytyping.Processor,
-          breadcrumbs: [
-            {
-              overviewPage: RouteNames.Processors,
             },
           ],
         },
