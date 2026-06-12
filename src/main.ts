@@ -1,5 +1,4 @@
 import { mediafileModule } from "mediafile-module";
-import { advancedFilterModule } from "advanced-filter-module";
 import { savedSearchModule } from "saved-search-module";
 import {
   dishacledModule,
@@ -15,7 +14,6 @@ import { dishacledPermissions } from "./dishacledPermissions";
 const dishacledElodyConfig: ElodyModuleConfig = {
   modules: [
     mediafileModule,
-    advancedFilterModule,
     savedSearchModule,
     dishacledModule,
   ],
