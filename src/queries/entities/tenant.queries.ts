@@ -31,7 +31,9 @@ export const tenant = gql`
               shown(input: true)
             }
             roleInfo: panels {
-              label(input: "panel-labels.role-info")
+              panelHeaderContent(panelHeaderContentInput: { label: "panel-labels.role-info" }) {
+                label
+              }
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)

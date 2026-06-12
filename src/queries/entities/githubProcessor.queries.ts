@@ -73,7 +73,9 @@ export const githubProcessorQueries = gql`
               shown(input: true)
             }
             repoInfo: panels {
-              label(input: "panel-labels.repository-info")
+              panelHeaderContent(panelHeaderContentInput: { label: "panel-labels.repository-info" }) {
+                label
+              }
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
@@ -107,7 +109,9 @@ export const githubProcessorQueries = gql`
               }
             }
             shaclInfo: panels {
-              label(input: "panel-labels.shacl-files")
+              panelHeaderContent(panelHeaderContentInput: { label: "panel-labels.shacl-files" }) {
+                label
+              }
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
@@ -128,7 +132,9 @@ export const githubProcessorQueries = gql`
               shown(input: true)
             }
             importConfig: panels {
-              label(input: "panel-labels.import-configuration")
+              panelHeaderContent(panelHeaderContentInput: { label: "panel-labels.import-configuration" }) {
+                label
+              }
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)

@@ -300,7 +300,13 @@ export const dishacledQueries = gql`
       label(input: "bulk-operations.bulk-edit.bulk-edit-title")
       relations: panels {
         ... on WindowElementPanel {
-          label(input: "bulk-operations.bulk-edit.relation-types")
+          panelHeaderContent(
+            panelHeaderContentInput: {
+              label: "bulk-operations.bulk-edit.relation-types"
+            }
+          ) {
+            label
+          }
           panelType(input: metadata)
           isEditable(input: true)
           isCollapsed(input: false)
@@ -551,13 +557,11 @@ export const dishacledQueries = gql`
   }
 
   query getFilterMatcherMapping {
-    FilterMatcherMapping {
-      text
-      date
-      number
-      selection
-      boolean
-      type
+    FilterMatcherMapping(
+      keys: ["text", "date", "number", "selection", "boolean", "type"]
+    ) {
+      key
+      matchers
     }
   }
 

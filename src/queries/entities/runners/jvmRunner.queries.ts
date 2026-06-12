@@ -64,7 +64,9 @@ export const jvmRunnerQueries = gql`
               shown(input: true)
             }
             info: panels {
-              label(input: "panel-labels.runner-info")
+              panelHeaderContent(panelHeaderContentInput: { label: "panel-labels.runner-info" }) {
+                label
+              }
               panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
