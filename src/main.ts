@@ -22,15 +22,13 @@ const dishacledElodyConfig: ElodyModuleConfig = {
   dataSources: {},
 };
 
-start(
-  dishacledElodyConfig,
-  dishacledAppConfig,
-  dishacledTranslations,
-  [],
-  dishacledFields,
-  dishacledElodyTypeCollectionMapping,
-  dishacledPermissions,
-  undefined,
-  undefined,
-  dishacledTypePillLabelMapping,
-);
+start({
+  customModuleConfig: dishacledElodyConfig,
+  appConfig: dishacledAppConfig,
+  customTranslations: dishacledTranslations,
+  customEndpoints: [],
+  customInputFields: dishacledFields,
+  customTypeCollectionMapping: dishacledElodyTypeCollectionMapping,
+  customPermissions: dishacledPermissions,
+  customTypePillLabelMapping: dishacledTypePillLabelMapping,
+});
