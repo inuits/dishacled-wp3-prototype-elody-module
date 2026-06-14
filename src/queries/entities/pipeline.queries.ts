@@ -461,6 +461,18 @@ export const pipelineQueries = gql`
           defaultValue(value: "githubProcessor")
           hidden(value: true)
         }
+        name: advancedFilter(
+          type: text
+          key: ["elody:1|metadata.name.value"]
+          label: "metadata.labels.name"
+          isDisplayedByDefault: true
+        ) {
+          type
+          key
+          label
+          isDisplayedByDefault
+          tooltip(value: true)
+        }
       }
     }
   }
