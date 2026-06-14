@@ -87,6 +87,45 @@ async function fetchChannelOptions(dataSources: any): Promise<string[]> {
   }
 }
 
+// Inject live Elody channel options into the SHACL-derived form fields that
+// were marked as channel fields by the backend (form.py).
+function injectChannelOptions(formFields: any, channelOptions: string[]): any {
+  if (!formFields) return formFields;
+  const result: any = {};
+  for (const [key, field] of Object.entries<any>(formFields)) {
+    if (field?.inputField?.channelField) {
+      result[key] = {
+        ...field,
+        inputField: {
+          ...field.inputField,
+          options: channelOptions.map((c) => ({
+            icon: "NoIcon",
+            label: c,
+            value: c,
+            __typename: "DropdownOption",
+          })),
+        },
+      };
+    } else {
+      result[key] = field;
+    }
+  }
+  return result;
+}
+
+// Build the processorConfig: the existing read-only panels plus the
+// modalFormFields (SHACL-1.2-UI derived) used by the dynamic config form.
+function buildConfig(data: any, channelOptions: string[]): any {
+  const base = buildProcessorConfig(data?.properties || [], channelOptions);
+  if (data?.formFields) {
+    return {
+      ...(base || {}),
+      formFields: injectChannelOptions(data.formFields, channelOptions),
+    };
+  }
+  return base;
+}
+
 function hasChannelFields(properties: any[]): boolean {
   return properties.some((p: any) => isChannelField(p));
 }
@@ -101,7 +140,7 @@ async function resolveProcessorConfig(
     const channelOptions = hasChannelFields(obj.data.properties)
       ? await fetchChannelOptions(dataSources)
       : [];
-    return buildProcessorConfig(obj.data.properties, channelOptions);
+    return buildConfig(obj.data, channelOptions);
   }
 
   // 2. For githubProcessor entities in list view, fetch individually to get TTL properties
@@ -117,7 +156,7 @@ async function resolveProcessorConfig(
         const channelOptions = hasChannelFields(fullEntity.data.properties)
           ? await fetchChannelOptions(dataSources)
           : [];
-        return buildProcessorConfig(fullEntity.data.properties, channelOptions);
+        return buildConfig(fullEntity.data, channelOptions);
       }
     } catch {
       // fall through to processorDefinition lookup
@@ -155,7 +194,7 @@ async function resolveProcessorConfig(
     const channelOptions = hasChannelFields(definition.data.properties)
       ? await fetchChannelOptions(dataSources)
       : [];
-    return buildProcessorConfig(definition.data.properties, channelOptions);
+    return buildConfig(definition.data, channelOptions);
   } catch {
     return null;
   }
