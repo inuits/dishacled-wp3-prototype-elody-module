@@ -97,5 +97,15 @@
       "info-window": "Info",
       "import-config": "Import configuration"
     }
+  },
+  "modals": {
+    "configureProcessor": {
+      "title": "Configure processor"
+    }
+  },
+  "contextMenu": {
+    "contextMenuElodyAction": {
+      "configureProcessor": "Configure"
+    }
   }
 }
