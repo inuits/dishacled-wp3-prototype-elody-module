@@ -31,6 +31,17 @@ export const githubProcessorQueries = gql`
       forceShowContextMenuActions(input: true)
       contextMenuActions {
         ...basicContextMenuActions
+        configure: doElodyAction {
+          action(input: UpdateMetadata)
+          formQuery(input: "ProcessorRelationConfig")
+          formFlow(input: Update)
+          formTitle(input: "modals.configureProcessor.title")
+          label(
+            input: "contextMenu.contextMenuElodyAction.configureProcessor"
+          )
+          icon(input: "Settings")
+          __typename
+        }
       }
       name: metaData {
         label(input: "metadata.labels.name")

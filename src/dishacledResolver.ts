@@ -143,9 +143,11 @@ async function resolveProcessorConfig(
     return buildConfig(obj.data, channelOptions);
   }
 
-  // 2. For githubProcessor entities in list view, fetch individually to get TTL properties
-  const entityType = obj.type;
-  const entityId = obj.identifiers?.[0] || obj._id;
+  // 2. For githubProcessor entities, fetch individually to get TTL properties.
+  // obj.id covers the single-entity query path (no identifiers/_id selected).
+  const entityType = obj.type || "githubProcessor";
+  const entityId =
+    obj.identifiers?.[0] || obj._id || obj.id?.split("/").pop() || obj.id;
   if (entityType === "githubProcessor" && entityId) {
     try {
       const fullEntity = await dataSources.CollectionAPI.GetEntity(
@@ -257,6 +259,28 @@ export const dishacledResolver: Resolvers = {
     ...baseSetOffResolvers,
   },
   Query: {
+    // Direct fetch of a github processor's SHACL-derived config form
+    // (modalFormFields), with live channel options. Used by the processor
+    // config modal; bypasses the entity-union resolution which does not
+    // work for http-stored github processors.
+    ProcessorConfigForm: async (_source: any, { id }: any, { dataSources }) => {
+      try {
+        const entity = await dataSources.CollectionAPI.getEntity(
+          id,
+          "githubProcessor",
+        );
+        const formFields = entity?.data?.formFields;
+        if (!formFields) return null;
+        const channelOptions = hasChannelFields(
+          entity?.data?.properties || [],
+        )
+          ? await fetchChannelOptions(dataSources)
+          : [];
+        return injectChannelOptions(formFields, channelOptions);
+      } catch {
+        return null;
+      }
+    },
     BulkOperationsRelationForm: async (
       _source: any,
       _args,

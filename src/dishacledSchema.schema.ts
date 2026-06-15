@@ -249,6 +249,7 @@ export const dishacledSchema = gql`
   }
 
   type Query {
+    ProcessorConfigForm(id: String!): JSON
     BulkOperationsRelationForm: WindowElement!
   }
 
