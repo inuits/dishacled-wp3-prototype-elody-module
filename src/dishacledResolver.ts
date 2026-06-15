@@ -57,7 +57,7 @@ async function fetchChannelOptions(dataSources: any): Promise<string[]> {
     const result = await dataSources.CollectionAPI.GetAdvancedEntities(
       "channel" as any,
       100,
-      0,
+      1, // 1-based page; skip is derived as limit * (page - 1)
       [
         {
           type: "selection",
