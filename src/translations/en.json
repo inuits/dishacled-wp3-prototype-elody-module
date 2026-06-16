@@ -41,6 +41,8 @@
         "method": "Method",
         "headers": "Headers",
         "accept-status-code": "Accept status code",
+        "accept-status-codes": "Accept status codes",
+        "output-as-stream": "Output as stream",
         "close-on-end": "Close on end",
         "time-out-milliseconds": "Timeout milliseconds",
         "auth": "Auth",

@@ -36,6 +36,8 @@
         "method": "Methode",
         "headers": "Headers",
         "accept-status-code": "Toegestane statuscode",
+        "accept-status-codes": "Toegestane statuscodes",
+        "output-as-stream": "Uitvoer als stream",
         "close-on-end": "Sluiten bij einde",
         "time-out-milliseconds": "Time-out in milliseconden",
         "auth": "Authenticatie",
