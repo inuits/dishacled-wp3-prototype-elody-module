@@ -88,16 +88,16 @@
     },
     "window-element-labels": {
       "info-window": "Info"
-    }
-  },
-  "modals": {
-    "configureProcessor": {
-      "title": "Processor configureren"
-    }
-  },
-  "contextMenu": {
-    "contextMenuElodyAction": {
-      "configureProcessor": "Configureren"
+    },
+    "modals": {
+      "configureProcessor": {
+        "title": "Processor configureren"
+      }
+    },
+    "contextMenu": {
+      "contextMenuElodyAction": {
+        "configureProcessor": "Configureren"
+      }
     }
   }
 }

@@ -7,11 +7,25 @@ import {
   RelationFieldInput,
 } from "../generated-types/type-defs";
 
-function camelToKebab(name: string): string {
-  return name
-    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-    .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
-    .toLowerCase();
+// Words rendered in uppercase when humanizing parameter names into labels.
+const ACRONYMS = new Set(["url", "iri", "id", "db", "api", "http", "mime"]);
+
+// Turn a camelCase parameter name into a human-readable label. Labels are
+// plain text (not translation keys) so every SHACL-described processor gets
+// readable field labels without per-processor translation maintenance.
+function humanizeLabel(name: string): string {
+  const words = name
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
+    .split(" ");
+  return words
+    .map((word, i) => {
+      const lower = word.toLowerCase();
+      if (ACRONYMS.has(lower)) return word.toUpperCase();
+      if (i === 0) return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      return lower;
+    })
+    .join(" ");
 }
 
 function isChannelField(p: any): boolean {
@@ -30,7 +44,7 @@ function buildProcessorConfig(
     const isChannel = isChannelField(p);
     return {
       key: p.name,
-      label: `metadata.labels.${camelToKebab(p.name)}`,
+      label: humanizeLabel(p.name),
       inputFieldType: isChannel ? "baseSelectField" : p.inputFieldType,
       isRequired: p.isRequired || false,
       inValues: isChannel ? channelOptions : p.inValues || [],
@@ -45,7 +59,9 @@ function buildProcessorConfig(
       {
         label: "panel-labels.processor-properties",
         panelType: "relationMetadata",
-        isEditable: true,
+        // config is edited exclusively via the Configure modal
+        // (ProcessorRelationConfig); the inline list view is read-only
+        isEditable: false,
         fields,
       },
     ],
