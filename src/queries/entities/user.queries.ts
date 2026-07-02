@@ -133,4 +133,10 @@ export const user = gql`
       isAsc(input: asc)
     }
   }
+
+  query getElodyUser {
+    getElodyUser {
+      ...minimalUser
+    }
+  }
 `;
