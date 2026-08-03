@@ -42,6 +42,15 @@ export const githubProcessorQueries = gql`
           icon(input: "Settings")
           __typename
         }
+        connect: doElodyAction {
+          action(input: UpdateMetadata)
+          formQuery(input: "ProcessorConnectionsConfig")
+          formFlow(input: Update)
+          formTitle(input: "modals.connectProcessor.title")
+          label(input: "contextMenu.contextMenuElodyAction.connectProcessor")
+          icon(input: "Link")
+          __typename
+        }
       }
       name: metaData {
         label(input: "metadata.labels.name")
@@ -265,5 +274,22 @@ export const githubProcessorQueries = gql`
         ...githubProcessorBulkOperations
       }
     }
+  }
+
+  # Field-source query for the generic relation-config modal. Referenced by name
+  # via the configure action's formQuery input ("ProcessorRelationConfig") and
+  # resolved at runtime by useImport().loadDocument. Returns the SHACL-derived,
+  # channel-injected field set for the given processor id.
+  query ProcessorRelationConfig($id: String!) {
+    ProcessorConfigForm(id: $id)
+  }
+
+  # Field-source query for the connect modal, referenced by name via the
+  # connect action's formQuery input ("ProcessorConnectionsConfig"). Takes the
+  # component id and the pipeline it sits in, and returns one producer
+  # dropdown per input port. Saved onto the same hasProcessor relation the
+  # config modal writes to, under dotted connections.<port>.* keys.
+  query ProcessorConnectionsConfig($id: String!, $parentEntityId: String) {
+    ProcessorConnectionForm(id: $id, parentEntityId: $parentEntityId)
   }
 `;

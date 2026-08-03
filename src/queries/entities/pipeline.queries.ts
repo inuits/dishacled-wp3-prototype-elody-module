@@ -28,6 +28,9 @@ export const pipelineQueries = gql`
       description: keyValue(key: "description", source: metadata)
     }
     relationValues
+    # the pipeline's producer->consumer links as directed, typed edges, each
+    # carrying the state placeholder that validation (B3) fills in
+    pipelineConnections
     entityView {
       column {
         size(size: seventy)
@@ -167,6 +170,12 @@ export const pipelineQueries = gql`
         }
       }
     }
+  }
+
+  # Direct fetch of a pipeline's connections, for callers that hold only the
+  # pipeline id (validation reporting, export previews).
+  query GetPipelineConnections($id: String!) {
+    PipelineConnections(id: $id)
   }
 
   query GetPipelineCreateForm {

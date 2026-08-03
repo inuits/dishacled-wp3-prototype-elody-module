@@ -121,4 +121,71 @@ export const channelQueries = gql`
       }
     }
   }
+
+  fragment channelBulkOperations on Channel {
+    bulkOperationOptions {
+      options(
+        input: [
+          {
+            icon: Create
+            label: "bulk-operations.create-channel"
+            value: "createEntity"
+            primary: true
+            actionContext: {
+              activeViewMode: readMode
+              entitiesSelectionType: noneSelected
+              labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-noneselected"
+            }
+            bulkOperationModal: {
+              typeModal: DynamicForm
+              formQuery: "GetChannelCreateForm"
+              formRelationType: "isChannelFor"
+              askForCloseConfirmation: true
+              neededPermission: cancreate
+            }
+          }
+        ]
+      ) {
+        icon
+        label
+        value
+        primary
+        can
+        actionContext {
+          ...actionContext
+        }
+        bulkOperationModal {
+          ...bulkOperationModal
+        }
+      }
+    }
+  }
+
+  query GetChannelCreateForm {
+    GetDynamicForm {
+      label(input: "navigation.create-channel")
+      name: formTab {
+        formFields {
+          name: metaData {
+            label(input: "metadata.labels.name")
+            key(input: "name")
+            inputField(type: baseTextField) {
+              ...inputfield
+              validation(input: { value: required }) {
+                ...validation
+              }
+            }
+          }
+          createAction: action {
+            label(input: "actions.labels.create")
+            icon(input: Create)
+            actionType(input: submit)
+            actionQuery(input: "CreateEntity")
+            creationType(input: channel)
+            showsFormErrors(input: true)
+          }
+        }
+      }
+    }
+  }
 `;

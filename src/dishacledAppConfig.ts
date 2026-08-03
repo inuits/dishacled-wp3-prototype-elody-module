@@ -10,7 +10,7 @@ export const dishacledAppConfig: FullyOptionalEnvironmentInput = {
     introspection: process.env.APOLLO_INTROSPECTION === "true",
     playground: process.env.APOLLO_PLAYGROUND === "true",
     tokenLogging: process.env.APOLLO_TOKENLOGGING || "false",
-    maxQueryDepth: 10,
+    maxQueryDepth: 15,
   },
   port: process.env.PORT || defaultPort,
   environment: process.env.NODE_ENV || "development",

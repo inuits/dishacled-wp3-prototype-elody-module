@@ -465,6 +465,9 @@ export const dishacledQueries = gql`
       ... on Pipeline {
         ...pipelineBulkOperations
       }
+      ... on Channel {
+        ...channelBulkOperations
+      }
       ... on JsRunner {
         ...jsRunnerBulkOperations
       }

@@ -62,6 +62,7 @@ export const dishacledSchema = gql`
     id: String!
     uuid: String!
     type: String!
+    pipelineConnections: JSON
     teaserMetadata: teaserMetadata
     intialValues: IntialValues!
     allowedViewModes: AllowedViewModes
@@ -159,6 +160,8 @@ export const dishacledSchema = gql`
     deleteQueryOptions: DeleteQueryOptions
     mapElement: MapElement
     processorConfig: JSON
+    componentContract: JSON
+    componentPorts: JSON
   }
 
   type Channel implements Entity {
@@ -250,6 +253,12 @@ export const dishacledSchema = gql`
 
   type Query {
     ProcessorConfigForm(id: String!): JSON
+    ComponentContract(id: String!): JSON
+    # Connect form for one component inside one pipeline. parentEntityId is
+    # the pipeline: without it there is no set of sibling components to offer
+    # as producers.
+    ProcessorConnectionForm(id: String!, parentEntityId: String): JSON
+    PipelineConnections(id: String!): JSON
     BulkOperationsRelationForm: WindowElement!
   }
 

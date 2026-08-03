@@ -2,6 +2,7 @@
   "en": {
     "bulk-operations": {
       "create-pipeline": "Create pipeline",
+      "create-channel": "Create channel",
       "create-jsrunner": "Create js runner",
       "create-jvmrunner": "Create jvm runner",
       "create-pyrunner": "Create py runner",
@@ -81,6 +82,7 @@
       "runners": "Runners",
       "channels": "Channels",
       "create-pipeline": "Create pipeline",
+      "create-channel": "Create channel",
       "create-jsrunner": "Create javascript runner",
       "create-jvmrunner": "Create java virtual machine runner",
       "create-pyrunner": "Create python runner"
@@ -93,7 +95,8 @@
       "processor-properties": "Properties",
       "channel-info": "Channel info",
       "runner-info": "Runner info",
-      "pipeline-info": "Pipeline info"
+      "pipeline-info": "Pipeline info",
+      "processor-connections": "Connections"
     },
     "window-element-labels": {
       "info-window": "Info",
@@ -102,11 +105,15 @@
     "modals": {
       "configureProcessor": {
         "title": "Configure processor"
+      },
+      "connectProcessor": {
+        "title": "Connect processor"
       }
     },
     "contextMenu": {
       "contextMenuElodyAction": {
-        "configureProcessor": "Configure"
+        "configureProcessor": "Configure",
+        "connectProcessor": "Connect"
       }
     }
   }

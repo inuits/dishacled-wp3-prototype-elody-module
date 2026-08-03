@@ -6,6 +6,12 @@ import {
   WindowElement,
   RelationFieldInput,
 } from "../generated-types/type-defs";
+import {
+  connectionFormFields,
+  connectionsForPipeline,
+  inputPorts,
+  processorRelations,
+} from "./pipelineConnections";
 
 // Words rendered in uppercase when humanizing parameter names into labels.
 const ACRONYMS = new Set(["url", "iri", "id", "db", "api", "http", "mime"]);
@@ -133,13 +139,57 @@ function injectChannelOptions(formFields: any, channelOptions: string[]): any {
 // modalFormFields (SHACL-1.2-UI derived) used by the dynamic config form.
 function buildConfig(data: any, channelOptions: string[]): any {
   const base = buildProcessorConfig(data?.properties || [], channelOptions);
+  const panels = [
+    ...(base?.panels || []),
+    ...buildConnectionPanels(data),
+  ];
+  const withPanels = panels.length > 0 ? { ...(base || {}), panels } : base;
   if (data?.formFields) {
     return {
-      ...(base || {}),
+      ...(withPanels || {}),
       formFields: injectChannelOptions(data.formFields, channelOptions),
     };
   }
-  return base;
+  return withPanels;
+}
+
+// A read-only panel per component showing what each of its input ports is fed
+// from and how validation judged that link. The values are relation metadata
+// (`connections.<port>.*`), so the PWA fills them in from the pipeline's
+// hasProcessor relation the same way it fills the config panel. The state
+// field is empty until B3's validation writes a verdict into it.
+function buildConnectionPanels(data: any): any[] {
+  const inputs = (data?.ports || []).filter((p: any) => p?.direction === "in");
+  if (inputs.length === 0) return [];
+
+  const fields = inputs.flatMap((port: any) => [
+    {
+      key: `connections.${port.name}.from`,
+      label: `${port.name} ← producer`,
+      inputFieldType: "text",
+      isRequired: false,
+      inValues: [],
+      value: "",
+    },
+    {
+      key: `connections.${port.name}.state`,
+      label: `${port.name} validation state`,
+      inputFieldType: "text",
+      isRequired: false,
+      inValues: [],
+      value: "",
+    },
+  ]);
+
+  return [
+    {
+      label: "panel-labels.processor-connections",
+      panelType: "relationMetadata",
+      // connections are drawn in the Connect modal, not edited inline
+      isEditable: false,
+      fields,
+    },
+  ];
 }
 
 function hasChannelFields(properties: any[]): boolean {
@@ -218,6 +268,114 @@ async function resolveProcessorConfig(
   }
 }
 
+// The component's data contract: the shapes it consumes and produces. The
+// collection-api derives these from the contract catalog and puts them on the
+// entity's data; they are what lets the pipeline editor connect one
+// component's output to a compatible input and validate the resulting chain.
+// A dataset produces data but consumes none, so its inputShape is null.
+function pickContract(data: any): any {
+  if (!data?.componentIri) return null;
+  return {
+    componentIri: data.componentIri,
+    componentKind: data.componentKind ?? null,
+    configShape: data.configShape ?? null,
+    inputShape: data.inputShape ?? null,
+    outputShape: data.outputShape ?? null,
+  };
+}
+
+async function resolveComponentContract(
+  obj: any,
+  _args: any,
+  { dataSources }: any,
+): Promise<any> {
+  // inline data, e.g. from a single entity fetch
+  const inline = pickContract(obj?.data);
+  if (inline) return inline;
+
+  // otherwise fetch the entity individually, the way processorConfig does:
+  // list responses do not carry the TTL-derived data
+  const entityId =
+    obj?.identifiers?.[0] || obj?._id || obj?.id?.split("/").pop() || obj?.id;
+  if (!entityId) return null;
+
+  try {
+    const fullEntity = await dataSources.CollectionAPI.GetEntity(
+      "githubProcessor" as any,
+      entityId,
+    );
+    return pickContract(fullEntity?.data);
+  } catch {
+    return null;
+  }
+}
+
+// The wiring points a component exposes. Derived by the collection-api from
+// the channel-typed config properties, typed by the component's contract.
+async function resolveComponentPorts(
+  obj: any,
+  _args: any,
+  { dataSources }: any,
+): Promise<any> {
+  if (Array.isArray(obj?.data?.ports)) return obj.data.ports;
+
+  const id =
+    obj?.identifiers?.[0] || obj?._id || obj?.id?.split("/").pop() || obj?.id;
+  if (!id) return null;
+  try {
+    const fullEntity = await dataSources.CollectionAPI.GetEntity(
+      "githubProcessor" as any,
+      id,
+    );
+    return fullEntity?.data?.ports ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// Fetch every component a pipeline holds, keyed by id. Both connection
+// resolvers need this: a connection's two endpoints only become typed once
+// both components' ports are known.
+async function fetchPipelineComponents(
+  pipeline: any,
+  dataSources: any,
+): Promise<Record<string, any>> {
+  const keys = Array.from(
+    new Set(processorRelations(pipeline).map((relation: any) => relation.key)),
+  );
+  const components: Record<string, any> = {};
+  await Promise.all(
+    keys.map(async (key: any) => {
+      try {
+        components[key] = await dataSources.CollectionAPI.getEntity(
+          key,
+          "githubProcessor",
+        );
+      } catch {
+        // a component that cannot be fetched simply contributes no ports
+      }
+    }),
+  );
+  return components;
+}
+
+async function resolvePipelineConnections(
+  pipelineId: string,
+  dataSources: any,
+): Promise<any> {
+  try {
+    const pipeline = await dataSources.CollectionAPI.getEntity(
+      pipelineId,
+      "pipeline",
+    );
+    if (!pipeline) return null;
+    const components = await fetchPipelineComponents(pipeline, dataSources);
+    return connectionsForPipeline(pipeline, components);
+  } catch {
+    return null;
+  }
+}
+
 const baseSetOffResolvers = {
   id: resolveId,
   uuid: resolveId,
@@ -254,6 +412,11 @@ export const dishacledResolver: Resolvers = {
   },
   Pipeline: {
     ...baseSetOffResolvers,
+    pipelineConnections: async (obj: any, _args: any, { dataSources }: any) => {
+      const id =
+        obj?.identifiers?.[0] || obj?._id || obj?.id?.split("/").pop() || obj?.id;
+      return id ? await resolvePipelineConnections(id, dataSources) : null;
+    },
   },
   Runner: {
     ...baseSetOffResolvers,
@@ -270,6 +433,8 @@ export const dishacledResolver: Resolvers = {
   GithubProcessor: {
     ...baseSetOffResolvers,
     processorConfig: resolveProcessorConfig,
+    componentContract: resolveComponentContract,
+    componentPorts: resolveComponentPorts,
   },
   Channel: {
     ...baseSetOffResolvers,
@@ -296,6 +461,59 @@ export const dishacledResolver: Resolvers = {
       } catch {
         return null;
       }
+    },
+    // Direct fetch of a component's input/output shapes. Mirrors
+    // ProcessorConfigForm above and exists for the same reason: entity-union
+    // resolution does not work for http-stored github processors.
+    ComponentContract: async (_source: any, { id }: any, { dataSources }) => {
+      try {
+        const entity = await dataSources.CollectionAPI.getEntity(
+          id,
+          "githubProcessor",
+        );
+        return pickContract(entity?.data);
+      } catch {
+        return null;
+      }
+    },
+    // Field-source query for the connect modal. Mirrors ProcessorConfigForm,
+    // but needs the pipeline as well as the component: a producer→consumer
+    // link only means something inside a pipeline, and the options offered are
+    // the output ports of that pipeline's other components.
+    ProcessorConnectionForm: async (
+      _source: any,
+      { id, parentEntityId }: any,
+      { dataSources }: any,
+    ) => {
+      if (!parentEntityId) return null;
+      try {
+        const [target, pipeline] = await Promise.all([
+          dataSources.CollectionAPI.getEntity(id, "githubProcessor"),
+          dataSources.CollectionAPI.getEntity(parentEntityId, "pipeline"),
+        ]);
+        if (!target || !pipeline) return null;
+        if (inputPorts(target).length === 0) return {};
+
+        const components = await fetchPipelineComponents(pipeline, dataSources);
+        const channelOptions = await fetchChannelOptions(dataSources);
+        return connectionFormFields(
+          target,
+          pipeline,
+          components,
+          channelOptions,
+        );
+      } catch {
+        return null;
+      }
+    },
+    // The pipeline's links as directed, typed edges, each carrying the state
+    // placeholder that B3's validation replaces.
+    PipelineConnections: async (
+      _source: any,
+      { id }: any,
+      { dataSources }: any,
+    ) => {
+      return await resolvePipelineConnections(id, dataSources);
     },
     BulkOperationsRelationForm: async (
       _source: any,
