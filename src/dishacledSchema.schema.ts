@@ -63,6 +63,7 @@ export const dishacledSchema = gql`
     uuid: String!
     type: String!
     pipelineConnections: JSON
+    pipelineValidation: JSON
     teaserMetadata: teaserMetadata
     intialValues: IntialValues!
     allowedViewModes: AllowedViewModes
@@ -259,6 +260,9 @@ export const dishacledSchema = gql`
     # as producers.
     ProcessorConnectionForm(id: String!, parentEntityId: String): JSON
     PipelineConnections(id: String!): JSON
+    # Chain validation: per-connection verdicts plus the structured violation
+    # list, each entry {from, to, constraint, expected, actual, message}.
+    PipelineValidation(id: String!): JSON
     BulkOperationsRelationForm: WindowElement!
   }
 

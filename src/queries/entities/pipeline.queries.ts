@@ -29,8 +29,11 @@ export const pipelineQueries = gql`
     }
     relationValues
     # the pipeline's producer->consumer links as directed, typed edges, each
-    # carrying the state placeholder that validation (B3) fills in
+    # carrying the verdict of the last chain validation
     pipelineConnections
+    # whether every link's producer output shape is acceptable to the consumer
+    # it feeds, with the structured violation list when it is not
+    pipelineValidation
     entityView {
       column {
         size(size: seventy)
@@ -176,6 +179,13 @@ export const pipelineQueries = gql`
   # pipeline id (validation reporting, export previews).
   query GetPipelineConnections($id: String!) {
     PipelineConnections(id: $id)
+  }
+
+  # The chain-validation report for one pipeline. Callers that already hold the
+  # pipeline get it from the fullPipeline fragment; this exists for the ones
+  # that only hold an id (export previews, a validation panel refresh).
+  query GetPipelineValidation($id: String!) {
+    PipelineValidation(id: $id)
   }
 
   query GetPipelineCreateForm {

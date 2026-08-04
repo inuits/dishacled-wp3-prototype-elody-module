@@ -179,6 +179,18 @@ function buildConnectionPanels(data: any): any[] {
       inValues: [],
       value: "",
     },
+    // Why the link was judged the way it was. The collection-api writes both
+    // keys onto the hasProcessor relation on every pipeline save, so an
+    // incompatible connection states its reason right next to the producer
+    // that caused it.
+    {
+      key: `connections.${port.name}.stateMessage`,
+      label: `${port.name} validation message`,
+      inputFieldType: "text",
+      isRequired: false,
+      inValues: [],
+      value: "",
+    },
   ]);
 
   return [
@@ -359,6 +371,32 @@ async function fetchPipelineComponents(
   return components;
 }
 
+// The chain-validation report for a pipeline: whether every producer's output
+// shape is acceptable to the consumer it feeds, and the structured violation
+// list when it is not.
+//
+// It is computed by the collection-api rather than here: deciding it means
+// producing a sample under one SHACL shape and validating it against another,
+// which needs the shape graphs and a SHACL engine. This resolver is the read
+// path onto `GET /pipelines/<id>/validation`.
+async function resolvePipelineValidation(
+  pipelineId: string,
+  dataSources: any,
+): Promise<any> {
+  if (!pipelineId) return null;
+  try {
+    // `get` is protected on RESTDataSource; going through it anyway keeps the
+    // auth headers and tenant context that willSendRequest attaches, which a
+    // bare fetch would not have.
+    return await (dataSources.CollectionAPI as any).get(
+      `pipelines/${pipelineId}/validation`,
+    );
+  } catch (e) {
+    console.error("[resolvePipelineValidation] Failed:", e);
+    return null;
+  }
+}
+
 async function resolvePipelineConnections(
   pipelineId: string,
   dataSources: any,
@@ -416,6 +454,11 @@ export const dishacledResolver: Resolvers = {
       const id =
         obj?.identifiers?.[0] || obj?._id || obj?.id?.split("/").pop() || obj?.id;
       return id ? await resolvePipelineConnections(id, dataSources) : null;
+    },
+    pipelineValidation: async (obj: any, _args: any, { dataSources }: any) => {
+      const id =
+        obj?.identifiers?.[0] || obj?._id || obj?.id?.split("/").pop() || obj?.id;
+      return id ? await resolvePipelineValidation(id, dataSources) : null;
     },
   },
   Runner: {
@@ -514,6 +557,15 @@ export const dishacledResolver: Resolvers = {
       { dataSources }: any,
     ) => {
       return await resolvePipelineConnections(id, dataSources);
+    },
+    // The chain-validation report: per-connection verdicts plus the structured
+    // violation list ({from, to, constraint, expected, actual, message}).
+    PipelineValidation: async (
+      _source: any,
+      { id }: any,
+      { dataSources }: any,
+    ) => {
+      return await resolvePipelineValidation(id, dataSources);
     },
     BulkOperationsRelationForm: async (
       _source: any,

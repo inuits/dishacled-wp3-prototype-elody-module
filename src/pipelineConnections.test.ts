@@ -13,6 +13,7 @@ import {
   parsePortReference,
   producerOptionsFor,
   shapeMatch,
+  stateLabel,
 } from "./pipelineConnections";
 
 const CM_SHAPE = "https://dishacled.github.io/demo#MeasurementsInCmShape";
@@ -339,6 +340,7 @@ describe("connectionFormFields", () => {
       "connections.input.channel",
       "connections.input.from",
       "connections.input.state",
+      "connections.input.stateMessage",
     ]);
   });
 
@@ -362,6 +364,12 @@ describe("connectionFormFields", () => {
     expect(fields["connections.input.state"].inputField.disabled).toBe(true);
   });
 
+  it("shows the reason a link was rejected, also read-only", () => {
+    expect(fields["connections.input.stateMessage"].inputField.disabled).toBe(
+      true,
+    );
+  });
+
   it("offers the pipeline's channels plus a derived default", () => {
     const options = fields["connections.input.channel"].inputField.options;
     expect(options[0].value).toBe("");
@@ -370,5 +378,37 @@ describe("connectionFormFields", () => {
 
   it("returns nothing for a component with no input ports", () => {
     expect(connectionFormFields(POLLER_CM, PIPELINE, COMPONENTS)).toEqual({});
+  });
+});
+
+describe("connection verdicts", () => {
+  it("reads the state the collection-api stamped onto the relation", () => {
+    const [connection] = connectionsForPipeline(
+      pipeline([
+        processor("local--http-poller-mm"),
+        processor("local--threshold-monitor-cm", [
+          {
+            key: "connections.input.from",
+            value: "local--http-poller-mm|output",
+          },
+          { key: "connections.input.state", value: "invalid" },
+          {
+            key: "connections.input.stateMessage",
+            value: 'HTTP poller (mm) → Threshold monitor (cm): "unit" ...',
+          },
+        ]),
+      ]),
+      COMPONENTS,
+    );
+    expect(connection.state).toBe("invalid");
+    expect(connection.stateMessage).toContain("unit");
+  });
+
+  it("condenses a verdict into a label", () => {
+    expect(stateLabel("valid", "")).toBe("compatible");
+    expect(stateLabel("invalid", "unit mismatch")).toBe("unit mismatch");
+    expect(stateLabel("invalid", "")).toBe("incompatible");
+    expect(stateLabel("unknown", "")).toBe("not verifiable");
+    expect(stateLabel("unvalidated", "")).toBe("not validated yet");
   });
 });

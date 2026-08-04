@@ -22,6 +22,9 @@ export const CHANNEL_FIELD = "channel";
 export const STATE_FIELD = "state";
 export const STATE_MESSAGE_FIELD = "stateMessage";
 export const STATE_UNVALIDATED = "unvalidated";
+export const STATE_VALID = "valid";
+export const STATE_INVALID = "invalid";
+export const STATE_UNKNOWN = "unknown";
 export const PROCESSOR_RELATION = "hasProcessor";
 
 export type Port = {
@@ -324,11 +327,25 @@ export function connectionFormFields(
       },
     };
 
+    // The verdict of the last chain validation. Read-only: it is written by
+    // the collection-api whenever the pipeline is saved, so editing it here
+    // would only produce a value the next save overwrites.
     fields[`${CONNECTIONS_KEY}.${port.name}.${STATE_FIELD}`] = {
       key: `${CONNECTIONS_KEY}.${port.name}.${STATE_FIELD}`,
       label: `${port.name} validation state`,
       __typename: "PanelMetaData",
-      // placeholder until B3 writes a real verdict here
+      inputField: {
+        type: "text",
+        __typename: "InputField",
+        validation: null,
+        disabled: true,
+      },
+    };
+
+    fields[`${CONNECTIONS_KEY}.${port.name}.${STATE_MESSAGE_FIELD}`] = {
+      key: `${CONNECTIONS_KEY}.${port.name}.${STATE_MESSAGE_FIELD}`,
+      label: `${port.name} validation message`,
+      __typename: "PanelMetaData",
       inputField: {
         type: "text",
         __typename: "InputField",
@@ -339,4 +356,12 @@ export function connectionFormFields(
   }
 
   return fields;
+}
+
+// A connection's verdict, condensed for display next to the link itself.
+export function stateLabel(state: string, message: string): string {
+  if (state === STATE_VALID) return "compatible";
+  if (state === STATE_INVALID) return message || "incompatible";
+  if (state === STATE_UNKNOWN) return message || "not verifiable";
+  return "not validated yet";
 }
