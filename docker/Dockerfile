@@ -57,7 +57,13 @@ RUN if [ -f /app/inuits-dams-graphql-service/docker/setFrontendVersion.sh ]; the
       /app/inuits-dams-graphql-service/docker/setFrontendVersion.sh; \
     fi
 
-RUN pnpm i && pnpm run build
+# The dams-frontend image ships source only, so this install actually
+# resolves packages and needs the private registry like the other steps.
+RUN --mount=type=secret,id=NPM_CONFIG_REGISTRY,uid=1000 \
+    --mount=type=secret,id=NPM_CONFIG__AUTH_TOKEN,uid=1000 \
+    export NPM_CONFIG_REGISTRY=$(cat /run/secrets/NPM_CONFIG_REGISTRY) && \
+    export NPM_CONFIG__AUTH_TOKEN=$(cat /run/secrets/NPM_CONFIG__AUTH_TOKEN) && \
+    pnpm i && pnpm run build
 
 
 # --------------------------------------------------------------
