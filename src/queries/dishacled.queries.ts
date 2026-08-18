@@ -64,6 +64,9 @@ export const dishacledQueries = gql`
     ... on GithubProcessor {
       ...fullGithubProcessor
     }
+    ... on Alert {
+      ...fullAlert
+    }
   }
 
   query getEntities(
@@ -116,6 +119,9 @@ export const dishacledQueries = gql`
         }
         ... on GithubProcessor {
           ...minimalGithubProcessor
+        }
+        ... on Alert {
+          ...minimalAlert
         }
       }
     }
@@ -179,6 +185,9 @@ export const dishacledQueries = gql`
       }
       ... on GithubProcessor {
         ...filtersForGithubProcessor
+      }
+      ... on Alert {
+        ...filtersForAlert
       }
     }
   }
@@ -370,6 +379,23 @@ export const dishacledQueries = gql`
           icon
           requiresAuth
         }
+        alerts: menuItem(
+          label: "navigation.alerts"
+          entityType: alert
+          typeLink: { route: { destination: "alerts" } }
+          icon: Bell
+          requiresAuth: true
+        ) {
+          label
+          entityType
+          typeLink {
+            route {
+              destination
+            }
+          }
+          icon
+          requiresAuth
+        }
       }
     }
   }
@@ -428,6 +454,9 @@ export const dishacledQueries = gql`
       ... on GithubProcessor {
         ...githubProcessorSortOptions
       }
+      ... on Alert {
+        ...alertSortOptions
+      }
     }
   }
 
@@ -479,6 +508,9 @@ export const dishacledQueries = gql`
       }
       ... on GithubProcessor {
         ...githubProcessorBulkOperations
+      }
+      ... on Alert {
+        ...alertBulkOperations
       }
     }
   }

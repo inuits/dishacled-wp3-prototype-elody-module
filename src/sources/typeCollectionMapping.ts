@@ -7,4 +7,5 @@ export const dishacledElodyTypeCollectionMapping: {
   [Entitytyping.Runner]: Collection.Entities,
   [Entitytyping.Channel]: Collection.Entities,
   [Entitytyping.GithubProcessor]: Collection.GithubProcessors,
+  [Entitytyping.Alert]: Collection.Alerts,
 };

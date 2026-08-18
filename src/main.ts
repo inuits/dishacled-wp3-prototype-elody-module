@@ -10,6 +10,7 @@ import {
 } from "./dishacledModule";
 import start, { type ElodyModuleConfig } from "base-graphql";
 import { dishacledPermissions } from "./dishacledPermissions";
+import { applyPipelineExportEndpoint } from "./endpoints/pipelineExport";
 
 const dishacledElodyConfig: ElodyModuleConfig = {
   modules: [
@@ -24,7 +25,7 @@ start({
   customModuleConfig: dishacledElodyConfig,
   appConfig: dishacledAppConfig,
   customTranslations: dishacledTranslations,
-  customEndpoints: [],
+  customEndpoints: [applyPipelineExportEndpoint],
   customInputFields: dishacledFields,
   customTypeCollectionMapping: dishacledElodyTypeCollectionMapping,
   customPermissions: dishacledPermissions,

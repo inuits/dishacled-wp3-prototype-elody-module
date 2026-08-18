@@ -61,7 +61,16 @@
         "sources": "Bronnen",
         "targets": "Doelen",
         "follow": "Volgen",
-        "poll-interval": "Poll-interval"
+        "poll-interval": "Poll-interval",
+        "alert": {
+          "message": "Bericht",
+          "created": "Tijdstip",
+          "subject": "Bron",
+          "creator": "Gemeld door",
+          "detail": "Detail",
+          "references": "Gerelateerde bron",
+          "uuid": "Identificatie"
+        }
       }
     },
     "navigation": {
@@ -72,7 +81,8 @@
       "create-channel": "Kanaal aanmaken",
       "create-jsrunner": "JavaScript-runner aanmaken",
       "create-jvmrunner": "Java Virtual Machine-runner aanmaken",
-      "create-pyrunner": "Python-runner aanmaken"
+      "create-pyrunner": "Python-runner aanmaken",
+      "alerts": "Meldingen"
     },
     "panel-labels": {
       "processor-info": "Processorinfo",
@@ -87,7 +97,8 @@
       "mappings": "Mappings",
       "sources": "Bronnen",
       "targets": "Doelen",
-      "processor-connections": "Verbindingen"
+      "processor-connections": "Verbindingen",
+      "alert-shape": "Melding"
     },
     "window-element-labels": {
       "info-window": "Info"
@@ -104,6 +115,11 @@
       "contextMenuElodyAction": {
         "configureProcessor": "Configureren",
         "connectProcessor": "Verbinden"
+      }
+    },
+    "actions": {
+      "labels": {
+        "export-pipeline-definition": "Exporteer pipelinedefinitie"
       }
     }
   }

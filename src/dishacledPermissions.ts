@@ -47,6 +47,14 @@ export const dishacledPermissions: { [key: string]: PermissionRequestInfo } = {
     uri: `/githubProcessors`,
     body: { type: Entitytyping.GithubProcessor },
   },
+  // Alerts are served from /alerts rather than /entities, so like
+  // githubProcessors they need their own read probe.
+  "read:alert": {
+    datasource: "CollectionAPI",
+    crud: "get",
+    uri: `/alerts`,
+    body: { type: Entitytyping.Alert },
+  },
   "update:runner:has-processor": {
     datasource: "CollectionAPI",
     crud: "patch",

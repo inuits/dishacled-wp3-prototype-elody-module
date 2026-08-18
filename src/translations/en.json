@@ -74,7 +74,16 @@
         "log-label": "Label",
         "send-writer": "Writer",
         "follow": "Follow",
-        "poll-interval": "Poll interval"
+        "poll-interval": "Poll interval",
+        "alert": {
+          "message": "Message",
+          "created": "Raised at",
+          "subject": "Source",
+          "creator": "Raised by",
+          "detail": "Detail",
+          "references": "Related resource",
+          "uuid": "Identifier"
+        }
       }
     },
     "navigation": {
@@ -85,7 +94,8 @@
       "create-channel": "Create channel",
       "create-jsrunner": "Create javascript runner",
       "create-jvmrunner": "Create java virtual machine runner",
-      "create-pyrunner": "Create python runner"
+      "create-pyrunner": "Create python runner",
+      "alerts": "Alerts"
     },
     "panel-labels": {
       "repository-info": "Repository info",
@@ -96,7 +106,8 @@
       "channel-info": "Channel info",
       "runner-info": "Runner info",
       "pipeline-info": "Pipeline info",
-      "processor-connections": "Connections"
+      "processor-connections": "Connections",
+      "alert-shape": "Alert"
     },
     "window-element-labels": {
       "info-window": "Info",
@@ -114,6 +125,11 @@
       "contextMenuElodyAction": {
         "configureProcessor": "Configure",
         "connectProcessor": "Connect"
+      }
+    },
+    "actions": {
+      "labels": {
+        "export-pipeline-definition": "Export pipeline definition"
       }
     }
   }

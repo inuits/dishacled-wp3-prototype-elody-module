@@ -6,6 +6,7 @@ export const dishacledSchema = gql`
     Runners
     Channels
     Users
+    Alerts
   }
 
   enum Entitytyping {
@@ -18,6 +19,7 @@ export const dishacledSchema = gql`
     channel
     user
     tenant
+    alert
   }
 
   #  enum KeyValueSource {
@@ -29,8 +31,10 @@ export const dishacledSchema = gql`
   #  }
 
   # Extend Collection with githubProcessors for HTTP-backed GitHub discovery
+  # and alerts, which are read live from the SPARQL error graph.
   enum Collection {
     githubProcessors
+    alerts
   }
 
   enum UploadEntityTypes {
@@ -163,6 +167,30 @@ export const dishacledSchema = gql`
     processorConfig: JSON
     componentContract: JSON
     componentPorts: JSON
+  }
+
+  # Demonstrator alerts, read live from the SPARQL error graph.
+  #
+  # shapeFields carries the detail view's fields derived from lblodsh:ErrorShape
+  # with this alert's values merged in, so the view is generated from the shape
+  # rather than enumerated per field in a fragment. Same JSON-field-set pattern
+  # as processorConfig above.
+  type Alert implements Entity {
+    id: String!
+    uuid: String!
+    type: String!
+    teaserMetadata: teaserMetadata
+    intialValues: IntialValues!
+    allowedViewModes: AllowedViewModes
+    relationValues: JSON
+    entityView: ColumnList!
+    advancedFilters: AdvancedFilters
+    sortOptions: SortOptions
+    bulkOperationOptions: BulkOperationOptions
+    previewComponent: PreviewComponent
+    deleteQueryOptions: DeleteQueryOptions
+    mapElement: MapElement
+    shapeFields: JSON
   }
 
   type Channel implements Entity {

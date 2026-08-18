@@ -26,6 +26,42 @@ export const dishacledRoutes = [
         component: "SingleEntity",
         meta: {
           requiresAuth: true,
+          entityPageConfig: {
+            [Entitytyping.Alert]: {
+              hasEditMetadataButton: false,
+              deleteButton: false,
+            },
+            [Entitytyping.Pipeline]: {
+              actions: [
+                {
+                  type: "downloadZip",
+                  label: "actions.labels.export-pipeline-definition",
+                  icon: "Export",
+                  endpointUrl: "api/pipelines/$id/definition.ttl",
+                  endpointMethod: "GET",
+                },
+              ],
+            },
+          },
+        },
+      },
+      {
+        path: "alerts",
+        name: RouteNames.Alerts,
+        component: "Home",
+        meta: {
+          requiresAuth: true,
+          type: Collection.Entities,
+          entityType: Entitytyping.Alert,
+          // Alerts are read live from the SPARQL error graph, so the overview
+          // re-queries on a timer: a new threshold breach shows up without the
+          // user reloading. Opt-in per route -- no other overview polls.
+          pollIntervalMs: 15000,
+          breadcrumbs: [
+            {
+              overviewPage: RouteNames.Alerts,
+            },
+          ],
         },
       },
       {

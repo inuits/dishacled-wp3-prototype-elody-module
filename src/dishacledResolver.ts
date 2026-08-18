@@ -6,6 +6,7 @@ import {
   WindowElement,
   RelationFieldInput,
 } from "../generated-types/type-defs";
+import { resolveAlertShapeFields } from "./alertShapeFields";
 import {
   connectionFormFields,
   connectionsForPipeline,
@@ -439,6 +440,7 @@ export const dishacledResolver: Resolvers = {
       else if (type === "pyrunner") return "PyRunner";
       else if (type === "githubprocessor") return "GithubProcessor";
       else if (type === "channel") return "Channel";
+      else if (type === "alert") return "Alert";
       return "BaseEntity";
     },
   },
@@ -481,6 +483,11 @@ export const dishacledResolver: Resolvers = {
   },
   Channel: {
     ...baseSetOffResolvers,
+  },
+  Alert: {
+    ...baseSetOffResolvers,
+    shapeFields: async (parent: any, _args: any, { dataSources }: any) =>
+      await resolveAlertShapeFields(parent, dataSources),
   },
   Query: {
     // Direct fetch of a github processor's SHACL-derived config form
