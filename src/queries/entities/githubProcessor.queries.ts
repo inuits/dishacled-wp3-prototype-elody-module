@@ -6,6 +6,7 @@ export const githubProcessorQueries = gql`
     intialValues {
       ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
+      repository: keyValue(key: "repository", source: metadata)
       description: keyValue(key: "description", source: metadata)
       runtime: keyValue(key: "runtime", source: metadata, formatter: "pill|auto")
     }
@@ -73,6 +74,7 @@ export const githubProcessorQueries = gql`
   fragment fullGithubProcessor on GithubProcessor {
     intialValues {
       name: keyValue(key: "name", source: metadata)
+      repository: keyValue(key: "repository", source: metadata)
       description: keyValue(key: "description", source: metadata)
       url: keyValue(key: "url", source: metadata)
       runtime: keyValue(key: "runtime", source: metadata)
@@ -102,6 +104,10 @@ export const githubProcessorQueries = gql`
               name: metaData {
                 label(input: "metadata.labels.name")
                 key(input: "name")
+              }
+              repository: metaData {
+                label(input: "metadata.labels.repository")
+                key(input: "repository")
               }
               description: metaData {
                 label(input: "metadata.labels.description")

@@ -353,6 +353,11 @@ export const pipelineQueries = gql`
                 formQuery: "GetEntityPickerForm"
                 askForCloseConfirmation: true
                 neededPermission: canupdate
+                # a step is a *use* of a component, and one component can be
+                # used twice -- the tutorial pipeline runs two loggers, and the
+                # toolchain's own reference definition has two of two different
+                # components. Without this the second one is greyed out.
+                allowDuplicateRelations: true
               }
             }
             {

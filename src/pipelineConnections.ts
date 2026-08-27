@@ -109,6 +109,85 @@ export function processorRelations(pipeline: any): any[] {
   );
 }
 
+// A step's own identity within its pipeline, stored on the relation. It is the
+// slug the step's IRI ends in, so a pipeline read back out of the store carries
+// it already. Mirrors INSTANCE_FIELD in pipeline/connections.py.
+export const INSTANCE_FIELD = "instance";
+
+// A step's identity lives in the relation key -- `component~step` -- because
+// that is what the framework addresses a related entity by: one row per key,
+// and a config form writes back to the relation whose key it was opened on.
+// Mirrors INSTANCE_SEPARATOR in pipeline/connections.py.
+export const INSTANCE_SEPARATOR = "~";
+
+export function splitComponentKey(key: string): [string, string | null] {
+  const text = String(key ?? "");
+  const at = text.indexOf(INSTANCE_SEPARATOR);
+  if (at < 0 || at === text.length - 1) return [text, null];
+  return [text.slice(0, at), text.slice(at + 1)];
+}
+
+export type Instance = {
+  id: string;
+  key: string; // the relation key: the component, or `component~step`
+  componentId: string;
+  label: string;
+  relation: any;
+};
+
+function storedInstanceId(relation: any): string | null {
+  for (const item of relation?.metadata ?? []) {
+    if (item?.key === INSTANCE_FIELD && item?.value) return String(item.value);
+  }
+  return null;
+}
+
+function uniqueId(candidate: string, taken: Set<string>): string {
+  if (!taken.has(candidate)) {
+    taken.add(candidate);
+    return candidate;
+  }
+  let index = 2;
+  while (taken.has(`${candidate}-${index}`)) index += 1;
+  const unique = `${candidate}-${index}`;
+  taken.add(unique);
+  return unique;
+}
+
+// Every step of a pipeline, in relation order, each with an id of its own. A
+// component used twice is two steps -- which is what the tutorial's two
+// loggers are, and what the toolchain's own reference definition contains.
+export function instancesOf(
+  pipeline: any,
+  components: Record<string, any>,
+): Instance[] {
+  const taken = new Set<string>();
+  return processorRelations(pipeline).map((relation: any) => {
+    const entity = components[relation.key] ?? {};
+    const [componentId, fromKey] = splitComponentKey(relation.key);
+    const label = entityName(entity) || componentId;
+    // the key is the authority: it is what the UI addressed this step by
+    const stored = fromKey ?? storedInstanceId(relation);
+    const id = stored ?? uniqueId(slugify(label) || slugify(componentId), taken);
+    if (stored) taken.add(stored);
+    return { id, key: relation.key, componentId, label, relation };
+  });
+}
+
+// The step a stored producer reference names: by step id, or -- for pipelines
+// saved before steps had identity -- by component, which then means its first
+// step (the only one that could have been saved back then).
+export function resolveInstance(
+  reference: string | null,
+  instances: Instance[],
+): Instance | undefined {
+  if (!reference) return undefined;
+  return (
+    instances.find((instance) => instance.id === reference) ??
+    instances.find((instance) => instance.key === reference)
+  );
+}
+
 export function connectionSettings(relation: any): Record<string, any> {
   const settings = nestMetadata(relation?.metadata ?? [])[CONNECTIONS_KEY];
   if (!settings || typeof settings !== "object") return {};
@@ -118,6 +197,21 @@ export function connectionSettings(relation: any): Record<string, any> {
       value && typeof value === "object" ? value : { [SOURCE_FIELD]: value };
   }
   return normalised;
+}
+
+export function channelNameBetween(
+  source: string,
+  sourcePort: string,
+  target: string,
+  targetPort: string,
+): string {
+  return [
+    slugify(source),
+    slugify(sourcePort),
+    "to",
+    slugify(target),
+    slugify(targetPort),
+  ].join("-");
 }
 
 export function defaultChannelName(
@@ -147,7 +241,11 @@ export function shapeMatch(
 
 export type Connection = {
   id: string;
+  // the two ends are step ids; the component behind each travels alongside,
+  // because shapes are a property of the component, not of the step
   source: string;
+  sourceKey: string;
+  targetKey: string;
   sourcePort: string;
   sourceRole: string;
   sourceShape: string | null;
@@ -167,26 +265,27 @@ export function connectionsForPipeline(
   pipeline: any,
   components: Record<string, any>,
 ): Connection[] {
-  const relations = processorRelations(pipeline);
-  const available = new Set(relations.map((r: any) => r.key));
+  const instances = instancesOf(pipeline, components);
   const connections: Connection[] = [];
 
-  for (const relation of relations) {
-    const target = relation.key;
-    const targetEntity = components[target] ?? {};
+  for (const instance of instances) {
+    const target = instance.id;
+    const targetEntity = components[instance.key] ?? {};
     const targetPortsByName = new Map(
       inputPorts(targetEntity).map((p) => [p.name, p]),
     );
 
-    const allSettings = connectionSettings(relation);
+    const allSettings = connectionSettings(instance.relation);
     for (const portName of Object.keys(allSettings).sort()) {
       const settings = allSettings[portName];
-      const [source, sourcePortName] = parsePortReference(
+      const [reference, sourcePortName] = parsePortReference(
         settings?.[SOURCE_FIELD],
       );
-      if (!source || source === target || !available.has(source)) continue;
+      const sourceInstance = resolveInstance(reference, instances);
+      if (!sourceInstance || sourceInstance.id === target) continue;
+      const source = sourceInstance.id;
 
-      const sourceEntity = components[source] ?? {};
+      const sourceEntity = components[sourceInstance.key] ?? {};
       const sourcePort = outputPorts(sourceEntity).find(
         (p) => p.name === sourcePortName,
       );
@@ -198,23 +297,22 @@ export function connectionsForPipeline(
       connections.push({
         id: `${source}${PORT_SEPARATOR}${sourcePort.name}->${target}${PORT_SEPARATOR}${portName}`,
         source,
+        sourceKey: sourceInstance.key,
         sourcePort: sourcePort.name,
         sourceRole: "output",
         sourceShape: sourcePort.shapeIri ?? null,
         sourceLabel: entityName(sourceEntity),
         target,
+        targetKey: instance.key,
         targetPort: portName,
         targetRole: "input",
         targetShape: targetPort?.shapeIri ?? null,
         targetLabel: entityName(targetEntity),
         channel:
           settings?.[CHANNEL_FIELD] ||
-          defaultChannelName(
-            sourceEntity,
-            sourcePort.name,
-            targetEntity,
-            portName,
-          ),
+          // named for the two steps: a component used twice feeds two
+          // different channels, not the same one twice
+          channelNameBetween(source, sourcePort.name, target, portName),
         isShapeMatch: shapeMatch(sourcePort.shapeIri, targetPort?.shapeIri),
         state: settings?.[STATE_FIELD] || STATE_UNVALIDATED,
         stateMessage: settings?.[STATE_MESSAGE_FIELD] || "",
@@ -234,16 +332,32 @@ export function producerOptionsFor(
   targetShape: string | null,
 ): any[] {
   const options: any[] = [];
-  const seen = new Set<string>();
-  for (const relation of processorRelations(pipeline)) {
-    if (relation.key === targetId || seen.has(relation.key)) continue;
-    seen.add(relation.key);
-    const entity = components[relation.key] ?? {};
+  const instances = instancesOf(pipeline, components);
+  // a component may appear more than once; say which one when it does
+  const repeated = new Set(
+    instances
+      .filter(
+        (instance, _index, all) =>
+          all.filter((other) => other.key === instance.key).length > 1,
+      )
+      .map((instance) => instance.key),
+  );
+
+  for (const instance of instances) {
+    if (instance.id === targetId || instance.key === targetId) continue;
+    const entity = components[instance.key] ?? {};
+    const name = repeated.has(instance.key)
+      ? `${instance.label} (${instance.id})`
+      : instance.label;
     for (const port of outputPorts(entity)) {
       options.push({
-        value: port.reference,
-        label: `${entityName(entity)} → ${port.name}`,
-        component: relation.key,
+        // the step id, not the relation key: it is the same before and after
+        // a pipeline's keys are qualified, so a saved connection keeps
+        // pointing at the same step either way
+        value: `${instance.id}${PORT_SEPARATOR}${port.name}`,
+        label: `${name} → ${port.name}`,
+        instance: instance.id,
+        component: instance.key,
         componentLabel: entityName(entity),
         port: port.name,
         shapeIri: port.shapeIri ?? null,

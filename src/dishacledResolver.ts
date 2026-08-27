@@ -8,6 +8,11 @@ import {
 } from "../generated-types/type-defs";
 import { resolveAlertShapeFields } from "./alertShapeFields";
 import {
+  channelOptions,
+  formHasChannelField,
+  injectChannelOptions,
+} from "./channelOptions";
+import {
   connectionFormFields,
   connectionsForPipeline,
   inputPorts,
@@ -73,67 +78,6 @@ function buildProcessorConfig(
       },
     ],
   };
-}
-
-async function fetchChannelOptions(dataSources: any): Promise<string[]> {
-  try {
-    const result = await dataSources.CollectionAPI.GetAdvancedEntities(
-      "channel" as any,
-      100,
-      1, // 1-based page; skip is derived as limit * (page - 1)
-      [
-        {
-          type: "selection",
-          key: "type",
-          value: ["channel"],
-          match_exact: true,
-        },
-      ],
-      { value: "", isAsc: undefined, key: "", order_by: "" },
-    );
-    return (
-      result?.results?.map((c: any) => {
-        const meta = c.metadata || c.data?.metadata;
-        if (Array.isArray(meta)) {
-          return (
-            meta.find((m: any) => m.key === "name")?.value ||
-            c.identifiers?.[0] ||
-            ""
-          );
-        }
-        return meta?.name?.value || c.identifiers?.[0] || "";
-      }) ?? []
-    );
-  } catch (e) {
-    console.error("[fetchChannelOptions] Failed:", e);
-    return [];
-  }
-}
-
-// Inject live Elody channel options into the SHACL-derived form fields that
-// were marked as channel fields by the backend (form.py).
-function injectChannelOptions(formFields: any, channelOptions: string[]): any {
-  if (!formFields) return formFields;
-  const result: any = {};
-  for (const [key, field] of Object.entries<any>(formFields)) {
-    if (field?.inputField?.channelField) {
-      result[key] = {
-        ...field,
-        inputField: {
-          ...field.inputField,
-          options: channelOptions.map((c) => ({
-            icon: "NoIcon",
-            label: c,
-            value: c,
-            __typename: "DropdownOption",
-          })),
-        },
-      };
-    } else {
-      result[key] = field;
-    }
-  }
-  return result;
 }
 
 // Build the processorConfig: the existing read-only panels plus the
@@ -209,6 +153,16 @@ function hasChannelFields(properties: any[]): boolean {
   return properties.some((p: any) => isChannelField(p));
 }
 
+// The form is the better witness: it carries the nested blocks, and a channel
+// field inside one still needs the channel list. The flat property list stays
+// as a fallback for a component that has properties but no derived form.
+function needsChannelOptions(data: any): boolean {
+  return (
+    formHasChannelField(data?.formFields) ||
+    hasChannelFields(data?.properties || [])
+  );
+}
+
 async function resolveProcessorConfig(
   obj: any,
   _args: any,
@@ -216,10 +170,10 @@ async function resolveProcessorConfig(
 ): Promise<any> {
   // 1. Use inline data.properties if present (e.g., from single entity fetch)
   if (obj?.data?.properties?.length > 0) {
-    const channelOptions = hasChannelFields(obj.data.properties)
-      ? await fetchChannelOptions(dataSources)
+    const channels = needsChannelOptions(obj.data)
+      ? await channelOptions(dataSources)
       : [];
-    return buildConfig(obj.data, channelOptions);
+    return buildConfig(obj.data, channels);
   }
 
   // 2. For githubProcessor entities, fetch individually to get TTL properties.
@@ -234,10 +188,10 @@ async function resolveProcessorConfig(
         entityId,
       );
       if (fullEntity?.data?.properties?.length > 0) {
-        const channelOptions = hasChannelFields(fullEntity.data.properties)
-          ? await fetchChannelOptions(dataSources)
+        const channels = needsChannelOptions(fullEntity.data)
+          ? await channelOptions(dataSources)
           : [];
-        return buildConfig(fullEntity.data, channelOptions);
+        return buildConfig(fullEntity.data, channels);
       }
     } catch {
       // fall through to processorDefinition lookup
@@ -272,10 +226,10 @@ async function resolveProcessorConfig(
     const definition = result?.results?.[0];
     if (!definition?.data?.properties?.length) return null;
 
-    const channelOptions = hasChannelFields(definition.data.properties)
-      ? await fetchChannelOptions(dataSources)
+    const channels = hasChannelFields(definition.data.properties)
+      ? await channelOptions(dataSources)
       : [];
-    return buildConfig(definition.data, channelOptions);
+    return buildConfig(definition.data, channels);
   } catch {
     return null;
   }
@@ -502,12 +456,12 @@ export const dishacledResolver: Resolvers = {
         );
         const formFields = entity?.data?.formFields;
         if (!formFields) return null;
-        const channelOptions = hasChannelFields(
-          entity?.data?.properties || [],
-        )
-          ? await fetchChannelOptions(dataSources)
+        // asked of the form, so a processor whose only channel fields are
+        // nested (RmlMapper's rdfc:source / rdfc:defaultTarget) still gets them
+        const channels = needsChannelOptions(entity?.data)
+          ? await channelOptions(dataSources)
           : [];
-        return injectChannelOptions(formFields, channelOptions);
+        return injectChannelOptions(formFields, channels);
       } catch {
         return null;
       }
@@ -545,13 +499,8 @@ export const dishacledResolver: Resolvers = {
         if (inputPorts(target).length === 0) return {};
 
         const components = await fetchPipelineComponents(pipeline, dataSources);
-        const channelOptions = await fetchChannelOptions(dataSources);
-        return connectionFormFields(
-          target,
-          pipeline,
-          components,
-          channelOptions,
-        );
+        const channels = await channelOptions(dataSources);
+        return connectionFormFields(target, pipeline, components, channels);
       } catch {
         return null;
       }

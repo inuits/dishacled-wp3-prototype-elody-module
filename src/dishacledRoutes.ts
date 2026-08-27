@@ -33,6 +33,17 @@ export const dishacledRoutes = [
             },
             [Entitytyping.Pipeline]: {
               actions: [
+                // Two exports, and which one you want depends on what you are
+                // about to do with it. Offering only the definition sent people
+                // to `npx rdfc` with the generator's input, which loads a graph
+                // with no rdfc:Pipeline in it and starts nothing.
+                {
+                  type: "downloadZip",
+                  label: "actions.labels.export-pipeline-runnable",
+                  icon: "Export",
+                  endpointUrl: "api/pipelines/$id/export.ttl",
+                  endpointMethod: "GET",
+                },
                 {
                   type: "downloadZip",
                   label: "actions.labels.export-pipeline-definition",

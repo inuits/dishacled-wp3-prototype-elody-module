@@ -129,7 +129,8 @@
     },
     "actions": {
       "labels": {
-        "export-pipeline-definition": "Export pipeline definition"
+        "export-pipeline-runnable": "Export runnable pipeline (RDF-Connect)",
+        "export-pipeline-definition": "Export pipeline definition (toolchain)"
       }
     }
   }
