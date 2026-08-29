@@ -22,6 +22,7 @@ export const githubProcessorQueries = gql`
             ]
           }
           { viewMode: ViewModesGrid }
+          { viewMode: ViewModesPipeline }
         ]
       ) {
         ...viewModes
@@ -63,10 +64,8 @@ export const githubProcessorQueries = gql`
         key(input: "description")
         colSpan(input: "3")
       }
-      runtime: metaData {
-        label(input: "metadata.labels.runtime")
-        key(input: "runtime")
-      }
+      # no runtime on the card: in the logical model that is a build detail
+      # (the exports derive the runner from it; users never choose it)
     }
     ...minimalBaseEntity
   }

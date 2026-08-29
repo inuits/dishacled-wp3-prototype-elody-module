@@ -6,7 +6,8 @@
       "create-jsrunner": "JavaScript-runner aanmaken",
       "create-jvmrunner": "JVM-runner aanmaken",
       "create-pyrunner": "Python-runner aanmaken",
-      "existing-runner": "Bestaande runner toevoegen"
+      "existing-runner": "Bestaande runner toevoegen",
+      "add-component-guided": "Component toevoegen (begeleid)"
     },
     "entity-translations": {
       "plural": {
@@ -16,8 +17,8 @@
       }
     },
     "element-labels": {
-      "runner-element": "Runners",
-      "processor-element": "Processors"
+      "runner-element": "Runners (build-detail)",
+      "processor-element": "Componenten"
     },
     "metadata": {
       "labels": {
@@ -25,7 +26,7 @@
         "name": "Naam",
         "repository": "Repository",
         "description": "Beschrijving",
-        "processor": "Processor",
+        "processor": "Component",
         "runner": "Runner",
         "location": "Locatie",
         "file": "Bestand",
@@ -75,8 +76,8 @@
     },
     "navigation": {
       "pipelines": "Pipelines",
-      "runners": "Runners",
-      "channels": "Kanalen",
+      "runners": "Runners (build)",
+      "channels": "Channels (build)",
       "create-pipeline": "Pipeline aanmaken",
       "create-channel": "Kanaal aanmaken",
       "create-jsrunner": "JavaScript-runner aanmaken",
@@ -85,7 +86,7 @@
       "alerts": "Meldingen"
     },
     "panel-labels": {
-      "processor-info": "Processorinfo",
+      "processor-info": "Component-info",
       "channel-info": "Kanaalinfo",
       "runner-info": "Runnerinfo",
       "pipeline-info": "Pipeline-info",
@@ -105,10 +106,10 @@
     },
     "modals": {
       "configureProcessor": {
-        "title": "Processor configureren"
+        "title": "Component configureren"
       },
       "connectProcessor": {
-        "title": "Processor verbinden"
+        "title": "Component verbinden"
       }
     },
     "contextMenu": {
@@ -122,6 +123,27 @@
         "export-pipeline-runnable": "Exporteer uitvoerbare pipeline (RDF-Connect)",
         "export-pipeline-definition": "Exporteer pipelinedefinitie (toolchain)"
       }
+    },
+    "repetitiveForm": {
+      "add-component-title": "Component toevoegen",
+      "step-component": "Kies component",
+      "add-another": "Nog een component toevoegen",
+      "finish": "Afronden"
+    },
+    "pipeline": {
+      "suggested-next-step": "Voorgestelde volgende stap",
+      "add-component": "Toevoegen",
+      "empty-title": "Voeg je eerste component toe",
+      "empty-subtitle": "Suggesties komen uit de gedeelde catalogus",
+      "consumes": "Consumes",
+      "produces": "Produces",
+      "connect-input-hint": "Deze input heeft nog een verbinding nodig",
+      "legend-valid": "Geldige verbinding",
+      "legend-mismatch": "Shape mismatch",
+      "legend-suggested": "Voorgesteld",
+      "fit": "Passend",
+      "add-consumer": "Voeg een verwerker toe voor deze output",
+      "legend-connection": "Verbinding"
     }
   }
 }

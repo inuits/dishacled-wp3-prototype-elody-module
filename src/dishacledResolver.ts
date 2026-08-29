@@ -52,17 +52,19 @@ function buildProcessorConfig(
   properties: any[],
   channelOptions: string[] = [],
 ): any {
-  const fields = properties.map((p: any) => {
-    const isChannel = isChannelField(p);
-    return {
+  // Channel-typed properties (rdfc readers/writers) are wiring, not config:
+  // the Connect modal owns them, and their channel-name values only read as
+  // noise on the cards and panels. Only real config fields remain.
+  const fields = properties
+    .filter((p: any) => !isChannelField(p))
+    .map((p: any) => ({
       key: p.name,
       label: humanizeLabel(p.name),
-      inputFieldType: isChannel ? "baseSelectField" : p.inputFieldType,
+      inputFieldType: p.inputFieldType,
       isRequired: p.isRequired || false,
-      inValues: isChannel ? channelOptions : p.inValues || [],
+      inValues: p.inValues || [],
       value: "",
-    };
-  });
+    }));
 
   if (fields.length === 0) return null;
 
@@ -86,6 +88,7 @@ function buildConfig(data: any, channelOptions: string[]): any {
   const base = buildProcessorConfig(data?.properties || [], channelOptions);
   const panels = [
     ...(base?.panels || []),
+    ...buildContractPanels(data),
     ...buildConnectionPanels(data),
   ];
   const withPanels = panels.length > 0 ? { ...(base || {}), panels } : base;
@@ -103,40 +106,93 @@ function buildConfig(data: any, channelOptions: string[]): any {
 // (`connections.<port>.*`), so the PWA fills them in from the pipeline's
 // hasProcessor relation the same way it fills the config panel. The state
 // field is empty until B3's validation writes a verdict into it.
+// Read-only "Consumes/Produces" lines from the component's contract shapes
+// (Koen's request: show the contracts on the components, also while
+// searching). Values are set here — they are catalog facts, not relation
+// metadata — and shown by the same panel machinery as the config summary.
+function buildContractPanels(data: any): any[] {
+  const label = (shape: any) => {
+    if (!shape) return "";
+    if (shape.shapeLabel) return String(shape.shapeLabel);
+    const iri = String(shape.shapeIri || "");
+    if (!iri) return "";
+    return iri.includes("#") ? iri.split("#").pop()! : iri.split("/").pop()!;
+  };
+  const ports = data?.ports || [];
+  const consumes = ports
+    .filter((p: any) => p?.direction === "in")
+    .map(label)
+    .filter(Boolean);
+  const produces = ports
+    .filter((p: any) => p?.direction === "out")
+    .map(label)
+    .filter(Boolean);
+  if (consumes.length === 0 && produces.length === 0) return [];
+
+  const fields: any[] = [];
+  if (consumes.length > 0)
+    fields.push({
+      key: "contracts.consumes",
+      label: "Consumes",
+      inputFieldType: "text",
+      isRequired: false,
+      inValues: [],
+      value: [...new Set(consumes)].join(", "),
+    });
+  if (produces.length > 0)
+    fields.push({
+      key: "contracts.produces",
+      label: "Produces",
+      inputFieldType: "text",
+      isRequired: false,
+      inValues: [],
+      value: [...new Set(produces)].join(", "),
+    });
+
+  // The raw output-shape IRIs, for the "add a consumer for this output"
+  // picker scope. An empty label keeps the field out of every rendered
+  // teaser (formatTeaserMetadata drops label-less entries) while the value
+  // still lands in the enriched intialValues the pipeline view reads.
+  const producesIris = ports
+    .filter((p: any) => p?.direction === "out")
+    .map((p: any) => String(p?.shapeIri || ""))
+    .filter(Boolean);
+  if (producesIris.length > 0)
+    fields.push({
+      key: "contracts.produces.iri",
+      label: "",
+      inputFieldType: "text",
+      isRequired: false,
+      inValues: [],
+      value: [...new Set(producesIris)].join(" "),
+    });
+
+  return [
+    {
+      label: "panel-labels.processor-contracts",
+      panelType: "relationMetadata",
+      isEditable: false,
+      fields,
+    },
+  ];
+}
+
 function buildConnectionPanels(data: any): any[] {
   const inputs = (data?.ports || []).filter((p: any) => p?.direction === "in");
   if (inputs.length === 0) return [];
 
-  const fields = inputs.flatMap((port: any) => [
-    {
-      key: `connections.${port.name}.from`,
-      label: `${port.name} ← producer`,
-      inputFieldType: "text",
-      isRequired: false,
-      inValues: [],
-      value: "",
-    },
-    {
-      key: `connections.${port.name}.state`,
-      label: `${port.name} validation state`,
-      inputFieldType: "text",
-      isRequired: false,
-      inValues: [],
-      value: "",
-    },
-    // Why the link was judged the way it was. The collection-api writes both
-    // keys onto the hasProcessor relation on every pipeline save, so an
-    // incompatible connection states its reason right next to the producer
-    // that caused it.
-    {
-      key: `connections.${port.name}.stateMessage`,
-      label: `${port.name} validation message`,
-      inputFieldType: "text",
-      isRequired: false,
-      inValues: [],
-      value: "",
-    },
-  ]);
+  // One human line per input port: which component feeds it. The raw
+  // channel/state bookkeeping stays out of the cards — validation verdicts
+  // surface in the Connect modal and the pipeline validation report.
+  const fields = inputs.map((port: any) => ({
+    key: `connections.${port.name}.from`,
+    label:
+      inputs.length > 1 ? `Connected to (${port.name})` : "Connected to",
+    inputFieldType: "text",
+    isRequired: false,
+    inValues: [],
+    value: "",
+  }));
 
   return [
     {
@@ -169,7 +225,13 @@ async function resolveProcessorConfig(
   { dataSources }: any,
 ): Promise<any> {
   // 1. Use inline data.properties if present (e.g., from single entity fetch)
-  if (obj?.data?.properties?.length > 0) {
+  // A dataset-kind component has ports (its contract) but no config
+  // properties; the contract panel must still be built or the card shows no
+  // Produces chip and its output port loses the add-consumer action.
+  const hasRenderableConfig = (data: any): boolean =>
+    data?.properties?.length > 0 || data?.ports?.length > 0;
+
+  if (hasRenderableConfig(obj?.data)) {
     const channels = needsChannelOptions(obj.data)
       ? await channelOptions(dataSources)
       : [];
@@ -187,7 +249,7 @@ async function resolveProcessorConfig(
         "githubProcessor" as any,
         entityId,
       );
-      if (fullEntity?.data?.properties?.length > 0) {
+      if (hasRenderableConfig(fullEntity?.data)) {
         const channels = needsChannelOptions(fullEntity.data)
           ? await channelOptions(dataSources)
           : [];

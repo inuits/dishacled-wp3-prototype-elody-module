@@ -35,45 +35,10 @@ export const pipelineQueries = gql`
     # it feeds, with the structured violation list when it is not
     pipelineValidation
     entityView {
+      # One full-width column: the pipeline info on top, the components
+      # (with the pipeline view mode canvas) full-width below it.
       column {
-        size(size: seventy)
-        elements {
-          runners: entityListElement {
-            label(input: "element-labels.runner-element")
-            isCollapsed(input: false)
-            entityTypes(input: [jsRunner, jvmRunner, pyRunner])
-            relationType: label(input: "hasRunner")
-            customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetRelatedRunnerFilter")
-            searchInputType(input: "AdvancedInputType")
-            customBulkOperations(input: "GetRunnerOnPipelineBulkOperations")
-            customQueryEntityPickerList(
-              input: "GetEntityPickerListForRunnersInPipeline"
-            )
-            customQueryEntityPickerListFilters(
-              input: "GetEntityPickerFiltersForRunnersInPipeline"
-            )
-          }
-          processors: entityListElement {
-            label(input: "element-labels.processor-element")
-            isCollapsed(input: false)
-            entityTypes(input: [githubProcessor])
-            relationType: label(input: "hasProcessor")
-            customQuery(input: "GetEntities")
-            customQueryFilters(input: "GetRelatedProcessorFilter")
-            searchInputType(input: "AdvancedInputType")
-            customBulkOperations(input: "GetProcessorOnPipelineOperations")
-            customQueryEntityPickerList(
-              input: "GetEntityPickerListForProcessorsInPipeline"
-            )
-            customQueryEntityPickerListFilters(
-              input: "GetEntityPickerFiltersForProcessorsInPipeline"
-            )
-          }
-        }
-      }
-      column2: column {
-        size(size: thirty)
+        size(size: hundred)
         elements {
           windowElement {
             label(input: "window-element-labels.info-window")
@@ -96,6 +61,25 @@ export const pipelineQueries = gql`
                 key(input: "description")
               }
             }
+          }
+          # No runners panel: in the logical model the runner is a build
+          # detail — the exports derive it from each processor's runtime
+          # metadata (NodeRunner by default, see pipeline_ttl_serializer.py).
+          processors: entityListElement {
+            label(input: "element-labels.processor-element")
+            isCollapsed(input: false)
+            entityTypes(input: [githubProcessor])
+            relationType: label(input: "hasProcessor")
+            customQuery(input: "GetEntities")
+            customQueryFilters(input: "GetRelatedProcessorFilter")
+            searchInputType(input: "AdvancedInputType")
+            customBulkOperations(input: "GetProcessorOnPipelineOperations")
+            customQueryEntityPickerList(
+              input: "GetEntityPickerListForProcessorsInPipeline"
+            )
+            customQueryEntityPickerListFilters(
+              input: "GetEntityPickerFiltersForProcessorsInPipeline"
+            )
           }
         }
       }
@@ -333,6 +317,43 @@ export const pipelineQueries = gql`
     }
   }
 
+  # Guided add-component flow: pick a component from the catalog in a stepper
+  # and attach it to the pipeline the flow was opened from (finalizeOnHost).
+  # PoC scope: one picker step; the configure and connect steps follow once
+  # this proves out (see the guided-pipeline-composition notes).
+  query GetRepetitiveFormForComponent {
+    GetRepetitiveForm {
+      label(input: "repetitiveForm.add-component-title")
+      repeatable(input: true)
+      # deliberately NOT linear: a linear flow with finalizeOnHost commits and
+      # closes after the last step, skipping the overview with "add another"
+      refetchOnFinish(input: true)
+      component: steps {
+        key(input: "component")
+        label(input: "repetitiveForm.step-component")
+        entityType(input: "githubProcessor")
+        createForm(input: "GetPipelineCreateForm")
+        pickerQuery(input: "GetEntityPickerListForProcessorsInPipeline")
+        pickerFiltersQuery(input: "GetEntityPickerFiltersForProcessorsInPipeline")
+        acceptedTypes(input: ["githubProcessor"])
+        maxSelection(input: 1)
+        overviewFields(
+          input: [
+            { key: "name", label: "metadata.labels.name" }
+            { key: "description", label: "metadata.labels.description" }
+          ]
+        ) {
+          key
+          label
+        }
+      }
+      finalizeOnHost {
+        fromStep(input: "component")
+        relationType(input: "hasProcessor")
+      }
+    }
+  }
+
   query GetProcessorOnPipelineOperations {
     CustomBulkOperations {
       bulkOperationOptions {
@@ -353,11 +374,11 @@ export const pipelineQueries = gql`
                 formQuery: "GetEntityPickerForm"
                 askForCloseConfirmation: true
                 neededPermission: canupdate
-                # a step is a *use* of a component, and one component can be
-                # used twice -- the tutorial pipeline runs two loggers, and the
-                # toolchain's own reference definition has two of two different
-                # components. Without this the second one is greyed out.
-                allowDuplicateRelations: true
+                # components already in the pipeline are greyed out in the
+                # picker, so it reads as "already used". A component CAN be
+                # used twice in the toolchain model (two loggers in the
+                # tutorial pipeline), but that is the exception -- when it
+                # comes up, allowDuplicateRelations: true turns it back on.
               }
             }
             {
@@ -483,6 +504,17 @@ export const pipelineQueries = gql`
         type: advancedFilter(type: type) {
           type
           defaultValue(value: "githubProcessor")
+          hidden(value: true)
+        }
+        # Shape-guided suggestions: carries the pipeline id ($parentIds — the
+        # one variable the picker-filter context reliably has); the backend
+        # reads the pipeline's chain tail and keeps only the components whose
+        # input shape matches its output shape. Typing a search term lifts the
+        # filter, so incompatible components stay reachable on purpose.
+        suggestion: advancedFilter(type: selection, key: ["suggest_for_pipeline"]) {
+          type
+          key
+          defaultValue(value: "$parentIds")
           hidden(value: true)
         }
         name: advancedFilter(

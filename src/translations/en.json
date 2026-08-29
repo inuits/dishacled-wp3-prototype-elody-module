@@ -7,22 +7,23 @@
       "create-jvmrunner": "Create jvm runner",
       "create-pyrunner": "Create py runner",
       "existing-runner": "Add existing runner",
-      "add-processor": "Add processor",
+      "add-processor": "Add component",
       "generate-code": "Generate code",
-      "install-processor": "Install processor",
-      "import-from-github": "Import from GitHub"
+      "install-processor": "Install component",
+      "import-from-github": "Import from GitHub",
+      "add-component-guided": "Add component (guided)"
     },
     "entity-translations": {
       "plural": {
         "jsRunner": "Js runners",
         "jvmRunner": "Jvm runners",
         "pyRunner": "Py runners",
-        "githubProcessor": "GitHub processors"
+        "githubProcessor": "Components"
       }
     },
     "element-labels": {
-      "runner-element": "Runners",
-      "processor-element": "Processors"
+      "runner-element": "Runners (build detail)",
+      "processor-element": "Components"
     },
     "metadata": {
       "labels": {
@@ -30,7 +31,7 @@
         "name": "Name",
         "repository": "Repository",
         "description": "Description",
-        "processor": "Processor",
+        "processor": "Component",
         "runner": "Runner",
         "location": "Location",
         "file": "File",
@@ -88,8 +89,8 @@
     },
     "navigation": {
       "pipelines": "Pipelines",
-      "runners": "Runners",
-      "channels": "Channels",
+      "runners": "Runners (build)",
+      "channels": "Channels (build)",
       "create-pipeline": "Create pipeline",
       "create-channel": "Create channel",
       "create-jsrunner": "Create javascript runner",
@@ -101,8 +102,8 @@
       "repository-info": "Repository info",
       "shacl-files": "SHACL files",
       "import-configuration": "Import configuration",
-      "processor-info": "Processor info",
-      "processor-properties": "Properties",
+      "processor-info": "Component info",
+      "processor-properties": "Configuration",
       "channel-info": "Channel info",
       "runner-info": "Runner info",
       "pipeline-info": "Pipeline info",
@@ -115,10 +116,10 @@
     },
     "modals": {
       "configureProcessor": {
-        "title": "Configure processor"
+        "title": "Configure component"
       },
       "connectProcessor": {
-        "title": "Connect processor"
+        "title": "Connect component"
       }
     },
     "contextMenu": {
@@ -132,6 +133,27 @@
         "export-pipeline-runnable": "Export runnable pipeline (RDF-Connect)",
         "export-pipeline-definition": "Export pipeline definition (toolchain)"
       }
+    },
+    "repetitiveForm": {
+      "add-component-title": "Add component",
+      "step-component": "Choose component",
+      "add-another": "Add another component",
+      "finish": "Finish"
+    },
+    "pipeline": {
+      "suggested-next-step": "Suggested next step",
+      "add-component": "Add",
+      "empty-title": "Add your first component",
+      "empty-subtitle": "Suggestions come from the shared catalog",
+      "consumes": "Consumes",
+      "produces": "Produces",
+      "connect-input-hint": "This input still needs a connection",
+      "legend-valid": "Valid connection",
+      "legend-mismatch": "Shape mismatch",
+      "legend-suggested": "Suggested",
+      "fit": "Fit",
+      "add-consumer": "Add a consumer for this output",
+      "legend-connection": "Connection"
     }
   }
 }
