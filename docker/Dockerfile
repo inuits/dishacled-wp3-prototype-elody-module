@@ -23,6 +23,12 @@ RUN --mount=type=secret,id=NPM_CONFIG_REGISTRY,uid=1000 \
     export NPM_CONFIG__AUTH_TOKEN=$(cat /run/secrets/NPM_CONFIG__AUTH_TOKEN) && \
     pnpm i --force
 
+# The query documents are a build artifact of src/ui/dishacled.ui.ttl.
+# Fail the image build when a commit changed the declaration without
+# regenerating them — the schemas are collected from the files below, so a
+# stale commit would otherwise ship silently.
+RUN pnpm run generate:ui:check
+
 RUN mkdir -p /app/schemas
 RUN find /app/inuits-dams-graphql-service -type f -name "*.schema.ts" -exec cp -n {} /app/schemas \;
 RUN find /app/inuits-dams-graphql-service -type f -name "*.queries.ts" -exec cp -n {} /app/schemas \;
