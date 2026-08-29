@@ -1,22 +1,16 @@
+// GENERATED from src/ui/dishacled.ui.ttl — do not edit by hand.
+// `pnpm run generate:ui` re-renders this file; the triples are the source.
 import { gql } from "graphql-modules";
 
-// Demonstrator alerts (oslc:Error), read live from the SPARQL error graph.
-//
-// The detail view deliberately does NOT enumerate fields: `shapeFields` carries
-// the field set derived from lblodsh:ErrorShape with this alert's values merged
-// in, and `shaclShapeElement` renders it. Adding a property to the shape makes
-// it appear here with no change to this file -- that is the point of A2.
 export const alertQueries = gql`
   fragment minimalAlert on Alert {
     intialValues {
-      # >>> generated:alert-initial-values from src/ui/dishacled.ui.ttl — do not edit by hand
       message: keyValue(key: "message", source: metadata)
       created: keyValue(key: "created", source: metadata)
       subject: keyValue(key: "subject", source: metadata)
-      # <<< generated:alert-initial-values
+      uuid: keyValue(key: "uuid", source: metadata)
     }
     relationValues
-    # >>> generated:alert-view-modes from src/ui/dishacled.ui.ttl — do not edit by hand
     allowedViewModes {
       viewModes(
         input: [
@@ -26,9 +20,7 @@ export const alertQueries = gql`
         ...viewModes
       }
     }
-    # <<< generated:alert-view-modes
     teaserMetadata {
-      # >>> generated:alert-teaser-fields from src/ui/dishacled.ui.ttl — do not edit by hand
       message: metaData {
         label(input: "metadata.labels.alert.message")
         key(input: "message")
@@ -43,18 +35,16 @@ export const alertQueries = gql`
         label(input: "metadata.labels.alert.subject")
         key(input: "subject")
       }
-      # <<< generated:alert-teaser-fields
     }
     ...minimalBaseEntity
   }
 
   fragment fullAlert on Alert {
     shapeFields
-    # Entity scaffolding, not the form: EntitySingle refuses to render an entity
-    # without intialValues, and the breadcrumb needs something to title the page.
-    # The fields on the page still come entirely from shapeFields.
     intialValues {
       message: keyValue(key: "message", source: metadata)
+      created: keyValue(key: "created", source: metadata)
+      subject: keyValue(key: "subject", source: metadata)
       uuid: keyValue(key: "uuid", source: metadata)
     }
     relationValues
@@ -73,7 +63,6 @@ export const alertQueries = gql`
   }
 
   fragment alertSortOptions on Alert {
-    # >>> generated:alert-sort-options from src/ui/dishacled.ui.ttl — do not edit by hand
     sortOptions {
       options(
         input: [
@@ -90,7 +79,6 @@ export const alertQueries = gql`
       }
       isAsc(input: desc)
     }
-    # <<< generated:alert-sort-options
   }
 
   fragment filtersForAlert on Alert {
@@ -151,5 +139,4 @@ export const alertQueries = gql`
       }
     }
   }
-
 `;

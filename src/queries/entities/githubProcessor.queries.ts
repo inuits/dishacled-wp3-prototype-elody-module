@@ -1,3 +1,5 @@
+// GENERATED from src/ui/dishacled.ui.ttl — do not edit by hand.
+// `pnpm run generate:ui` re-renders this file; the triples are the source.
 import { gql } from "graphql-modules";
 
 export const githubProcessorQueries = gql`
@@ -5,15 +7,18 @@ export const githubProcessorQueries = gql`
     processorConfig
     intialValues {
       ...typePillsIntialValues
-      # >>> generated:component-initial-values from src/ui/dishacled.ui.ttl — do not edit by hand
       name: keyValue(key: "name", source: metadata)
       description: keyValue(key: "description", source: metadata)
       repository: keyValue(key: "repository", source: metadata)
       runtime: keyValue(key: "runtime", source: metadata, formatter: "pill|auto")
-      # <<< generated:component-initial-values
+      url: keyValue(key: "url", source: metadata)
+      owner: keyValue(key: "owner", source: metadata)
+      language: keyValue(key: "language", source: metadata)
+      stars: keyValue(key: "stars", source: metadata)
+      defaultBranch: keyValue(key: "defaultBranch", source: metadata)
+      shaclFiles: keyValue(key: "shaclFiles", source: metadata)
     }
     relationValues
-    # >>> generated:component-view-modes from src/ui/dishacled.ui.ttl — do not edit by hand
     allowedViewModes {
       viewModes(
         input: [
@@ -31,7 +36,6 @@ export const githubProcessorQueries = gql`
         ...viewModes
       }
     }
-    # <<< generated:component-view-modes
     teaserMetadata {
       ...typePillsTeaserMetadata
       forceShowContextMenuActions(input: true)
@@ -42,9 +46,7 @@ export const githubProcessorQueries = gql`
           formQuery(input: "ProcessorRelationConfig")
           formFlow(input: Update)
           formTitle(input: "modals.configureProcessor.title")
-          label(
-            input: "contextMenu.contextMenuElodyAction.configureProcessor"
-          )
+          label(input: "contextMenu.contextMenuElodyAction.configureProcessor")
           icon(input: "Settings")
           __typename
         }
@@ -58,9 +60,6 @@ export const githubProcessorQueries = gql`
           __typename
         }
       }
-      # no runtime on the card: in the logical model that is a build detail
-      # (the exports derive the runner from it; users never choose it)
-      # >>> generated:component-teaser-fields from src/ui/dishacled.ui.ttl — do not edit by hand
       name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
@@ -71,7 +70,6 @@ export const githubProcessorQueries = gql`
         key(input: "description")
         colSpan(input: "3")
       }
-      # <<< generated:component-teaser-fields
     }
     ...minimalBaseEntity
   }
@@ -79,14 +77,14 @@ export const githubProcessorQueries = gql`
   fragment fullGithubProcessor on GithubProcessor {
     intialValues {
       name: keyValue(key: "name", source: metadata)
-      repository: keyValue(key: "repository", source: metadata)
       description: keyValue(key: "description", source: metadata)
-      url: keyValue(key: "url", source: metadata)
+      repository: keyValue(key: "repository", source: metadata)
       runtime: keyValue(key: "runtime", source: metadata)
-      defaultBranch: keyValue(key: "defaultBranch", source: metadata)
+      url: keyValue(key: "url", source: metadata)
       owner: keyValue(key: "owner", source: metadata)
-      stars: keyValue(key: "stars", source: metadata)
       language: keyValue(key: "language", source: metadata)
+      stars: keyValue(key: "stars", source: metadata)
+      defaultBranch: keyValue(key: "defaultBranch", source: metadata)
       shaclFiles: keyValue(key: "shaclFiles", source: metadata)
     }
     relationValues
@@ -181,7 +179,6 @@ export const githubProcessorQueries = gql`
   }
 
   fragment githubProcessorSortOptions on GithubProcessor {
-    # >>> generated:component-sort-options from src/ui/dishacled.ui.ttl — do not edit by hand
     sortOptions {
       options(
         input: [
@@ -197,7 +194,6 @@ export const githubProcessorQueries = gql`
         value
       }
     }
-    # <<< generated:component-sort-options
   }
 
   fragment filtersForGithubProcessor on GithubProcessor {
@@ -295,19 +291,16 @@ export const githubProcessorQueries = gql`
     }
   }
 
-  # Field-source query for the generic relation-config modal. Referenced by name
-  # via the configure action's formQuery input ("ProcessorRelationConfig") and
-  # resolved at runtime by useImport().loadDocument. Returns the SHACL-derived,
-  # channel-injected field set for the given processor id.
+  # Field-source document for a runtime SHACL form: the modal asks for
+  # it by name (loadDocument), the resolver answers with the
+  # shape-derived form definition.
   query ProcessorRelationConfig($id: String!) {
     ProcessorConfigForm(id: $id)
   }
 
-  # Field-source query for the connect modal, referenced by name via the
-  # connect action's formQuery input ("ProcessorConnectionsConfig"). Takes the
-  # component id and the pipeline it sits in, and returns one producer
-  # dropdown per input port. Saved onto the same hasProcessor relation the
-  # config modal writes to, under dotted connections.<port>.* keys.
+  # Field-source document for a runtime SHACL form: the modal asks for
+  # it by name (loadDocument), the resolver answers with the
+  # shape-derived form definition.
   query ProcessorConnectionsConfig($id: String!, $parentEntityId: String) {
     ProcessorConnectionForm(id: $id, parentEntityId: $parentEntityId)
   }

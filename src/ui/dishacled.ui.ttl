@@ -1,19 +1,21 @@
 # The declarative UI of the DiSHACLed entity types, as triples.
 #
-# This file is the SOURCE for the declarative (data-shaped) parts of the
-# GraphQL query documents: which fields a card shows, in which view modes a
-# listing renders, and what a listing sorts on. `generateUiQueries.ts` reads
-# it and writes those sections into the *.queries.ts files between
-# `>>> generated:` markers — the GraphQL becomes a build artifact of this
-# declaration, the same way a processor's config form is already a runtime
-# artifact of its SHACL shape.
+# This file is the SOURCE for the UI declaration of the DiSHACLed entity
+# types. `generateUiQueries.ts` reads it and emits the GraphQL query
+# documents: for alert and component it writes the WHOLE file (someone
+# configuring this instance touches only these triples), for pipeline it
+# still fills marked regions inside a hand-written file. The GraphQL is a
+# build artifact of this declaration, the same way a processor's config form
+# is already a runtime artifact of its SHACL shape.
 #
 # Vocabulary: SHACL property shapes carry what SHACL can say (path, name,
-# order); DASH property roles say what a field *is* on a card (dash:LabelRole
-# = the title); the small elody: vocabulary covers what is platform
-# presentation and nothing else (view modes, column span, value formatting,
-# sortability). Behaviour — context menus, bulk operations, filters, pickers
-# — deliberately stays in code: SHACL describes data, not actions.
+# order); DASH property roles say what a field *is* on a card
+# (dash:LabelRole = the title); the small elody: vocabulary covers what is
+# platform presentation and nothing else — view modes, columns and panels,
+# filters, sort, and *references* to platform behaviour (an action's type,
+# form query and icon are parameters; the behaviour itself lives in the
+# platform). Developing new kinds of building blocks stays GraphQL/code;
+# choosing and arranging them is this file.
 
 @prefix sh:    <http://www.w3.org/ns/shacl#> .
 @prefix dash:  <http://datashapes.org/dash#> .
@@ -23,9 +25,17 @@
 @prefix ui:    <https://dishacled.github.io/demo/ui#> .
 
 # ---------------------------------------------------------------- alerts ---
+# Demonstrator alerts (oslc:Error), read live from the SPARQL error graph.
+# The detail view deliberately does NOT enumerate fields: `shapeFields`
+# carries the field set derived from lblodsh:ErrorShape with this alert's
+# values merged in, and the shaclShapeElement renders it. Adding a property
+# to the shape makes it appear there with no change to this declaration —
+# that is the point of A2.
 
 ui:AlertUi a elody:EntityUi ;
   elody:graphqlType "Alert" ;
+  elody:emit "file" ;
+  elody:documents "entities" ;
   elody:viewMode [ elody:mode "ViewModesList" ; sh:order 1 ] ;
   sh:property
     [ sh:path em:message ; sh:name "message" ;
@@ -36,12 +46,31 @@ ui:AlertUi a elody:EntityUi ;
       elody:unit "DATETIME_DMY24" ;
       elody:sortable true ; elody:defaultSortDirection "desc" ] ,
     [ sh:path em:subject ; sh:name "subject" ;
-      rdfs:label "metadata.labels.alert.subject" ; sh:order 3 ] .
+      rdfs:label "metadata.labels.alert.subject" ; sh:order 3 ] ,
+    [ sh:path em:uuid ; sh:name "uuid" ; sh:order 4 ; elody:teaser false ] ;
+  elody:filter
+    [ elody:alias "type" ; elody:filterKind "type" ; sh:order 1 ;
+      elody:defaultValue "alert" ; elody:hidden true ] ;
+  elody:detail [
+    elody:shapeDriven true ;
+    elody:column [
+      sh:order 1 ; elody:size "hundred" ;
+      elody:element [
+        a elody:ShaclShapeElement ; sh:order 1 ;
+        rdfs:label "panel-labels.alert-shape" ;
+        elody:fieldsKey "shapeFields" ;
+        elody:collapsed false ]
+    ]
+  ] .
 
 # ------------------------------------------------------------ components ---
 
 ui:ComponentUi a elody:EntityUi ;
   elody:graphqlType "GithubProcessor" ;
+  elody:emit "file" ;
+  elody:documents "entities", "filters", "sortOptions", "bulkOperations" ;
+  elody:typePills true ;
+  elody:processorConfig true ;
   elody:viewMode
     [ elody:mode "ViewModesList" ; sh:order 1 ;
       elody:config [ elody:key "multiLine" ; elody:value true ] ,
@@ -56,17 +85,105 @@ ui:ComponentUi a elody:EntityUi ;
     [ sh:path em:description ; sh:name "description" ;
       rdfs:label "metadata.labels.description" ; sh:order 2 ;
       dash:propertyRole dash:DescriptionRole ; elody:colSpan 3 ] ,
-    # values the detail page and the exports read; not on the card — the
-    # runtime deliberately so (in the logical model it is a build detail)
-    [ sh:path em:repository ; sh:name "repository" ; sh:order 3 ;
+    [ sh:path em:repository ; sh:name "repository" ;
+      rdfs:label "metadata.labels.repository" ; sh:order 3 ;
       elody:teaser false ] ,
-    [ sh:path em:runtime ; sh:name "runtime" ; sh:order 4 ;
-      elody:teaser false ; elody:formatter "pill|auto" ] .
+    # no runtime on the card: in the logical model that is a build detail
+    # (the exports derive the runner from it; users never choose it)
+    [ sh:path em:runtime ; sh:name "runtime" ;
+      rdfs:label "metadata.labels.runtime" ; sh:order 4 ;
+      elody:teaser false ; elody:formatter "pill|auto" ] ,
+    [ sh:path em:url ; sh:name "url" ;
+      rdfs:label "metadata.labels.url" ; sh:order 5 ; elody:teaser false ] ,
+    [ sh:path em:owner ; sh:name "owner" ;
+      rdfs:label "metadata.labels.owner" ; sh:order 6 ; elody:teaser false ] ,
+    [ sh:path em:language ; sh:name "language" ;
+      rdfs:label "metadata.labels.language" ; sh:order 7 ; elody:teaser false ] ,
+    [ sh:path em:stars ; sh:name "stars" ;
+      rdfs:label "metadata.labels.stars" ; sh:order 8 ; elody:teaser false ] ,
+    [ sh:path em:defaultBranch ; sh:name "defaultBranch" ;
+      rdfs:label "metadata.labels.default-branch" ; sh:order 9 ;
+      elody:teaser false ] ,
+    [ sh:path em:shaclFiles ; sh:name "shaclFiles" ;
+      rdfs:label "metadata.labels.shacl-files" ; sh:order 10 ;
+      elody:teaser false ] ;
+  elody:filter
+    [ elody:alias "type" ; elody:filterKind "type" ; sh:order 1 ;
+      elody:defaultValue "githubProcessor" ; elody:hidden true ] ,
+    [ elody:alias "name" ; elody:filterKind "text" ; sh:order 2 ;
+      elody:key "elody:1|metadata.name.value" ;
+      rdfs:label "metadata.labels.name" ;
+      elody:displayedByDefault true ; elody:tooltip true ] ;
+  # action *parameters*: which platform action, opening which form, with
+  # which label and icon — the behaviour they reference lives in the platform
+  elody:contextMenu [
+    elody:forceShow true ;
+    elody:includeBasicActions true ;
+    elody:action
+      [ elody:alias "configure" ; sh:order 1 ;
+        elody:actionType "UpdateMetadata" ;
+        elody:formQuery "ProcessorRelationConfig" ;
+        elody:formFlow "Update" ;
+        elody:formTitle "modals.configureProcessor.title" ;
+        rdfs:label "contextMenu.contextMenuElodyAction.configureProcessor" ;
+        elody:icon "Settings" ] ,
+      [ elody:alias "connect" ; sh:order 2 ;
+        elody:actionType "UpdateMetadata" ;
+        elody:formQuery "ProcessorConnectionsConfig" ;
+        elody:formFlow "Update" ;
+        elody:formTitle "modals.connectProcessor.title" ;
+        rdfs:label "contextMenu.contextMenuElodyAction.connectProcessor" ;
+        elody:icon "Link" ]
+  ] ;
+  elody:detail [
+    elody:column [
+      sh:order 1 ; elody:size "seventy" ;
+      elody:element [
+        a elody:WindowElement ; sh:order 1 ;
+        rdfs:label "window-element-labels.info-window" ;
+        elody:expandButton true ;
+        elody:panel
+          [ elody:alias "repoInfo" ; sh:order 1 ;
+            rdfs:label "panel-labels.repository-info" ;
+            elody:panelType "metadata" ;
+            elody:collapsed false ; elody:editable false ;
+            elody:field "name", "repository", "description", "url", "owner",
+                        "language", "stars", "defaultBranch" ] ,
+          [ elody:alias "shaclInfo" ; sh:order 2 ;
+            rdfs:label "panel-labels.shacl-files" ;
+            elody:panelType "metadata" ;
+            elody:collapsed false ; elody:editable false ;
+            elody:field "shaclFiles" ]
+      ]
+    ] ,
+    [
+      sh:order 2 ; elody:size "thirty" ;
+      elody:element [
+        a elody:WindowElement ; sh:order 1 ;
+        rdfs:label "window-element-labels.import-config" ;
+        elody:expandButton true ;
+        elody:panel [
+          elody:alias "importConfig" ; sh:order 1 ;
+          rdfs:label "panel-labels.import-configuration" ;
+          elody:panelType "metadata" ;
+          elody:collapsed false ; elody:editable false ;
+          elody:field "runtime" ]
+      ]
+    ]
+  ] ;
+  # field-source documents for the runtime SHACL forms: the modal asks for
+  # them by name, the resolver answers with the shape-derived form
+  elody:formSource
+    [ elody:queryName "ProcessorRelationConfig" ;
+      elody:field "ProcessorConfigForm" ] ,
+    [ elody:queryName "ProcessorConnectionsConfig" ;
+      elody:field "ProcessorConnectionForm" ; elody:withParent true ] .
 
 # -------------------------------------------------------------- pipelines ---
 
 ui:PipelineUi a elody:EntityUi ;
   elody:graphqlType "Pipeline" ;
+  elody:emit "regions" ;
   elody:viewMode
     [ elody:mode "ViewModesList" ; sh:order 1 ] ,
     [ elody:mode "ViewModesGrid" ; sh:order 2 ] ;
