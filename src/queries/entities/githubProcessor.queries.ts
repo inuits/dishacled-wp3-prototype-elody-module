@@ -5,12 +5,15 @@ export const githubProcessorQueries = gql`
     processorConfig
     intialValues {
       ...typePillsIntialValues
+      # >>> generated:component-initial-values from src/ui/dishacled.ui.ttl — do not edit by hand
       name: keyValue(key: "name", source: metadata)
-      repository: keyValue(key: "repository", source: metadata)
       description: keyValue(key: "description", source: metadata)
+      repository: keyValue(key: "repository", source: metadata)
       runtime: keyValue(key: "runtime", source: metadata, formatter: "pill|auto")
+      # <<< generated:component-initial-values
     }
     relationValues
+    # >>> generated:component-view-modes from src/ui/dishacled.ui.ttl — do not edit by hand
     allowedViewModes {
       viewModes(
         input: [
@@ -28,6 +31,7 @@ export const githubProcessorQueries = gql`
         ...viewModes
       }
     }
+    # <<< generated:component-view-modes
     teaserMetadata {
       ...typePillsTeaserMetadata
       forceShowContextMenuActions(input: true)
@@ -54,6 +58,9 @@ export const githubProcessorQueries = gql`
           __typename
         }
       }
+      # no runtime on the card: in the logical model that is a build detail
+      # (the exports derive the runner from it; users never choose it)
+      # >>> generated:component-teaser-fields from src/ui/dishacled.ui.ttl — do not edit by hand
       name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
@@ -64,8 +71,7 @@ export const githubProcessorQueries = gql`
         key(input: "description")
         colSpan(input: "3")
       }
-      # no runtime on the card: in the logical model that is a build detail
-      # (the exports derive the runner from it; users never choose it)
+      # <<< generated:component-teaser-fields
     }
     ...minimalBaseEntity
   }
@@ -175,15 +181,23 @@ export const githubProcessorQueries = gql`
   }
 
   fragment githubProcessorSortOptions on GithubProcessor {
+    # >>> generated:component-sort-options from src/ui/dishacled.ui.ttl — do not edit by hand
     sortOptions {
       options(
-        input: [{ icon: NoIcon, label: "metadata.labels.name", value: "name" }]
+        input: [
+          {
+            icon: NoIcon
+            label: "metadata.labels.name"
+            value: "name"
+          }
+        ]
       ) {
         icon
         label
         value
       }
     }
+    # <<< generated:component-sort-options
   }
 
   fragment filtersForGithubProcessor on GithubProcessor {

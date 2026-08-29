@@ -9,17 +9,26 @@ import { gql } from "graphql-modules";
 export const alertQueries = gql`
   fragment minimalAlert on Alert {
     intialValues {
+      # >>> generated:alert-initial-values from src/ui/dishacled.ui.ttl — do not edit by hand
       message: keyValue(key: "message", source: metadata)
       created: keyValue(key: "created", source: metadata)
       subject: keyValue(key: "subject", source: metadata)
+      # <<< generated:alert-initial-values
     }
     relationValues
+    # >>> generated:alert-view-modes from src/ui/dishacled.ui.ttl — do not edit by hand
     allowedViewModes {
-      viewModes(input: [{ viewMode: ViewModesList }]) {
+      viewModes(
+        input: [
+          { viewMode: ViewModesList }
+        ]
+      ) {
         ...viewModes
       }
     }
+    # <<< generated:alert-view-modes
     teaserMetadata {
+      # >>> generated:alert-teaser-fields from src/ui/dishacled.ui.ttl — do not edit by hand
       message: metaData {
         label(input: "metadata.labels.alert.message")
         key(input: "message")
@@ -34,6 +43,7 @@ export const alertQueries = gql`
         label(input: "metadata.labels.alert.subject")
         key(input: "subject")
       }
+      # <<< generated:alert-teaser-fields
     }
     ...minimalBaseEntity
   }
@@ -63,6 +73,7 @@ export const alertQueries = gql`
   }
 
   fragment alertSortOptions on Alert {
+    # >>> generated:alert-sort-options from src/ui/dishacled.ui.ttl — do not edit by hand
     sortOptions {
       options(
         input: [
@@ -79,6 +90,7 @@ export const alertQueries = gql`
       }
       isAsc(input: desc)
     }
+    # <<< generated:alert-sort-options
   }
 
   fragment filtersForAlert on Alert {

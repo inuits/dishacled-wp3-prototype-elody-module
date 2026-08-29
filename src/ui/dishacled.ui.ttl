@@ -1,0 +1,77 @@
+# The declarative UI of the DiSHACLed entity types, as triples.
+#
+# This file is the SOURCE for the declarative (data-shaped) parts of the
+# GraphQL query documents: which fields a card shows, in which view modes a
+# listing renders, and what a listing sorts on. `generateUiQueries.ts` reads
+# it and writes those sections into the *.queries.ts files between
+# `>>> generated:` markers — the GraphQL becomes a build artifact of this
+# declaration, the same way a processor's config form is already a runtime
+# artifact of its SHACL shape.
+#
+# Vocabulary: SHACL property shapes carry what SHACL can say (path, name,
+# order); DASH property roles say what a field *is* on a card (dash:LabelRole
+# = the title); the small elody: vocabulary covers what is platform
+# presentation and nothing else (view modes, column span, value formatting,
+# sortability). Behaviour — context menus, bulk operations, filters, pickers
+# — deliberately stays in code: SHACL describes data, not actions.
+
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix dash:  <http://datashapes.org/dash#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix elody: <https://elody.io/ns/ui#> .
+@prefix em:    <https://elody.io/ns/metadata#> .
+@prefix ui:    <https://dishacled.github.io/demo/ui#> .
+
+# ---------------------------------------------------------------- alerts ---
+
+ui:AlertUi a elody:EntityUi ;
+  elody:graphqlType "Alert" ;
+  elody:viewMode [ elody:mode "ViewModesList" ; sh:order 1 ] ;
+  sh:property
+    [ sh:path em:message ; sh:name "message" ;
+      rdfs:label "metadata.labels.alert.message" ; sh:order 1 ;
+      dash:propertyRole dash:LabelRole ; elody:colSpan 2 ] ,
+    [ sh:path em:created ; sh:name "created" ;
+      rdfs:label "metadata.labels.alert.created" ; sh:order 2 ;
+      elody:unit "DATETIME_DMY24" ;
+      elody:sortable true ; elody:defaultSortDirection "desc" ] ,
+    [ sh:path em:subject ; sh:name "subject" ;
+      rdfs:label "metadata.labels.alert.subject" ; sh:order 3 ] .
+
+# ------------------------------------------------------------ components ---
+
+ui:ComponentUi a elody:EntityUi ;
+  elody:graphqlType "GithubProcessor" ;
+  elody:viewMode
+    [ elody:mode "ViewModesList" ; sh:order 1 ;
+      elody:config [ elody:key "multiLine" ; elody:value true ] ,
+                   [ elody:key "multiLineColumns" ; elody:value 3 ] ] ,
+    [ elody:mode "ViewModesGrid" ; sh:order 2 ] ,
+    [ elody:mode "ViewModesPipeline" ; sh:order 3 ] ;
+  sh:property
+    [ sh:path em:name ; sh:name "name" ;
+      rdfs:label "metadata.labels.name" ; sh:order 1 ;
+      dash:propertyRole dash:LabelRole ; elody:colSpan 2 ;
+      elody:sortable true ] ,
+    [ sh:path em:description ; sh:name "description" ;
+      rdfs:label "metadata.labels.description" ; sh:order 2 ;
+      dash:propertyRole dash:DescriptionRole ; elody:colSpan 3 ] ,
+    # values the detail page and the exports read; not on the card — the
+    # runtime deliberately so (in the logical model it is a build detail)
+    [ sh:path em:repository ; sh:name "repository" ; sh:order 3 ;
+      elody:teaser false ] ,
+    [ sh:path em:runtime ; sh:name "runtime" ; sh:order 4 ;
+      elody:teaser false ; elody:formatter "pill|auto" ] .
+
+# -------------------------------------------------------------- pipelines ---
+
+ui:PipelineUi a elody:EntityUi ;
+  elody:graphqlType "Pipeline" ;
+  elody:viewMode
+    [ elody:mode "ViewModesList" ; sh:order 1 ] ,
+    [ elody:mode "ViewModesGrid" ; sh:order 2 ] ;
+  sh:property
+    [ sh:path em:name ; sh:name "name" ;
+      rdfs:label "metadata.labels.name" ; sh:order 1 ;
+      dash:propertyRole dash:LabelRole ;
+      elody:sortable true ] .

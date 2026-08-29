@@ -3,21 +3,30 @@ import { gql } from "graphql-modules";
 export const pipelineQueries = gql`
   fragment minimalPipeline on Pipeline {
     intialValues {
+      # >>> generated:pipeline-initial-values from src/ui/dishacled.ui.ttl — do not edit by hand
       name: keyValue(key: "name", source: metadata)
+      # <<< generated:pipeline-initial-values
     }
     relationValues
+    # >>> generated:pipeline-view-modes from src/ui/dishacled.ui.ttl — do not edit by hand
     allowedViewModes {
       viewModes(
-        input: [{ viewMode: ViewModesList }, { viewMode: ViewModesGrid }]
+        input: [
+          { viewMode: ViewModesList }
+          { viewMode: ViewModesGrid }
+        ]
       ) {
         ...viewModes
       }
     }
+    # <<< generated:pipeline-view-modes
     teaserMetadata {
+      # >>> generated:pipeline-teaser-fields from src/ui/dishacled.ui.ttl — do not edit by hand
       name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
       }
+      # <<< generated:pipeline-teaser-fields
     }
     ...minimalBaseEntity
   }
@@ -87,15 +96,23 @@ export const pipelineQueries = gql`
   }
 
   fragment pipelineSortOptions on Pipeline {
+    # >>> generated:pipeline-sort-options from src/ui/dishacled.ui.ttl — do not edit by hand
     sortOptions {
       options(
-        input: [{ icon: NoIcon, label: "metadata.labels.name", value: "name" }]
+        input: [
+          {
+            icon: NoIcon
+            label: "metadata.labels.name"
+            value: "name"
+          }
+        ]
       ) {
         icon
         label
         value
       }
     }
+    # <<< generated:pipeline-sort-options
   }
 
   fragment filtersForPipeline on Pipeline {
