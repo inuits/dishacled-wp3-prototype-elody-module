@@ -9,13 +9,17 @@ export const processorQueries = gql`
           defaultValue(value: "githubProcessor")
           hidden(value: true)
         }
+        # Server-side "components of this pipeline": the store reads the
+        # pipeline's hasProcessor relations itself. Filtering on the client's
+        # cached relationValues made a freshly added component vanish from the
+        # panel until the parent entity was refetched.
         relation: advancedFilter(
           type: selection
-          key: ["elody:1|identifiers"]
+          key: ["related_to_pipeline"]
         ) {
           type
           key
-          defaultValue(value: "$entity.relationValues.hasProcessor.key")
+          defaultValue(value: "$parentIds")
           hidden(value: true)
         }
       }

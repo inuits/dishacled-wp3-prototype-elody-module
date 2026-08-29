@@ -1,6 +1,30 @@
 import { gql } from "graphql-modules";
 
 export const runnerQueries = gql`
+  # Restricts the pipeline detail's runners panel to the runners this pipeline
+  # actually holds a hasRunner relation to — without it the panel lists every
+  # runner in the database (same pattern as GetRelatedProcessorFilter).
+  query GetRelatedRunnerFilter($entityType: String!) {
+    EntityTypeFilters(type: $entityType) {
+      advancedFilters {
+        type: advancedFilter(type: type) {
+          type
+          defaultValue(value: ["jsRunner", "jvmRunner", "pyRunner"])
+          hidden(value: true)
+        }
+        relation: advancedFilter(
+          type: selection
+          key: ["elody:1|identifiers"]
+        ) {
+          type
+          key
+          defaultValue(value: "$entity.relationValues.hasRunner.key")
+          hidden(value: true)
+        }
+      }
+    }
+  }
+
   fragment minimalRunner on Runner {
     intialValues {
       name: keyValue(key: "name", source: metadata)

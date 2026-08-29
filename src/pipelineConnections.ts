@@ -199,34 +199,26 @@ export function connectionSettings(relation: any): Record<string, any> {
   return normalised;
 }
 
+// One channel per producer port (mirrors channel_name_between on the
+// collection side): every consumer of a port reads the same channel, which is
+// what lets one output fan out to several components. Consumer arguments stay
+// for signature compatibility and are deliberately not part of the name.
 export function channelNameBetween(
   source: string,
   sourcePort: string,
-  target: string,
-  targetPort: string,
+  _target: string,
+  _targetPort: string,
 ): string {
-  return [
-    slugify(source),
-    slugify(sourcePort),
-    "to",
-    slugify(target),
-    slugify(targetPort),
-  ].join("-");
+  return [slugify(source), slugify(sourcePort), "channel"].join("-");
 }
 
 export function defaultChannelName(
   sourceEntity: any,
   sourcePort: string,
-  targetEntity: any,
-  targetPort: string,
+  _targetEntity: any,
+  _targetPort: string,
 ): string {
-  return [
-    slugify(entityName(sourceEntity)),
-    slugify(sourcePort),
-    "to",
-    slugify(entityName(targetEntity)),
-    slugify(targetPort),
-  ].join("-");
+  return [slugify(entityName(sourceEntity)), slugify(sourcePort), "channel"].join("-");
 }
 
 // True/false only when both shapes are known. An untyped processor must not be
@@ -369,6 +361,14 @@ export function producerOptionsFor(
   return options;
 }
 
+// match(0) → unannotated(1) → mismatch(2); keeps guidance visible without
+// hiding anything — an incompatible producer is still selectable.
+function shapeMatchRank(isShapeMatch: boolean | null): number {
+  if (isShapeMatch === true) return 0;
+  if (isShapeMatch === null) return 1;
+  return 2;
+}
+
 const NOT_CONNECTED = "— not connected —";
 const AUTO_CHANNEL = "— derived from the connection —";
 
@@ -411,35 +411,32 @@ export function connectionFormFields(
         validation: null,
         options: [
           dropdownOption(NOT_CONNECTED, ""),
-          ...options.map((option) =>
-            dropdownOption(
-              // an incompatible producer stays selectable; the label says so
-              option.isShapeMatch === false
-                ? `${option.label}  (shape mismatch)`
-                : option.label,
-              option.value,
+          // Guided ordering: producers whose output shape matches this input
+          // come first, unannotated shapes in the middle, mismatches last.
+          ...options
+            .slice()
+            .sort(
+              (a, b) => shapeMatchRank(a.isShapeMatch) - shapeMatchRank(b.isShapeMatch),
+            )
+            .map((option) =>
+              dropdownOption(
+                option.isShapeMatch === true
+                  ? `✓ ${option.label}`
+                  : // an incompatible producer stays selectable; the label says so
+                    option.isShapeMatch === false
+                    ? `${option.label}  (shape mismatch)`
+                    : option.label,
+                option.value,
+              ),
             ),
-          ),
         ],
       },
     };
 
-    fields[`${CONNECTIONS_KEY}.${port.name}.${CHANNEL_FIELD}`] = {
-      key: `${CONNECTIONS_KEY}.${port.name}.${CHANNEL_FIELD}`,
-      label: `${port.name} channel (optional)`,
-      __typename: "PanelMetaData",
-      inputField: {
-        type: "dropdown",
-        __typename: "InputField",
-        validation: null,
-        channelField: true,
-        options: [
-          // left empty, the channel name is derived from the two endpoints
-          dropdownOption(AUTO_CHANNEL, ""),
-          ...channelOptions.map((channel) => dropdownOption(channel, channel)),
-        ],
-      },
-    };
+    // No channel field: a channel is an RDF-Connect build detail. Left
+    // unset it is derived from the two endpoints (`channelNameBetween`),
+    // which is what happened for every connection anyway — the dropdown
+    // only added rdf-connect noise to the logical connect step.
 
     // The verdict of the last chain validation. Read-only: it is written by
     // the collection-api whenever the pipeline is saved, so editing it here

@@ -345,40 +345,9 @@ export const dishacledQueries = gql`
           icon
           requiresAuth
         }
-        runners: menuItem(
-          label: "navigation.runners"
-          entityType: runner
-          typeLink: { route: { destination: "runners" } }
-          icon: Cog
-          requiresAuth: true
-        ) {
-          label
-          entityType
-          typeLink {
-            route {
-              destination
-            }
-          }
-          icon
-          requiresAuth
-        }
-        channels: menuItem(
-          label: "navigation.channels"
-          entityType: channel
-          typeLink: { route: { destination: "channels" } }
-          icon: Channel
-          requiresAuth: true
-        ) {
-          label
-          entityType
-          typeLink {
-            route {
-              destination
-            }
-          }
-          icon
-          requiresAuth
-        }
+        # Runners and channels are RDF-Connect build details the compiler
+        # handles; in the logical DiSHACLed model they are not user concepts,
+        # so they are out of the menu (their routes still resolve by URL).
         alerts: menuItem(
           label: "navigation.alerts"
           entityType: alert

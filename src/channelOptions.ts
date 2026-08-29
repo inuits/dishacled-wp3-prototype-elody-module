@@ -52,11 +52,37 @@ export function injectChannelOptions(formFields: any, channels: string[]): any {
 
   const result: any = {};
   for (const [key, field] of Object.entries<any>(formFields)) {
+    // Channel fields (rdfc readers/writers) are wiring, not configuration:
+    // the Connect modal owns them, and showing them here only put
+    // rdf-connect bookkeeping in the middle of a config form.
+    if (field?.inputField?.channelField) continue;
     result[key] = field?.inputField
-      ? { ...field, inputField: withChannelOptions(field.inputField, channels) }
+      ? {
+          ...field,
+          inputField: pruneChannelSubFields(
+            withChannelOptions(field.inputField, channels),
+          ),
+        }
       : field;
   }
   return result;
+}
+
+function pruneChannelSubFields(inputField: any): any {
+  if (!inputField?.subFields) return inputField;
+  return {
+    ...inputField,
+    subFields: inputField.subFields
+      .filter((subField: any) => !subField?.inputField?.channelField)
+      .map((subField: any) =>
+        subField?.inputField
+          ? {
+              ...subField,
+              inputField: pruneChannelSubFields(subField.inputField),
+            }
+          : subField,
+      ),
+  };
 }
 
 // Whether anything in this form needs the channel list at all.

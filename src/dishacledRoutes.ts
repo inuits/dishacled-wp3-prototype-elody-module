@@ -26,6 +26,9 @@ export const dishacledRoutes = [
         component: "SingleEntity",
         meta: {
           requiresAuth: true,
+          // One plain search field on name, only in entity-picker modals (the
+          // component picker); the suggestion filter keeps working underneath.
+          simpleSearch: { keys: ["elody:1|metadata.name.value"], pickerOnly: true },
           entityPageConfig: {
             [Entitytyping.Alert]: {
               hasEditMetadataButton: false,
