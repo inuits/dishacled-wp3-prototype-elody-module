@@ -54,8 +54,10 @@ export type UiFilter = {
   kind: string;
   order: number;
   key?: string;
+  keyAsList: boolean;
   label?: string;
-  defaultValue?: string;
+  defaultValues: string[];
+  defaultValueAsList: boolean;
   hidden: boolean;
   displayedByDefault: boolean;
   tooltip: boolean;
@@ -78,6 +80,88 @@ export type UiContextMenu = {
   actions: UiAction[];
 };
 
+export type UiBulkOpContext = {
+  activeViewMode: string;
+  selection: string;
+  tooltip: string;
+};
+
+export type UiBulkOpModal = {
+  typeModal: string;
+  formQuery?: string;
+  formRelationType?: string;
+  closeConfirmation: boolean;
+  permission?: string;
+};
+
+export type UiBulkOperation = {
+  value: string;
+  order: number;
+  icon?: string;
+  label?: string;
+  primary?: boolean;
+  can: string[];
+  context?: UiBulkOpContext;
+  modal?: UiBulkOpModal;
+};
+
+export type UiCustomBulkOperations = {
+  queryName: string;
+  operations: UiBulkOperation[];
+};
+
+export type UiCreateFormField = {
+  key: string;
+  label?: string;
+  order: number;
+  inputType: string;
+  required: boolean;
+};
+
+export type UiCreateForm = {
+  queryName: string;
+  label?: string;
+  fields: UiCreateFormField[];
+  submit?: {
+    label?: string;
+    icon?: string;
+    actionQuery?: string;
+    creationType?: string;
+  };
+};
+
+export type UiRepetitiveStep = {
+  key: string;
+  order: number;
+  label?: string;
+  entityType?: string;
+  createForm?: string;
+  pickerQuery?: string;
+  pickerFiltersQuery?: string;
+  acceptedTypes: string[];
+  maxSelection?: number;
+  overviewFields: { key: string; label?: string; order: number }[];
+};
+
+export type UiRepetitiveForm = {
+  queryName: string;
+  label?: string;
+  repeatable: boolean;
+  refetchOnFinish: boolean;
+  steps: UiRepetitiveStep[];
+  finalize?: { fromStep: string; relationType: string };
+};
+
+export type UiPickerResult = { type: string; fragment: string; order: number };
+
+export type UiPicker = {
+  queryName: string;
+  filtersQueryName: string;
+  order: number;
+  results: UiPickerResult[];
+  filters: UiFilter[];
+};
+
 export type UiPanel = {
   alias: string;
   order: number;
@@ -89,18 +173,32 @@ export type UiPanel = {
 };
 
 export type UiElement = {
-  kind: "shaclShape" | "window";
+  kind: "shaclShape" | "window" | "list";
   order: number;
+  alias?: string;
   label?: string;
   fieldsKey?: string;
   collapsed?: boolean;
   expandButton?: boolean;
   panels: UiPanel[];
+  // list-element parameters (all references to platform machinery)
+  entityTypes: string[];
+  relationType?: string;
+  customQuery?: string;
+  customQueryFilters?: string;
+  searchInputType?: string;
+  customBulkOperations?: string;
+  pickerList?: string;
+  pickerFilters?: string;
 };
 
 export type UiColumn = { order: number; size: string; elements: UiElement[] };
 
-export type UiDetail = { shapeDriven: boolean; columns: UiColumn[] };
+export type UiDetail = {
+  shapeDriven: boolean;
+  fragmentFields: string[];
+  columns: UiColumn[];
+};
 
 export type UiFormSource = {
   queryName: string;
@@ -120,6 +218,11 @@ export type UiEntity = {
   contextMenu?: UiContextMenu;
   detail?: UiDetail;
   formSources: UiFormSource[];
+  bulkOperations: UiBulkOperation[];
+  customBulkOperations: UiCustomBulkOperations[];
+  createForms: UiCreateForm[];
+  repetitiveForms: UiRepetitiveForm[];
+  pickers: UiPicker[];
 };
 
 // -- triples -> model --------------------------------------------------------
@@ -220,20 +323,190 @@ export function parseUiDeclaration(ttl: string): UiEntity[] {
         };
       });
 
+    const readFilter = (node: string): UiFilter => ({
+      alias: String(reading.value(node, `${ELODY}alias`) ?? ""),
+      kind: String(reading.value(node, `${ELODY}filterKind`) ?? "text"),
+      order: Number(reading.value(node, `${SH}order`) ?? 0),
+      key: reading.value(node, `${ELODY}key`),
+      keyAsList: reading.literal(node, `${ELODY}keyAsList`) !== false,
+      label: reading.value(node, `${RDFS}label`),
+      defaultValues: reading.values(node, `${ELODY}defaultValue`),
+      defaultValueAsList:
+        reading.literal(node, `${ELODY}defaultValueAsList`) === true,
+      hidden: reading.literal(node, `${ELODY}hidden`) === true,
+      displayedByDefault:
+        reading.literal(node, `${ELODY}displayedByDefault`) === true,
+      tooltip: reading.literal(node, `${ELODY}tooltip`) === true,
+    });
+
     const filters = reading
       .values(subject, `${ELODY}filter`)
       .sort(byOrder(reading))
-      .map((node): UiFilter => ({
-        alias: String(reading.value(node, `${ELODY}alias`) ?? ""),
-        kind: String(reading.value(node, `${ELODY}filterKind`) ?? "text"),
+      .map(readFilter);
+
+    const readBulkOperation = (node: string): UiBulkOperation => {
+      const contextNode = reading.value(node, `${ELODY}context`);
+      const modalNode = reading.value(node, `${ELODY}modal`);
+      const primary = reading.literal(node, `${ELODY}primary`);
+      return {
+        value: String(reading.value(node, `${ELODY}value`) ?? ""),
         order: Number(reading.value(node, `${SH}order`) ?? 0),
-        key: reading.value(node, `${ELODY}key`),
+        icon: reading.value(node, `${ELODY}icon`),
         label: reading.value(node, `${RDFS}label`),
-        defaultValue: reading.value(node, `${ELODY}defaultValue`),
-        hidden: reading.literal(node, `${ELODY}hidden`) === true,
-        displayedByDefault:
-          reading.literal(node, `${ELODY}displayedByDefault`) === true,
-        tooltip: reading.literal(node, `${ELODY}tooltip`) === true,
+        primary: typeof primary === "boolean" ? primary : undefined,
+        can: reading.values(node, `${ELODY}can`),
+        context: contextNode
+          ? {
+              activeViewMode: String(
+                reading.value(contextNode, `${ELODY}activeViewMode`) ?? "",
+              ),
+              selection: String(
+                reading.value(contextNode, `${ELODY}selection`) ?? "",
+              ),
+              tooltip: String(
+                reading.value(contextNode, `${ELODY}tooltip`) ?? "",
+              ),
+            }
+          : undefined,
+        modal: modalNode
+          ? {
+              typeModal: String(
+                reading.value(modalNode, `${ELODY}typeModal`) ?? "",
+              ),
+              formQuery: reading.value(modalNode, `${ELODY}formQuery`),
+              formRelationType: reading.value(
+                modalNode,
+                `${ELODY}formRelationType`,
+              ),
+              closeConfirmation:
+                reading.literal(modalNode, `${ELODY}closeConfirmation`) ===
+                true,
+              permission: reading.value(modalNode, `${ELODY}permission`),
+            }
+          : undefined,
+      };
+    };
+
+    const bulkOperations = reading
+      .values(subject, `${ELODY}bulkOperation`)
+      .sort(byOrder(reading))
+      .map(readBulkOperation);
+
+    const customBulkOperations = reading
+      .values(subject, `${ELODY}customBulkOperations`)
+      .map((node): UiCustomBulkOperations => ({
+        queryName: String(reading.value(node, `${ELODY}queryName`) ?? ""),
+        operations: reading
+          .values(node, `${ELODY}operation`)
+          .sort(byOrder(reading))
+          .map(readBulkOperation),
+      }));
+
+    const createForms = reading
+      .values(subject, `${ELODY}createForm`)
+      .map((node): UiCreateForm => {
+        const submitNode = reading.value(node, `${ELODY}submit`);
+        return {
+          queryName: String(reading.value(node, `${ELODY}queryName`) ?? ""),
+          label: reading.value(node, `${RDFS}label`),
+          fields: reading
+            .values(node, `${ELODY}field`)
+            .sort(byOrder(reading))
+            .map((field): UiCreateFormField => ({
+              key: String(reading.value(field, `${SH}name`) ?? ""),
+              label: reading.value(field, `${RDFS}label`),
+              order: Number(reading.value(field, `${SH}order`) ?? 0),
+              inputType: String(
+                reading.value(field, `${ELODY}inputType`) ?? "baseTextField",
+              ),
+              required: reading.literal(field, `${ELODY}required`) === true,
+            })),
+          submit: submitNode
+            ? {
+                label: reading.value(submitNode, `${RDFS}label`),
+                icon: reading.value(submitNode, `${ELODY}icon`),
+                actionQuery: reading.value(submitNode, `${ELODY}actionQuery`),
+                creationType: reading.value(
+                  submitNode,
+                  `${ELODY}creationType`,
+                ),
+              }
+            : undefined,
+        };
+      });
+
+    const repetitiveForms = reading
+      .values(subject, `${ELODY}repetitiveForm`)
+      .map((node): UiRepetitiveForm => {
+        const finalizeNode = reading.value(node, `${ELODY}finalize`);
+        return {
+          queryName: String(reading.value(node, `${ELODY}queryName`) ?? ""),
+          label: reading.value(node, `${RDFS}label`),
+          repeatable: reading.literal(node, `${ELODY}repeatable`) === true,
+          refetchOnFinish:
+            reading.literal(node, `${ELODY}refetchOnFinish`) === true,
+          steps: reading
+            .values(node, `${ELODY}step`)
+            .sort(byOrder(reading))
+            .map((step): UiRepetitiveStep => ({
+              key: String(reading.value(step, `${ELODY}key`) ?? ""),
+              order: Number(reading.value(step, `${SH}order`) ?? 0),
+              label: reading.value(step, `${RDFS}label`),
+              entityType: reading.value(step, `${ELODY}entityType`),
+              createForm: reading.value(step, `${ELODY}createForm`),
+              pickerQuery: reading.value(step, `${ELODY}pickerQuery`),
+              pickerFiltersQuery: reading.value(
+                step,
+                `${ELODY}pickerFiltersQuery`,
+              ),
+              acceptedTypes: reading.values(step, `${ELODY}acceptedTypes`),
+              maxSelection: (() => {
+                const value = reading.literal(step, `${ELODY}maxSelection`);
+                return typeof value === "number" ? value : undefined;
+              })(),
+              overviewFields: reading
+                .values(step, `${ELODY}overviewField`)
+                .sort(byOrder(reading))
+                .map((field) => ({
+                  key: String(reading.value(field, `${ELODY}key`) ?? ""),
+                  label: reading.value(field, `${RDFS}label`),
+                  order: Number(reading.value(field, `${SH}order`) ?? 0),
+                })),
+            })),
+          finalize: finalizeNode
+            ? {
+                fromStep: String(
+                  reading.value(finalizeNode, `${ELODY}fromStep`) ?? "",
+                ),
+                relationType: String(
+                  reading.value(finalizeNode, `${ELODY}relationType`) ?? "",
+                ),
+              }
+            : undefined,
+        };
+      });
+
+    const pickers = reading
+      .values(subject, `${ELODY}picker`)
+      .sort(byOrder(reading))
+      .map((node): UiPicker => ({
+        queryName: String(reading.value(node, `${ELODY}queryName`) ?? ""),
+        filtersQueryName: String(
+          reading.value(node, `${ELODY}filtersQueryName`) ?? "",
+        ),
+        order: Number(reading.value(node, `${SH}order`) ?? 0),
+        results: reading
+          .values(node, `${ELODY}result`)
+          .sort(byOrder(reading))
+          .map((result): UiPickerResult => ({
+            type: String(reading.value(result, `${ELODY}type`) ?? ""),
+            fragment: String(reading.value(result, `${ELODY}fragment`) ?? ""),
+            order: Number(reading.value(result, `${SH}order`) ?? 0),
+          })),
+        filters: reading
+          .values(node, `${ELODY}filter`)
+          .sort(byOrder(reading))
+          .map(readFilter),
       }));
 
     const menuNode = reading.value(subject, `${ELODY}contextMenu`);
@@ -265,6 +538,7 @@ export function parseUiDeclaration(ttl: string): UiEntity[] {
       ? {
           shapeDriven:
             reading.literal(detailNode, `${ELODY}shapeDriven`) === true,
+          fragmentFields: reading.values(detailNode, `${ELODY}fragmentField`),
           columns: reading
             .values(detailNode, `${ELODY}column`)
             .sort(byOrder(reading))
@@ -279,9 +553,34 @@ export function parseUiDeclaration(ttl: string): UiEntity[] {
                     .values(element, `${RDF}type`)
                     .some((type) => type === `${ELODY}ShaclShapeElement`)
                     ? "shaclShape"
-                    : "window",
+                    : reading
+                          .values(element, `${RDF}type`)
+                          .some((type) => type === `${ELODY}ListElement`)
+                      ? "list"
+                      : "window",
                   order: Number(reading.value(element, `${SH}order`) ?? 0),
+                  alias: reading.value(element, `${ELODY}alias`),
                   label: reading.value(element, `${RDFS}label`),
+                  entityTypes: reading.values(element, `${ELODY}entityTypes`),
+                  relationType: reading.value(element, `${ELODY}relationType`),
+                  customQuery: reading.value(element, `${ELODY}customQuery`),
+                  customQueryFilters: reading.value(
+                    element,
+                    `${ELODY}customQueryFilters`,
+                  ),
+                  searchInputType: reading.value(
+                    element,
+                    `${ELODY}searchInputType`,
+                  ),
+                  customBulkOperations: reading.value(
+                    element,
+                    `${ELODY}customBulkOperations`,
+                  ),
+                  pickerList: reading.value(element, `${ELODY}pickerList`),
+                  pickerFilters: reading.value(
+                    element,
+                    `${ELODY}pickerFilters`,
+                  ),
                   fieldsKey: reading.value(element, `${ELODY}fieldsKey`),
                   collapsed:
                     reading.literal(element, `${ELODY}collapsed`) === true,
@@ -330,6 +629,11 @@ export function parseUiDeclaration(ttl: string): UiEntity[] {
           field: String(reading.value(node, `${ELODY}field`) ?? ""),
           withParent: reading.literal(node, `${ELODY}withParent`) === true,
         })),
+      bulkOperations,
+      customBulkOperations,
+      createForms,
+      repetitiveForms,
+      pickers,
     };
   });
 }
@@ -450,16 +754,45 @@ export function renderSortOptions(entity: UiEntity, indent: number): string {
   return lines.join("\n");
 }
 
+const filterDefaultLiteral = (filter: UiFilter): string => {
+  if (filter.defaultValueAsList)
+    return `[${filter.defaultValues.map((value) => `"${value}"`).join(", ")}]`;
+  return `"${filter.defaultValues[0] ?? ""}"`;
+};
+
 export function renderFilters(entity: UiEntity, indent: number): string {
-  const entries = entity.filters.map((filter) => {
+  return renderFilterList(entity.filters, indent);
+}
+
+export function renderFilterList(filters: UiFilter[], indent: number): string {
+  const entries = filters.map((filter) => {
     if (filter.kind === "type")
       return [
         `${pad(indent + 2)}${filter.alias}: advancedFilter(type: type) {`,
         `${pad(indent + 4)}type`,
-        `${pad(indent + 4)}defaultValue(value: "${filter.defaultValue ?? ""}")`,
+        `${pad(indent + 4)}defaultValue(value: ${filterDefaultLiteral(filter)})`,
         `${pad(indent + 4)}hidden(value: ${filter.hidden})`,
         `${pad(indent + 2)}}`,
       ].join("\n");
+
+    if (filter.kind === "selection") {
+      const key = filter.keyAsList
+        ? `["${filter.key}"]`
+        : `"${filter.key}"`;
+      const selection = [
+        "type",
+        "key",
+        ...(filter.defaultValues.length > 0
+          ? [`defaultValue(value: ${filterDefaultLiteral(filter)})`]
+          : []),
+        ...(filter.hidden ? ["hidden(value: true)"] : []),
+      ];
+      return [
+        `${pad(indent + 2)}${filter.alias}: advancedFilter(type: selection, key: ${key}) {`,
+        ...selection.map((field) => `${pad(indent + 4)}${field}`),
+        `${pad(indent + 2)}}`,
+      ].join("\n");
+    }
 
     const args = [
       `type: ${filter.kind}`,
@@ -520,6 +853,253 @@ export function renderContextMenu(entity: UiEntity, indent: number): string {
   return lines.join("\n");
 }
 
+export function renderBulkOperationOptions(
+  operations: UiBulkOperation[],
+  indent: number,
+): string {
+  const entries = operations.map((operation) => {
+    const lines = [`${pad(indent + 6)}{`];
+    if (operation.icon)
+      lines.push(`${pad(indent + 8)}icon: ${operation.icon}`);
+    if (operation.label)
+      lines.push(`${pad(indent + 8)}label: "${operation.label}"`);
+    lines.push(`${pad(indent + 8)}value: "${operation.value}"`);
+    if (operation.primary !== undefined)
+      lines.push(`${pad(indent + 8)}primary: ${operation.primary}`);
+    if (operation.can.length > 0)
+      lines.push(
+        `${pad(indent + 8)}can: [${operation.can.map((entry) => `"${entry}"`).join(", ")}]`,
+      );
+    if (operation.context) {
+      lines.push(`${pad(indent + 8)}actionContext: {`);
+      lines.push(
+        `${pad(indent + 10)}activeViewMode: ${operation.context.activeViewMode}`,
+      );
+      lines.push(
+        `${pad(indent + 10)}entitiesSelectionType: ${operation.context.selection}`,
+      );
+      lines.push(
+        `${pad(indent + 10)}labelForTooltip: "${operation.context.tooltip}"`,
+      );
+      lines.push(`${pad(indent + 8)}}`);
+    }
+    if (operation.modal) {
+      lines.push(`${pad(indent + 8)}bulkOperationModal: {`);
+      lines.push(`${pad(indent + 10)}typeModal: ${operation.modal.typeModal}`);
+      if (operation.modal.formQuery)
+        lines.push(
+          `${pad(indent + 10)}formQuery: "${operation.modal.formQuery}"`,
+        );
+      if (operation.modal.formRelationType)
+        lines.push(
+          `${pad(indent + 10)}formRelationType: "${operation.modal.formRelationType}"`,
+        );
+      lines.push(
+        `${pad(indent + 10)}askForCloseConfirmation: ${operation.modal.closeConfirmation}`,
+      );
+      if (operation.modal.permission)
+        lines.push(
+          `${pad(indent + 10)}neededPermission: ${operation.modal.permission}`,
+        );
+      lines.push(`${pad(indent + 8)}}`);
+    }
+    lines.push(`${pad(indent + 6)}}`);
+    return lines.join("\n");
+  });
+
+  const input =
+    operations.length === 0
+      ? `${pad(indent + 2)}options(input: []) {`
+      : [
+          `${pad(indent + 2)}options(`,
+          `${pad(indent + 4)}input: [`,
+          ...entries,
+          `${pad(indent + 4)}]`,
+          `${pad(indent + 2)}) {`,
+        ].join("\n");
+
+  return [
+    `${pad(indent)}bulkOperationOptions {`,
+    input,
+    `${pad(indent + 4)}icon`,
+    `${pad(indent + 4)}label`,
+    `${pad(indent + 4)}value`,
+    `${pad(indent + 4)}primary`,
+    `${pad(indent + 4)}can`,
+    `${pad(indent + 4)}actionContext {`,
+    `${pad(indent + 6)}...actionContext`,
+    `${pad(indent + 4)}}`,
+    `${pad(indent + 4)}bulkOperationModal {`,
+    `${pad(indent + 6)}...bulkOperationModal`,
+    `${pad(indent + 4)}}`,
+    `${pad(indent + 2)}}`,
+    `${pad(indent)}}`,
+  ].join("\n");
+}
+
+export function renderCreateForm(form: UiCreateForm): string {
+  const fields = form.fields.map((field) => {
+    const lines = [
+      `          ${field.key}: metaData {`,
+      `            label(input: "${field.label ?? field.key}")`,
+      `            key(input: "${field.key}")`,
+      `            inputField(type: ${field.inputType}) {`,
+      "              ...inputfield",
+    ];
+    if (field.required) {
+      lines.push("              validation(input: { value: required }) {");
+      lines.push("                ...validation");
+      lines.push("              }");
+    }
+    lines.push("            }");
+    lines.push("          }");
+    return lines.join("\n");
+  });
+
+  const submit = form.submit
+    ? [
+        "          createAction: action {",
+        `            label(input: "${form.submit.label ?? ""}")`,
+        `            icon(input: ${form.submit.icon ?? "NoIcon"})`,
+        "            actionType(input: submit)",
+        `            actionQuery(input: "${form.submit.actionQuery ?? ""}")`,
+        `            creationType(input: ${form.submit.creationType ?? ""})`,
+        "            showsFormErrors(input: true)",
+        "          }",
+      ].join("\n")
+    : "";
+
+  return [
+    `  query ${form.queryName} {`,
+    "    GetDynamicForm {",
+    `      label(input: "${form.label ?? ""}")`,
+    "      name: formTab {",
+    "        formFields {",
+    fields.join("\n"),
+    ...(submit ? [submit] : []),
+    "        }",
+    "      }",
+    "    }",
+    "  }",
+  ].join("\n");
+}
+
+export function renderRepetitiveForm(form: UiRepetitiveForm): string {
+  const steps = form.steps.map((step) => {
+    const lines = [
+      `      ${step.key}: steps {`,
+      `        key(input: "${step.key}")`,
+      `        label(input: "${step.label ?? ""}")`,
+    ];
+    if (step.entityType)
+      lines.push(`        entityType(input: "${step.entityType}")`);
+    if (step.createForm)
+      lines.push(`        createForm(input: "${step.createForm}")`);
+    if (step.pickerQuery)
+      lines.push(`        pickerQuery(input: "${step.pickerQuery}")`);
+    if (step.pickerFiltersQuery)
+      lines.push(
+        `        pickerFiltersQuery(input: "${step.pickerFiltersQuery}")`,
+      );
+    if (step.acceptedTypes.length > 0)
+      lines.push(
+        `        acceptedTypes(input: [${step.acceptedTypes.map((entry) => `"${entry}"`).join(", ")}])`,
+      );
+    if (step.maxSelection !== undefined)
+      lines.push(`        maxSelection(input: ${step.maxSelection})`);
+    if (step.overviewFields.length > 0) {
+      lines.push("        overviewFields(");
+      lines.push("          input: [");
+      for (const field of step.overviewFields)
+        lines.push(
+          `            { key: "${field.key}", label: "${field.label ?? field.key}" }`,
+        );
+      lines.push("          ]");
+      lines.push("        ) {");
+      lines.push("          key");
+      lines.push("          label");
+      lines.push("        }");
+    }
+    lines.push("      }");
+    return lines.join("\n");
+  });
+
+  const finalize = form.finalize
+    ? [
+        "      finalizeOnHost {",
+        `        fromStep(input: "${form.finalize.fromStep}")`,
+        `        relationType(input: "${form.finalize.relationType}")`,
+        "      }",
+      ].join("\n")
+    : "";
+
+  return [
+    `  query ${form.queryName} {`,
+    "    GetRepetitiveForm {",
+    `      label(input: "${form.label ?? ""}")`,
+    `      repeatable(input: ${form.repeatable})`,
+    `      refetchOnFinish(input: ${form.refetchOnFinish})`,
+    steps.join("\n"),
+    ...(finalize ? [finalize] : []),
+    "    }",
+    "  }",
+  ].join("\n");
+}
+
+export function renderPicker(picker: UiPicker): string {
+  const results = picker.results
+    .map((result) =>
+      [
+        `        ... on ${result.type} {`,
+        `          ...${result.fragment}`,
+        "        }",
+      ].join("\n"),
+    )
+    .join("\n");
+
+  const list = [
+    `  query ${picker.queryName}(`,
+    "    $type: Entitytyping!",
+    "    $limit: Int",
+    "    $skip: Int",
+    "    $searchValue: SearchFilter!",
+    "    $advancedSearchValue: [FilterInput]",
+    "    $advancedFilterInputs: [AdvancedFilterInput!]!",
+    "    $searchInputType: SearchInputType",
+    "  ) {",
+    "    Entities(",
+    "      type: $type",
+    "      limit: $limit",
+    "      skip: $skip",
+    "      searchValue: $searchValue",
+    "      advancedSearchValue: $advancedSearchValue",
+    "      advancedFilterInputs: $advancedFilterInputs",
+    "      searchInputType: $searchInputType",
+    "    ) {",
+    "      count",
+    "      limit",
+    "      results {",
+    "        id",
+    "        uuid",
+    "        type",
+    results,
+    "      }",
+    "      __typename",
+    "    }",
+    "  }",
+  ].join("\n");
+
+  const filters = [
+    `  query ${picker.filtersQueryName}($entityType: String!) {`,
+    "    EntityTypeFilters(type: $entityType) {",
+    renderFilterList(picker.filters, 6),
+    "    }",
+    "  }",
+  ].join("\n");
+
+  return `${list}\n\n${filters}`;
+}
+
 export function renderDetailView(entity: UiEntity, indent: number): string {
   const detail = entity.detail;
   if (!detail || detail.columns.length === 0) return "";
@@ -556,6 +1136,48 @@ export function renderDetailView(entity: UiEntity, indent: number): string {
   };
 
   const renderElement = (element: UiElement, depth: number): string => {
+    if (element.kind === "list") {
+      const alias = element.alias ? `${element.alias}: ` : "";
+      const lines = [
+        `${pad(depth)}${alias}entityListElement {`,
+        `${pad(depth + 2)}label(input: "${element.label ?? ""}")`,
+        `${pad(depth + 2)}isCollapsed(input: ${element.collapsed ?? false})`,
+      ];
+      if (element.entityTypes.length > 0)
+        lines.push(
+          `${pad(depth + 2)}entityTypes(input: [${element.entityTypes.join(", ")}])`,
+        );
+      if (element.relationType)
+        lines.push(
+          `${pad(depth + 2)}relationType: label(input: "${element.relationType}")`,
+        );
+      if (element.customQuery)
+        lines.push(
+          `${pad(depth + 2)}customQuery(input: "${element.customQuery}")`,
+        );
+      if (element.customQueryFilters)
+        lines.push(
+          `${pad(depth + 2)}customQueryFilters(input: "${element.customQueryFilters}")`,
+        );
+      if (element.searchInputType)
+        lines.push(
+          `${pad(depth + 2)}searchInputType(input: "${element.searchInputType}")`,
+        );
+      if (element.customBulkOperations)
+        lines.push(
+          `${pad(depth + 2)}customBulkOperations(input: "${element.customBulkOperations}")`,
+        );
+      if (element.pickerList)
+        lines.push(
+          `${pad(depth + 2)}customQueryEntityPickerList(input: "${element.pickerList}")`,
+        );
+      if (element.pickerFilters)
+        lines.push(
+          `${pad(depth + 2)}customQueryEntityPickerListFilters(input: "${element.pickerFilters}")`,
+        );
+      lines.push(`${pad(depth)}}`);
+      return lines.join("\n");
+    }
     if (element.kind === "shaclShape")
       return [
         `${pad(depth)}shaclShapeElement {`,
@@ -632,6 +1254,8 @@ export function renderEntityFile(entity: UiEntity): string {
     full.push(renderInitialValues(entity, 6, false));
     full.push("    }");
     full.push("    relationValues");
+    for (const field of entity.detail.fragmentFields)
+      full.push(`    ${field}`);
     full.push(renderDetailView(entity, 4));
     full.push("  }");
     fragments.push(full.join("\n"));
@@ -655,21 +1279,7 @@ export function renderEntityFile(entity: UiEntity): string {
   fragments.push(
     [
       `  fragment ${low}BulkOperations on ${type} {`,
-      "    bulkOperationOptions {",
-      "      options(input: []) {",
-      "        icon",
-      "        label",
-      "        value",
-      "        primary",
-      "        can",
-      "        actionContext {",
-      "          ...actionContext",
-      "        }",
-      "        bulkOperationModal {",
-      "          ...bulkOperationModal",
-      "        }",
-      "      }",
-      "    }",
+      renderBulkOperationOptions(entity.bulkOperations, 4),
       "  }",
     ].join("\n"),
   );
@@ -747,6 +1357,24 @@ export function renderEntityFile(entity: UiEntity): string {
       ].join("\n"),
     );
 
+  for (const form of entity.createForms) documents.push(renderCreateForm(form));
+
+  for (const custom of entity.customBulkOperations)
+    documents.push(
+      [
+        `  query ${custom.queryName} {`,
+        "    CustomBulkOperations {",
+        renderBulkOperationOptions(custom.operations, 6),
+        "    }",
+        "  }",
+      ].join("\n"),
+    );
+
+  for (const form of entity.repetitiveForms)
+    documents.push(renderRepetitiveForm(form));
+
+  for (const picker of entity.pickers) documents.push(renderPicker(picker));
+
   for (const source of entity.formSources) {
     const params = source.withParent
       ? "($id: String!, $parentEntityId: String)"
@@ -806,14 +1434,13 @@ export function replaceRegion(
 const FILE_TARGETS: Record<string, string> = {
   Alert: "src/queries/entities/alert.queries.ts",
   GithubProcessor: "src/queries/entities/githubProcessor.queries.ts",
+  Pipeline: "src/queries/entities/pipeline.queries.ts",
 };
 
-const REGION_TARGETS: Record<
-  string,
-  { file: string; prefix: string }
-> = {
-  Pipeline: { file: "src/queries/entities/pipeline.queries.ts", prefix: "pipeline" },
-};
+// entities still in region mode splice into a hand-written file; the set is
+// empty now that all three types emit whole files, but the mechanism stays
+// for the next entity that converts gradually
+const REGION_TARGETS: Record<string, { file: string; prefix: string }> = {};
 
 export function generate(root: string, check = false): boolean {
   const declaration = readFileSync(

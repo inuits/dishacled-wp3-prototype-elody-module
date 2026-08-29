@@ -203,10 +203,47 @@ describe("full-file declarations", () => {
     );
   });
 
-  it("keeps the pipeline in region mode", () => {
-    const pipeline = entity("Pipeline");
-    expect(pipeline.emit).toBe("regions");
+  it("emits every DiSHACLed type as a whole file now", () => {
+    expect(entity("Pipeline").emit).toBe("file");
     expect(entity("Alert").emit).toBe("file");
+    expect(entity("GithubProcessor").emit).toBe("file");
+  });
+
+  it("renders the pipeline's list element, builder documents and pickers", () => {
+    const pipelineFile = renderEntityFile(entity("Pipeline"));
+    // detail: info panel above the components list element, one column
+    expect(pipelineFile).toContain("size(size: hundred)");
+    expect(pipelineFile).toContain("processors: entityListElement {");
+    expect(pipelineFile).toContain(
+      'customBulkOperations(input: "GetProcessorOnPipelineOperations")',
+    );
+    expect(pipelineFile).toContain("pipelineConnections");
+    expect(pipelineFile).toContain("pipelineValidation");
+    // rich bulk operations, both on the type and as custom documents
+    expect(pipelineFile).toContain('label: "bulk-operations.create-pipeline"');
+    expect(pipelineFile).toContain("query GetRunnerOnPipelineBulkOperations {");
+    expect(pipelineFile).toContain("query GetProcessorOnPipelineOperations {");
+    expect(pipelineFile).toContain('can: ["update:pipeline:has-processor"]');
+    // create form, guided flow, id-addressed documents
+    expect(pipelineFile).toContain("query GetPipelineCreateForm {");
+    expect(pipelineFile).toContain("validation(input: { value: required })");
+    expect(pipelineFile).toContain("query GetRepetitiveFormForComponent {");
+    expect(pipelineFile).toContain('finalizeOnHost {');
+    expect(pipelineFile).toContain("PipelineConnections(id: $id)");
+    // pickers with their scoping filters
+    expect(pipelineFile).toContain(
+      "query GetEntityPickerListForProcessorsInPipeline(",
+    );
+    expect(pipelineFile).toContain(
+      'suggestion: advancedFilter(type: selection, key: ["suggest_for_pipeline"])',
+    );
+    expect(pipelineFile).toContain('defaultValue(value: "$parentIds")');
+    expect(pipelineFile).toContain(
+      'defaultValue(value: ["jsRunner", "pyRunner", "jvmRunner"])',
+    );
+    expect(pipelineFile).toContain(
+      'type: advancedFilter(type: selection, key: "type") {',
+    );
   });
 });
 

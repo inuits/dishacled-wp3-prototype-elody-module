@@ -1,14 +1,14 @@
+// GENERATED from src/ui/dishacled.ui.ttl — do not edit by hand.
+// `pnpm run generate:ui` re-renders this file; the triples are the source.
 import { gql } from "graphql-modules";
 
 export const pipelineQueries = gql`
   fragment minimalPipeline on Pipeline {
     intialValues {
-      # >>> generated:pipeline-initial-values from src/ui/dishacled.ui.ttl — do not edit by hand
       name: keyValue(key: "name", source: metadata)
-      # <<< generated:pipeline-initial-values
+      description: keyValue(key: "description", source: metadata)
     }
     relationValues
-    # >>> generated:pipeline-view-modes from src/ui/dishacled.ui.ttl — do not edit by hand
     allowedViewModes {
       viewModes(
         input: [
@@ -19,14 +19,11 @@ export const pipelineQueries = gql`
         ...viewModes
       }
     }
-    # <<< generated:pipeline-view-modes
     teaserMetadata {
-      # >>> generated:pipeline-teaser-fields from src/ui/dishacled.ui.ttl — do not edit by hand
       name: metaData {
         label(input: "metadata.labels.name")
         key(input: "name")
       }
-      # <<< generated:pipeline-teaser-fields
     }
     ...minimalBaseEntity
   }
@@ -37,15 +34,9 @@ export const pipelineQueries = gql`
       description: keyValue(key: "description", source: metadata)
     }
     relationValues
-    # the pipeline's producer->consumer links as directed, typed edges, each
-    # carrying the verdict of the last chain validation
     pipelineConnections
-    # whether every link's producer output shape is acceptable to the consumer
-    # it feeds, with the structured violation list when it is not
     pipelineValidation
     entityView {
-      # One full-width column: the pipeline info on top, the components
-      # (with the pipeline view mode canvas) full-width below it.
       column {
         size(size: hundred)
         elements {
@@ -71,9 +62,6 @@ export const pipelineQueries = gql`
               }
             }
           }
-          # No runners panel: in the logical model the runner is a build
-          # detail — the exports derive it from each processor's runtime
-          # metadata (NodeRunner by default, see pipeline_ttl_serializer.py).
           processors: entityListElement {
             label(input: "element-labels.processor-element")
             isCollapsed(input: false)
@@ -83,12 +71,8 @@ export const pipelineQueries = gql`
             customQueryFilters(input: "GetRelatedProcessorFilter")
             searchInputType(input: "AdvancedInputType")
             customBulkOperations(input: "GetProcessorOnPipelineOperations")
-            customQueryEntityPickerList(
-              input: "GetEntityPickerListForProcessorsInPipeline"
-            )
-            customQueryEntityPickerListFilters(
-              input: "GetEntityPickerFiltersForProcessorsInPipeline"
-            )
+            customQueryEntityPickerList(input: "GetEntityPickerListForProcessorsInPipeline")
+            customQueryEntityPickerListFilters(input: "GetEntityPickerFiltersForProcessorsInPipeline")
           }
         }
       }
@@ -96,7 +80,6 @@ export const pipelineQueries = gql`
   }
 
   fragment pipelineSortOptions on Pipeline {
-    # >>> generated:pipeline-sort-options from src/ui/dishacled.ui.ttl — do not edit by hand
     sortOptions {
       options(
         input: [
@@ -112,7 +95,6 @@ export const pipelineQueries = gql`
         value
       }
     }
-    # <<< generated:pipeline-sort-options
   }
 
   fragment filtersForPipeline on Pipeline {
@@ -174,19 +156,6 @@ export const pipelineQueries = gql`
         }
       }
     }
-  }
-
-  # Direct fetch of a pipeline's connections, for callers that hold only the
-  # pipeline id (validation reporting, export previews).
-  query GetPipelineConnections($id: String!) {
-    PipelineConnections(id: $id)
-  }
-
-  # The chain-validation report for one pipeline. Callers that already hold the
-  # pipeline get it from the fullPipeline fragment; this exists for the ones
-  # that only hold an id (export previews, a validation panel refresh).
-  query GetPipelineValidation($id: String!) {
-    PipelineValidation(id: $id)
   }
 
   query GetPipelineCreateForm {
@@ -305,15 +274,15 @@ export const pipelineQueries = gql`
               value: "deleteEntities"
               primary: false
               can: ["update:pipeline:has-runner"]
-              bulkOperationModal: {
-                typeModal: BulkOperationsDeleteEntities
-                formQuery: "GetBulkRemovingMediafilesInDetailForm"
-                askForCloseConfirmation: false
-              }
               actionContext: {
                 activeViewMode: readMode
                 entitiesSelectionType: someSelected
                 labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-someselected"
+              }
+              bulkOperationModal: {
+                typeModal: BulkOperationsDeleteEntities
+                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                askForCloseConfirmation: false
               }
             }
           ]
@@ -330,43 +299,6 @@ export const pipelineQueries = gql`
             ...bulkOperationModal
           }
         }
-      }
-    }
-  }
-
-  # Guided add-component flow: pick a component from the catalog in a stepper
-  # and attach it to the pipeline the flow was opened from (finalizeOnHost).
-  # PoC scope: one picker step; the configure and connect steps follow once
-  # this proves out (see the guided-pipeline-composition notes).
-  query GetRepetitiveFormForComponent {
-    GetRepetitiveForm {
-      label(input: "repetitiveForm.add-component-title")
-      repeatable(input: true)
-      # deliberately NOT linear: a linear flow with finalizeOnHost commits and
-      # closes after the last step, skipping the overview with "add another"
-      refetchOnFinish(input: true)
-      component: steps {
-        key(input: "component")
-        label(input: "repetitiveForm.step-component")
-        entityType(input: "githubProcessor")
-        createForm(input: "GetPipelineCreateForm")
-        pickerQuery(input: "GetEntityPickerListForProcessorsInPipeline")
-        pickerFiltersQuery(input: "GetEntityPickerFiltersForProcessorsInPipeline")
-        acceptedTypes(input: ["githubProcessor"])
-        maxSelection(input: 1)
-        overviewFields(
-          input: [
-            { key: "name", label: "metadata.labels.name" }
-            { key: "description", label: "metadata.labels.description" }
-          ]
-        ) {
-          key
-          label
-        }
-      }
-      finalizeOnHost {
-        fromStep(input: "component")
-        relationType(input: "hasProcessor")
       }
     }
   }
@@ -391,11 +323,6 @@ export const pipelineQueries = gql`
                 formQuery: "GetEntityPickerForm"
                 askForCloseConfirmation: true
                 neededPermission: canupdate
-                # components already in the pipeline are greyed out in the
-                # picker, so it reads as "already used". A component CAN be
-                # used twice in the toolchain model (two loggers in the
-                # tutorial pipeline), but that is the exception -- when it
-                # comes up, allowDuplicateRelations: true turns it back on.
               }
             }
             {
@@ -403,15 +330,15 @@ export const pipelineQueries = gql`
               value: "deleteEntities"
               primary: false
               can: ["update:pipeline:has-processor"]
-              bulkOperationModal: {
-                typeModal: BulkOperationsDeleteEntities
-                formQuery: "GetBulkRemovingMediafilesInDetailForm"
-                askForCloseConfirmation: false
-              }
               actionContext: {
                 activeViewMode: readMode
                 entitiesSelectionType: someSelected
                 labelForTooltip: "tooltip.bulkOperationsActionBar.readmode-someselected"
+              }
+              bulkOperationModal: {
+                typeModal: BulkOperationsDeleteEntities
+                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                askForCloseConfirmation: false
               }
             }
           ]
@@ -428,6 +355,37 @@ export const pipelineQueries = gql`
             ...bulkOperationModal
           }
         }
+      }
+    }
+  }
+
+  query GetRepetitiveFormForComponent {
+    GetRepetitiveForm {
+      label(input: "repetitiveForm.add-component-title")
+      repeatable(input: true)
+      refetchOnFinish(input: true)
+      component: steps {
+        key(input: "component")
+        label(input: "repetitiveForm.step-component")
+        entityType(input: "githubProcessor")
+        createForm(input: "GetPipelineCreateForm")
+        pickerQuery(input: "GetEntityPickerListForProcessorsInPipeline")
+        pickerFiltersQuery(input: "GetEntityPickerFiltersForProcessorsInPipeline")
+        acceptedTypes(input: ["githubProcessor"])
+        maxSelection(input: 1)
+        overviewFields(
+          input: [
+            { key: "name", label: "metadata.labels.name" }
+            { key: "description", label: "metadata.labels.description" }
+          ]
+        ) {
+          key
+          label
+        }
+      }
+      finalizeOnHost {
+        fromStep(input: "component")
+        relationType(input: "hasProcessor")
       }
     }
   }
@@ -523,11 +481,6 @@ export const pipelineQueries = gql`
           defaultValue(value: "githubProcessor")
           hidden(value: true)
         }
-        # Shape-guided suggestions: carries the pipeline id ($parentIds — the
-        # one variable the picker-filter context reliably has); the backend
-        # reads the pipeline's chain tail and keeps only the components whose
-        # input shape matches its output shape. Typing a search term lifts the
-        # filter, so incompatible components stay reachable on purpose.
         suggestion: advancedFilter(type: selection, key: ["suggest_for_pipeline"]) {
           type
           key
@@ -548,5 +501,19 @@ export const pipelineQueries = gql`
         }
       }
     }
+  }
+
+  # Field-source document for a runtime SHACL form: the modal asks for
+  # it by name (loadDocument), the resolver answers with the
+  # shape-derived form definition.
+  query GetPipelineConnections($id: String!) {
+    PipelineConnections(id: $id)
+  }
+
+  # Field-source document for a runtime SHACL form: the modal asks for
+  # it by name (loadDocument), the resolver answers with the
+  # shape-derived form definition.
+  query GetPipelineValidation($id: String!) {
+    PipelineValidation(id: $id)
   }
 `;
