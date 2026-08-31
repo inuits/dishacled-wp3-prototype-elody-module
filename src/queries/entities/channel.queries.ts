@@ -138,7 +138,7 @@ export const channelQueries = gql`
             }
             bulkOperationModal: {
               typeModal: DynamicForm
-              formQuery: "GetChannelCreateForm"
+              formQueries: ["GetChannelCreateForm"]
               formRelationType: "isChannelFor"
               askForCloseConfirmation: true
               neededPermission: cancreate

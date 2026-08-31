@@ -133,7 +133,7 @@ export const pyRunnerQueries = gql`
             }
             bulkOperationModal: {
               typeModal: DynamicForm
-              formQuery: "GetPyRunnerCreateForm"
+              formQueries: ["GetPyRunnerCreateForm"]
               formRelationType: "isPyRunnerFor"
               askForCloseConfirmation: true
               neededPermission: cancreate
@@ -202,7 +202,7 @@ export const pyRunnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetProcessorCreateForm"
+                formQueries: ["GetProcessorCreateForm"]
                 formRelationType: "isProcessorFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -220,7 +220,7 @@ export const pyRunnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetEntityPickerForm"
+                formQueries: ["GetEntityPickerForm"]
                 askForCloseConfirmation: true
                 neededPermission: canupdate
               }
@@ -232,7 +232,7 @@ export const pyRunnerQueries = gql`
               can: ["update:pyrunner:has-processor"]
               bulkOperationModal: {
                 typeModal: BulkOperationsDeleteEntities
-                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                formQueries: ["GetBulkRemovingMediafilesInDetailForm"]
                 askForCloseConfirmation: false
               }
               actionContext: {
