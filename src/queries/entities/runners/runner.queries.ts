@@ -215,7 +215,7 @@ export const runnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetProcessorCreateForm"
+                formQueries: ["GetProcessorCreateForm"]
                 formRelationType: "isProcessorFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -233,7 +233,7 @@ export const runnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetEntityPickerForm"
+                formQueries: ["GetEntityPickerForm"]
                 askForCloseConfirmation: true
                 neededPermission: canupdate
               }
@@ -245,7 +245,7 @@ export const runnerQueries = gql`
               can: ["update:runner:has-processor"]
               bulkOperationModal: {
                 typeModal: BulkOperationsDeleteEntities
-                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                formQueries: ["GetBulkRemovingMediafilesInDetailForm"]
                 askForCloseConfirmation: false
               }
               actionContext: {
@@ -391,7 +391,7 @@ export const runnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetJsRunnerCreateForm"
+                formQueries: ["GetJsRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -408,7 +408,7 @@ export const runnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetJvmRunnerCreateForm"
+                formQueries: ["GetJvmRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -425,7 +425,7 @@ export const runnerQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetPyRunnerCreateForm"
+                formQueries: ["GetPyRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate

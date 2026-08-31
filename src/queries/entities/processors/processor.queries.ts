@@ -64,7 +64,7 @@ export const processorQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetJsRunnerCreateForm"
+                formQueries: ["GetJsRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -82,7 +82,7 @@ export const processorQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetJvmRunnerCreateForm"
+                formQueries: ["GetJvmRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -100,7 +100,7 @@ export const processorQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetPyRunnerCreateForm"
+                formQueries: ["GetPyRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -118,7 +118,7 @@ export const processorQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetEntityPickerForm"
+                formQueries: ["GetEntityPickerForm"]
                 askForCloseConfirmation: true
                 neededPermission: canupdate
               }
@@ -130,7 +130,7 @@ export const processorQueries = gql`
               can: ["update:githubProcessor:has-runner"]
               bulkOperationModal: {
                 typeModal: BulkOperationsDeleteEntities
-                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                formQueries: ["GetBulkRemovingMediafilesInDetailForm"]
                 askForCloseConfirmation: false
               }
               actionContext: {
