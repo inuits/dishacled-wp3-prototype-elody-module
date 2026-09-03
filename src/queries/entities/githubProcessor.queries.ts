@@ -2,7 +2,9 @@ import { gql } from "graphql-modules";
 
 export const githubProcessorQueries = gql`
   fragment minimalGithubProcessor on GithubProcessor {
-    processorConfig
+    # the PWA reads the generic dynamicFormConfig convention; the resolver's
+    # field keeps its domain name
+    dynamicFormConfig: processorConfig
     intialValues {
       ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
