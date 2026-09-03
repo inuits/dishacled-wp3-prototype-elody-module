@@ -517,6 +517,15 @@ export const pipelineQueries = gql`
           defaultValue(value: "$parentIds")
           hidden(value: true)
         }
+        # the "+" on an output port fills $portShapeIris with that port's
+        # shape IRIs; opened any other way the variable stays unresolved and
+        # the store ignores the empty filter
+        shapeScope: advancedFilter(type: selection, key: ["suggest_for_shape"]) {
+          type
+          key
+          defaultValue(value: "$portShapeIris")
+          hidden(value: true)
+        }
         name: advancedFilter(
           type: text
           key: ["elody:1|metadata.name.value"]
