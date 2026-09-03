@@ -135,7 +135,7 @@ export const pipelineQueries = gql`
             }
             bulkOperationModal: {
               typeModal: DynamicForm
-              formQuery: "GetPipelineCreateForm"
+              formQueries: ["GetPipelineCreateForm"]
               formRelationType: "isPipelineFor"
               askForCloseConfirmation: true
               neededPermission: cancreate
@@ -210,7 +210,7 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetJsRunnerCreateForm"
+                formQueries: ["GetJsRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -228,7 +228,7 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetJvmRunnerCreateForm"
+                formQueries: ["GetJvmRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -246,7 +246,7 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetPyRunnerCreateForm"
+                formQueries: ["GetPyRunnerCreateForm"]
                 formRelationType: "isRunnerFor"
                 askForCloseConfirmation: true
                 neededPermission: cancreate
@@ -264,7 +264,7 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetEntityPickerForm"
+                formQueries: ["GetEntityPickerForm"]
                 askForCloseConfirmation: true
                 neededPermission: canupdate
               }
@@ -281,7 +281,7 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: BulkOperationsDeleteEntities
-                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                formQueries: ["GetBulkRemovingMediafilesInDetailForm"]
                 askForCloseConfirmation: false
               }
             }
@@ -320,7 +320,7 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: DynamicForm
-                formQuery: "GetEntityPickerForm"
+                formQueries: ["GetEntityPickerForm"]
                 askForCloseConfirmation: true
                 neededPermission: canupdate
               }
@@ -337,7 +337,7 @@ export const pipelineQueries = gql`
               }
               bulkOperationModal: {
                 typeModal: BulkOperationsDeleteEntities
-                formQuery: "GetBulkRemovingMediafilesInDetailForm"
+                formQueries: ["GetBulkRemovingMediafilesInDetailForm"]
                 askForCloseConfirmation: false
               }
             }

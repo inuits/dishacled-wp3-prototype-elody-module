@@ -890,7 +890,7 @@ export function renderBulkOperationOptions(
       lines.push(`${pad(indent + 10)}typeModal: ${operation.modal.typeModal}`);
       if (operation.modal.formQuery)
         lines.push(
-          `${pad(indent + 10)}formQuery: "${operation.modal.formQuery}"`,
+          `${pad(indent + 10)}formQueries: ["${operation.modal.formQuery}"]`,
         );
       if (operation.modal.formRelationType)
         lines.push(
