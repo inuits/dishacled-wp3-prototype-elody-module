@@ -211,7 +211,9 @@ export type UiEntity = {
   emit: "file" | "regions";
   documents: string[];
   typePills: boolean;
-  processorConfig: boolean;
+  // resolver field carrying runtime-computed form panels; emitted as the
+  // generic dynamicFormConfig selection the PWA reads (aliased when needed)
+  dynamicFormConfigField?: string;
   viewModes: UiViewMode[];
   properties: UiProperty[];
   filters: UiFilter[];
@@ -615,8 +617,8 @@ export function parseUiDeclaration(ttl: string): UiEntity[] {
         reading.value(subject, `${ELODY}emit`) === "file" ? "file" : "regions",
       documents: reading.values(subject, `${ELODY}documents`),
       typePills: reading.literal(subject, `${ELODY}typePills`) === true,
-      processorConfig:
-        reading.literal(subject, `${ELODY}processorConfig`) === true,
+      dynamicFormConfigField:
+        reading.value(subject, `${ELODY}dynamicFormConfig`) || undefined,
       viewModes,
       properties,
       filters,
@@ -1228,7 +1230,12 @@ export function renderEntityFile(entity: UiEntity): string {
 
   // minimal fragment: the listing card
   const minimal: string[] = [`  fragment minimal${type} on ${type} {`];
-  if (entity.processorConfig) minimal.push("    processorConfig");
+  if (entity.dynamicFormConfigField)
+    minimal.push(
+      entity.dynamicFormConfigField === "dynamicFormConfig"
+        ? "    dynamicFormConfig"
+        : `    dynamicFormConfig: ${entity.dynamicFormConfigField}`,
+    );
   minimal.push("    intialValues {");
   if (entity.typePills) minimal.push("      ...typePillsIntialValues");
   minimal.push(renderInitialValues(entity, 6));

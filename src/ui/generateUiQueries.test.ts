@@ -185,7 +185,7 @@ describe("full-file declarations", () => {
     expect(alertFile).not.toContain("query GetAlertFilters");
 
     const componentFile = renderEntityFile(entity("GithubProcessor"));
-    expect(componentFile).toContain("processorConfig");
+    expect(componentFile).toContain("dynamicFormConfig: processorConfig");
     expect(componentFile).toContain("...typePillsIntialValues");
     expect(componentFile).toContain("query GetGithubProcessorFilters($entityType: String!)");
     expect(componentFile).toContain("query GetGithubProcessorSortOptions($entityType: String!)");
