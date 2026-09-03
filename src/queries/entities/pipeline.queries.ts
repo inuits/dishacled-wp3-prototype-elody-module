@@ -487,6 +487,12 @@ export const pipelineQueries = gql`
           defaultValue(value: "$parentIds")
           hidden(value: true)
         }
+        shapeScope: advancedFilter(type: selection, key: ["suggest_for_shape"]) {
+          type
+          key
+          defaultValue(value: "$portShapeIris")
+          hidden(value: true)
+        }
         name: advancedFilter(
           type: text
           key: ["elody:1|metadata.name.value"]
