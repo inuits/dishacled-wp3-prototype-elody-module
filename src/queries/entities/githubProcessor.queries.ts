@@ -5,6 +5,7 @@ import { gql } from "graphql-modules";
 export const githubProcessorQueries = gql`
   fragment minimalGithubProcessor on GithubProcessor {
     dynamicFormConfig: processorConfig
+    ports
     intialValues {
       ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)

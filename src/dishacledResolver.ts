@@ -149,24 +149,6 @@ function buildContractPanels(data: any): any[] {
       value: [...new Set(produces)].join(", "),
     });
 
-  // The raw output-shape IRIs, for the "add a consumer for this output"
-  // picker scope. An empty label keeps the field out of every rendered
-  // teaser (formatTeaserMetadata drops label-less entries) while the value
-  // still lands in the enriched intialValues the pipeline view reads.
-  const producesIris = ports
-    .filter((p: any) => p?.direction === "out")
-    .map((p: any) => String(p?.shapeIri || ""))
-    .filter(Boolean);
-  if (producesIris.length > 0)
-    fields.push({
-      key: "contracts.produces.iri",
-      label: "",
-      inputFieldType: "text",
-      isRequired: false,
-      inValues: [],
-      value: [...new Set(producesIris)].join(" "),
-    });
-
   return [
     {
       label: "panel-labels.processor-contracts",
@@ -192,6 +174,9 @@ function buildConnectionPanels(data: any): any[] {
     isRequired: false,
     inValues: [],
     value: "",
+    // the value is a "step-id|port" reference; the enrich helper shows the
+    // step's readable name instead
+    stepReference: true,
   }));
 
   return [
@@ -200,6 +185,8 @@ function buildConnectionPanels(data: any): any[] {
       panelType: "relationMetadata",
       // connections are drawn in the Connect modal, not edited inline
       isEditable: false,
+      // pipeline cards skip these rows: the drawn edges already say it
+      hideOnPipelineCard: true,
       fields,
     },
   ];
@@ -496,6 +483,7 @@ export const dishacledResolver: Resolvers = {
     processorConfig: resolveProcessorConfig,
     componentContract: resolveComponentContract,
     componentPorts: resolveComponentPorts,
+    ports: resolveComponentPorts,
   },
   Channel: {
     ...baseSetOffResolvers,

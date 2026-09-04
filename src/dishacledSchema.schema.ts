@@ -167,6 +167,8 @@ export const dishacledSchema = gql`
     processorConfig: JSON
     componentContract: JSON
     componentPorts: JSON
+    # the typed ports list the pipeline view mode reads (same data)
+    ports: JSON
   }
 
   # Demonstrator alerts, read live from the SPARQL error graph.

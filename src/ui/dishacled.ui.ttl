@@ -71,6 +71,7 @@ ui:ComponentUi a elody:EntityUi ;
   elody:documents "entities", "filters", "sortOptions", "bulkOperations" ;
   elody:typePills true ;
   elody:dynamicFormConfig "processorConfig" ;
+  elody:ports "ports" ;
   elody:viewMode
     [ elody:mode "ViewModesList" ; sh:order 1 ;
       elody:config [ elody:key "multiLine" ; elody:value true ] ,

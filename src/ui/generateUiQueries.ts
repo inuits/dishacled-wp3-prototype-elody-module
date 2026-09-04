@@ -214,6 +214,8 @@ export type UiEntity = {
   // resolver field carrying runtime-computed form panels; emitted as the
   // generic dynamicFormConfig selection the PWA reads (aliased when needed)
   dynamicFormConfigField?: string;
+  // resolver field carrying the typed ports list the pipeline view reads
+  portsField?: string;
   viewModes: UiViewMode[];
   properties: UiProperty[];
   filters: UiFilter[];
@@ -619,6 +621,7 @@ export function parseUiDeclaration(ttl: string): UiEntity[] {
       typePills: reading.literal(subject, `${ELODY}typePills`) === true,
       dynamicFormConfigField:
         reading.value(subject, `${ELODY}dynamicFormConfig`) || undefined,
+      portsField: reading.value(subject, `${ELODY}ports`) || undefined,
       viewModes,
       properties,
       filters,
@@ -1235,6 +1238,12 @@ export function renderEntityFile(entity: UiEntity): string {
       entity.dynamicFormConfigField === "dynamicFormConfig"
         ? "    dynamicFormConfig"
         : `    dynamicFormConfig: ${entity.dynamicFormConfigField}`,
+    );
+  if (entity.portsField)
+    minimal.push(
+      entity.portsField === "ports"
+        ? "    ports"
+        : `    ports: ${entity.portsField}`,
     );
   minimal.push("    intialValues {");
   if (entity.typePills) minimal.push("      ...typePillsIntialValues");
