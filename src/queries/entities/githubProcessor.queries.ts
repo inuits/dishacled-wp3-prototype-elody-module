@@ -5,6 +5,7 @@ export const githubProcessorQueries = gql`
     # the PWA reads the generic dynamicFormConfig convention; the resolver's
     # field keeps its domain name
     dynamicFormConfig: processorConfig
+    ports
     intialValues {
       ...typePillsIntialValues
       name: keyValue(key: "name", source: metadata)
