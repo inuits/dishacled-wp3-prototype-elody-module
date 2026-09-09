@@ -374,11 +374,13 @@ export const pipelineQueries = gql`
                 formQueries: ["GetEntityPickerForm"]
                 askForCloseConfirmation: true
                 neededPermission: canupdate
-                # components already in the pipeline are greyed out in the
-                # picker, so it reads as "already used". A component CAN be
-                # used twice in the toolchain model (two loggers in the
-                # tutorial pipeline), but that is the exception -- when it
-                # comes up, allowDuplicateRelations: true turns it back on.
+                # A step is a *use* of a component, so the same component can
+                # be used twice -- two loggers in the tutorial pipeline, two
+                # dashboards on different alert graphs. The picker greys out
+                # what the parent is already related to by default, which is
+                # right for most relations (picking the same author twice is a
+                # slip) and wrong here.
+                allowDuplicateRelations: true
               }
             }
             {
