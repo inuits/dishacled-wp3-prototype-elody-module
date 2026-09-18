@@ -9,7 +9,7 @@ import {
   dishacledElodyTypeCollectionMapping,
   dishacledTypePillLabelMapping,
 } from "./dishacledModule";
-import start, { type ElodyModuleConfig } from "base-graphql";
+import { ElodyInstance, type ElodyModuleConfig } from "base-graphql";
 import { dishacledPermissions } from "./dishacledPermissions";
 
 const dishacledElodyConfig: ElodyModuleConfig = {
@@ -22,15 +22,13 @@ const dishacledElodyConfig: ElodyModuleConfig = {
   dataSources: {},
 };
 
-start(
-  dishacledElodyConfig,
-  dishacledAppConfig,
-  dishacledTranslations,
-  [],
-  dishacledFields,
-  dishacledElodyTypeCollectionMapping,
-  dishacledPermissions,
-  undefined,
-  undefined,
-  dishacledTypePillLabelMapping,
-);
+new ElodyInstance({
+  customModuleConfig: dishacledElodyConfig,
+  appConfig: dishacledAppConfig,
+  customTranslations: dishacledTranslations,
+  customEndpoints: [],
+  customInputFields: dishacledFields,
+  customTypeCollectionMapping: dishacledElodyTypeCollectionMapping,
+  customPermissions: dishacledPermissions,
+  customTypePillLabelMapping: dishacledTypePillLabelMapping,
+}).start();
