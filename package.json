@@ -10,7 +10,6 @@
     "generate": "pnpm graphql-code-generator --config ./codegen.ts"
   },
   "dependencies": {
-    "advanced-filter-module": "0.0.x",
     "import-module": "0.0.x",
     "mediafile-module": "0.0.x",
     "saved-search-module": "0.0.x",
