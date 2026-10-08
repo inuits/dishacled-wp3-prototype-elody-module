@@ -76,7 +76,6 @@ export const jvmRmlProcessorQueries = gql`
             }
             mappingsPanel: panels {
               label(input: "panel-labels.mappings")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               mappings: metaData {
@@ -110,7 +109,6 @@ export const jvmRmlProcessorQueries = gql`
             }
             sourcesPanel: panels {
               label(input: "panel-labels.sources")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               sources: metaData {
@@ -120,7 +118,6 @@ export const jvmRmlProcessorQueries = gql`
             }
             targetsPanel: panels {
               label(input: "panel-labels.targets")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               targets: metaData {

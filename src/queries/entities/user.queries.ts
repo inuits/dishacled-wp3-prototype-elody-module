@@ -42,7 +42,6 @@ export const user = gql`
             }
             userInfo: panels {
               label(input: "panel-labels.user-panel")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               first_name: metaData {

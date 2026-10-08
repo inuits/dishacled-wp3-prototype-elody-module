@@ -84,7 +84,6 @@ export const tsHttpUtilsProcessorQueries = gql`
             }
             auth: panels {
               label(input: "panel-labels.auth")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               authType: metaData {
@@ -100,7 +99,6 @@ export const tsHttpUtilsProcessorQueries = gql`
             }
             fetchOptions: panels {
               label(input: "panel-labels.fetch-options")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               method: metaData {
@@ -176,7 +174,6 @@ export const tsHttpUtilsProcessorQueries = gql`
             }
             fetch: panels {
               label(input: "panel-labels.fetch")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               url: metaData {

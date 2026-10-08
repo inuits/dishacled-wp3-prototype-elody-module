@@ -62,7 +62,6 @@ export const processorQueries = gql`
             }
             info: panels {
               label(input: "panel-labels.processor-info")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {

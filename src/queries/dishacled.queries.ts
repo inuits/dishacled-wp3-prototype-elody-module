@@ -328,7 +328,6 @@ export const dishacledQueries = gql`
       relations: panels {
         ... on WindowElementPanel {
           label(input: "bulk-operations.bulk-edit.relation-types")
-          panelType(input: metadata)
           isEditable(input: true)
           isCollapsed(input: false)
         }

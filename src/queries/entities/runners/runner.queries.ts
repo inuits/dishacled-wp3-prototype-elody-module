@@ -69,7 +69,6 @@ export const runnerQueries = gql`
             }
             info: panels {
               label(input: "panel-labels.runner-info")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {

@@ -51,7 +51,6 @@ export const channelQueries = gql`
             }
             info: panels {
               label(input: "panel-labels.channel-info")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {

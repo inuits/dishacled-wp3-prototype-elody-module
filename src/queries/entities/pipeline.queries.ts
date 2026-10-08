@@ -78,7 +78,6 @@ export const pipelineQueries = gql`
             }
             info: panels {
               label(input: "panel-labels.pipeline-info")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {

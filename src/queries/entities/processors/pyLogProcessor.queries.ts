@@ -74,7 +74,6 @@ export const pyLogProcessorQueries = gql`
             }
             logProcessor: panels {
               label(input: "panel-labels.log-processor")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               reader: metaData {
@@ -112,7 +111,6 @@ export const pyLogProcessorQueries = gql`
             }
             sendProcessor: panels {
               label(input: "panel-labels.send-processor")
-              panelType(input: metadata)
               isCollapsed(input: false)
               isEditable(input: true)
               sendWriter: metaData {
