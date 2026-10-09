@@ -8,7 +8,7 @@ export const runnerQueries = gql`
       hasProcessor: keyValue(
         key: "hasProcessor"
         source: relations
-        metadataKeyAsLabel: "name"
+        keyAsLabel: { origin: metadata, key: "name" }
         formatter: "pill"
       )
     }

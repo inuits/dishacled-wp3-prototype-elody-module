@@ -8,7 +8,7 @@ export const pyRunnerQueries = gql`
       hasProcessor: keyValue(
         key: "isRunnerFor"
         source: relations
-        metadataKeyAsLabel: "name"
+        keyAsLabel: { origin: metadata, key: "name" }
         formatter: "pill"
       )
     }

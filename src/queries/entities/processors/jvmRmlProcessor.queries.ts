@@ -8,7 +8,7 @@ export const jvmRmlProcessorQueries = gql`
       hasRunner: keyValue(
         key: "hasRunner"
         source: relations
-        metadataKeyAsLabel: "name"
+        keyAsLabel: { origin: metadata, key: "name" }
         formatter: "pill"
       )
     }

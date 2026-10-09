@@ -8,7 +8,7 @@ export const tsHttpUtilsProcessorQueries = gql`
       isProcessorFor: keyValue(
         key: "isProcessorFor"
         source: relations
-        metadataKeyAsLabel: "name"
+        keyAsLabel: { origin: metadata, key: "name" }
         formatter: "pill"
       )
     }
@@ -52,7 +52,7 @@ export const tsHttpUtilsProcessorQueries = gql`
       errorsAreFatal: keyValue(key: "errorsAreFatal", source: metadata)
       outputAsBuffer: keyValue(key: "outputAsBuffer", source: metadata)
       url: keyValue(key: "url", source: metadata)
-      hasWriter: keyValue(key: "hasWriter", source: relations, metadataKeyAsLabel: "name", relationEntityType: "channel")
+      hasWriter: keyValue(key: "hasWriter", source: relations, keyAsLabel: { origin: metadata, key: "name" }, relationEntityType: "channel")
       options: keyValue(key: "options", source: metadata)
     }
     relationValues
