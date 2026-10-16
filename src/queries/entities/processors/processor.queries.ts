@@ -21,8 +21,7 @@ export const processorQueries = gql`
     }
     teaserMetadata {
       name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+        key
       }
       hasRunner: metaData {
         label(input: "metadata.labels.runner")
@@ -65,8 +64,7 @@ export const processorQueries = gql`
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {
-                label(input: "metadata.labels.name")
-                key(input: "name")
+                key
               }
             }
           }
@@ -154,7 +152,6 @@ export const processorQueries = gql`
       name: formTab {
         formFields {
           name: metaData {
-            label(input: "metadata.labels.name")
             key(input: "name")
             inputField(type: baseTextField) {
               ...inputfield

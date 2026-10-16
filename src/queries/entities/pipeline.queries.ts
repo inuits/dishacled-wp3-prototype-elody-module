@@ -15,8 +15,7 @@ export const pipelineQueries = gql`
     }
     teaserMetadata {
       name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+        key
       }
     }
     ...minimalBaseEntity
@@ -81,12 +80,10 @@ export const pipelineQueries = gql`
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {
-                label(input: "metadata.labels.name")
-                key(input: "name")
+                key
               }
               description: metaData {
-                label(input: "metadata.labels.description")
-                key(input: "description")
+                key
               }
             }
           }
@@ -174,7 +171,6 @@ export const pipelineQueries = gql`
       name: formTab {
         formFields {
           name: metaData {
-            label(input: "metadata.labels.name")
             key(input: "name")
             inputField(type: baseTextField) {
               ...inputfield
@@ -184,7 +180,6 @@ export const pipelineQueries = gql`
             }
           }
           description: metaData {
-            label(input: "metadata.labels.description")
             key(input: "description")
             inputField(type: baseTextField) {
               ...inputfield

@@ -16,8 +16,7 @@ export const dishacledQueries = gql`
     }
     teaserMetadata {
       title: metaData {
-        label(input: "metadata.labels.title")
-        key(input: "title")
+        key
       }
     }
   }
@@ -28,8 +27,7 @@ export const dishacledQueries = gql`
 
   fragment typePillsTeaserMetadata on teaserMetadata {
     type: metaData {
-      label(input: "metadata.labels.type")
-      key(input: "type")
+      key
     }
   }
 

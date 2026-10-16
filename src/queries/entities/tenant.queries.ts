@@ -35,7 +35,6 @@ export const tenant = gql`
               isCollapsed(input: false)
               isEditable(input: true)
               name: metaData {
-                label(input: "metadata.labels.name")
                 key(input: "name")
                 inputField(type: baseTextField) {
                   ...inputfield

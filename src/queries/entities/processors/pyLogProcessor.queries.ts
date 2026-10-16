@@ -23,8 +23,7 @@ export const pyLogProcessorQueries = gql`
     teaserMetadata {
       ...typePillsTeaserMetadata
       name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+        key
       }
       hasRunner: metaData {
         label(input: "metadata.labels.runner")
@@ -77,8 +76,7 @@ export const pyLogProcessorQueries = gql`
               isCollapsed(input: false)
               isEditable(input: true)
               reader: metaData {
-                label(input: "metadata.labels.reader")
-                key(input: "reader")
+                key
               }
              hasWriter: metaData {
                 label(input: "metadata.labels.writer")
@@ -95,14 +93,12 @@ export const pyLogProcessorQueries = gql`
                 }
               }
               level: metaData {
-                label(input: "metadata.labels.level")
                 key(input: "level")
                 inputField(type: baseTextField) {
                   ...inputfield
                 }
               }
               raw: metaData {
-                label(input: "metadata.labels.raw")
                 key(input: "raw")
                 inputField(type: baseCheckbox) {
                   ...inputfield
@@ -118,8 +114,7 @@ export const pyLogProcessorQueries = gql`
                 key(input: "sendWriter")
               }
               msg: metaData {
-                label(input: "metadata.labels.msg")
-                key(input: "msg")
+                key
               }
             }
           }
@@ -207,7 +202,6 @@ export const pyLogProcessorQueries = gql`
       name: formTab {
         formFields {
           name: metaData {
-            label(input: "metadata.labels.name")
             key(input: "name")
             inputField(type: baseTextField) {
               ...inputfield

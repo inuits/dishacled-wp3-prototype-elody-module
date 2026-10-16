@@ -15,8 +15,7 @@ export const user = gql`
     }
     teaserMetadata {
       email: metaData {
-        label(input: "metadata.labels.email")
-        key(input: "email")
+        key
       }
     }
     ...minimalBaseEntity
@@ -59,8 +58,7 @@ export const user = gql`
                 }
               }
               email: metaData {
-                label(input: "metadata.labels.email")
-                key(input: "email")
+                key
               }
             }
           }

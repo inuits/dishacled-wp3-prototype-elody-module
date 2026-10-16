@@ -23,8 +23,7 @@ export const jvmRmlProcessorQueries = gql`
     teaserMetadata {
       ...typePillsTeaserMetadata
       name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+        key
       }
       hasRunner: metaData {
         label(input: "metadata.labels.runner")
@@ -79,7 +78,6 @@ export const jvmRmlProcessorQueries = gql`
               isCollapsed(input: false)
               isEditable(input: true)
               mappings: metaData {
-                label(input: "metadata.labels.mappings")
                 key(input: "mappings")
                 inputField(type: baseTextField) {
                   ...inputfield
@@ -112,8 +110,7 @@ export const jvmRmlProcessorQueries = gql`
               isCollapsed(input: false)
               isEditable(input: true)
               sources: metaData {
-                label(input: "metadata.labels.sources")
-                key(input: "sources")
+                key
               }
             }
             targetsPanel: panels {
@@ -121,8 +118,7 @@ export const jvmRmlProcessorQueries = gql`
               isCollapsed(input: false)
               isEditable(input: true)
               targets: metaData {
-                label(input: "metadata.labels.targets")
-                key(input: "targets")
+                key
               }
             }
           }
@@ -210,7 +206,6 @@ export const jvmRmlProcessorQueries = gql`
       name: formTab {
         formFields {
           name: metaData {
-            label(input: "metadata.labels.name")
             key(input: "name")
             inputField(type: baseTextField) {
               ...inputfield

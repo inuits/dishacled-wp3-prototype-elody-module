@@ -23,8 +23,7 @@ export const tsHttpUtilsProcessorQueries = gql`
     teaserMetadata {
       ...typePillsTeaserMetadata
       name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+        key
       }
       isProcessorFor: metaData {
         label(input: "metadata.labels.runner")
@@ -102,7 +101,6 @@ export const tsHttpUtilsProcessorQueries = gql`
               isCollapsed(input: false)
               isEditable(input: true)
               method: metaData {
-                label(input: "metadata.labels.method")
                 key(input: "method")
                 inputField(type: baseTextField) {
                   ...inputfield
@@ -112,7 +110,6 @@ export const tsHttpUtilsProcessorQueries = gql`
                 }
               }
               headers: metaData {
-                label(input: "metadata.labels.headers")
                 key(input: "headers")
                 inputField(type: baseTextField) {
                   ...inputfield
@@ -140,11 +137,9 @@ export const tsHttpUtilsProcessorQueries = gql`
                 }
               }
               auth: metaData {
-                label(input: "metadata.labels.auth")
-                key(input: "auth")
+                key
               }
               cron: metaData {
-                label(input: "metadata.labels.cron")
                 key(input: "cron")
                 inputField(type: baseTextField) {
                   ...inputfield
@@ -177,7 +172,6 @@ export const tsHttpUtilsProcessorQueries = gql`
               isCollapsed(input: false)
               isEditable(input: true)
               url: metaData {
-                label(input: "metadata.labels.url")
                 key(input: "url")
                 inputField(type: baseTextField) {
                   ...inputfield
@@ -194,8 +188,7 @@ export const tsHttpUtilsProcessorQueries = gql`
                 }
               }
               options: metaData {
-                label(input: "metadata.labels.options")
-                key(input: "options")
+                key
               }
             }
           }
@@ -283,7 +276,6 @@ export const tsHttpUtilsProcessorQueries = gql`
       name: formTab {
         formFields {
           name: metaData {
-            label(input: "metadata.labels.name")
             key(input: "name")
             inputField(type: baseTextField) {
               ...inputfield

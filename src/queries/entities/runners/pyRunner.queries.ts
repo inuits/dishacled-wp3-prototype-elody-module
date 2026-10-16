@@ -23,8 +23,7 @@ export const pyRunnerQueries = gql`
     teaserMetadata {
       ...typePillsTeaserMetadata
       name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+        key
       }
       hasProcessor: metaData {
         label(input: "metadata.labels.processor")
@@ -68,8 +67,7 @@ export const pyRunnerQueries = gql`
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {
-                label(input: "metadata.labels.name")
-                key(input: "name")
+                key
               }
             }
           }
@@ -159,7 +157,6 @@ export const pyRunnerQueries = gql`
       name: formTab {
         formFields {
           name: metaData {
-            label(input: "metadata.labels.name")
             key(input: "name")
             inputField(type: baseTextField) {
               ...inputfield

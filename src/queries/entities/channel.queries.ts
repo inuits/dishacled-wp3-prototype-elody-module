@@ -15,8 +15,7 @@ export const channelQueries = gql`
     }
     teaserMetadata {
       name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+        key
       }
     }
     ...minimalBaseEntity
@@ -54,8 +53,7 @@ export const channelQueries = gql`
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {
-                label(input: "metadata.labels.name")
-                key(input: "name")
+                key
               }
             }
           }

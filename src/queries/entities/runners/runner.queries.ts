@@ -22,15 +22,12 @@ export const runnerQueries = gql`
     }
     teaserMetadata {
       name: metaData {
-        label(input: "metadata.labels.name")
-        key(input: "name")
+        key
       }
       repository: metaData {
-        label(input: "metadata.labels.repository")
-        key(input: "repository")
+        key
       }
       hasProcessor: metaData {
-        label(input: "metadata.labels.processor")
         key(input: "processor")
       }
     }
@@ -72,12 +69,10 @@ export const runnerQueries = gql`
               isCollapsed(input: false)
               isEditable(input: false)
               name: metaData {
-                label(input: "metadata.labels.name")
-                key(input: "name")
+                key
               }
               repository: metaData {
-                label(input: "metadata.labels.repository")
-                key(input: "repository")
+                key
               }
             }
           }
@@ -138,7 +133,6 @@ export const runnerQueries = gql`
       name: formTab {
         formFields {
           name: metaData {
-            label(input: "metadata.labels.name")
             key(input: "name")
             inputField(type: baseTextField) {
               ...inputfield
@@ -148,7 +142,6 @@ export const runnerQueries = gql`
             }
           }
           repository: metaData {
-            label(input: "metadata.labels.repository")
             key(input: "repository")
             inputField(type: baseTextField) {
               ...inputfield
