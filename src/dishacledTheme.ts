@@ -1,0 +1,5 @@
+export const dishacledTheme: Record<string, string> = {
+  "--color-accent-light": "#164C85",
+  "--color-accent-normal": "#0057b1",
+  "--color-accent-accent": "#0057b1",
+};
