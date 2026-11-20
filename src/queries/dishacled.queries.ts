@@ -233,26 +233,6 @@ export const dishacledQueries = gql`
     }
   }
 
-  mutation linkMediafileToEntity(
-    $entityId: String!
-    $mediaFileInput: MediaFileInput!
-  ) {
-    linkMediafileToEntity(
-      entityId: $entityId
-      mediaFileInput: $mediaFileInput
-    ) {
-      _id
-      filename
-      original_file_location
-      thumbnail_file_location
-      mimetype
-      metadata {
-        key
-        value
-      }
-    }
-  }
-
   mutation patchMediaFileMetadata(
     $mediafileId: String!
     $mediaFileInput: [MediaFileMetadataInput]!
